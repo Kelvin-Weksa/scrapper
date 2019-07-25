@@ -2,6 +2,19 @@ const express = require ( 'express' );
 const favicon = require ( 'express-favicon' );
 const path = require ( 'path' );
 const puppeteer = require ( 'puppeteer' );
+var fs = require('fs'),
+    request = require('request');
+
+
+//  This is main download function which takes the url of your image
+function download ( uri , filename , callback ) {
+  request.head ( uri , function ( err , res , body ) {
+    request ( uri )
+      .pipe ( fs.createWriteStream ( filename ) )
+        .on ( "close" , callback );
+ });
+}
+
 
 const port = process.env.PORT || 8080;
 const app = express ( );
@@ -11,6 +24,7 @@ app.use ( express.static ( path.join ( __dirname , 'build' ) ) );
 app.get ( '/ping' , function ( req , res ) {
  return res.send ( 'pong' );
 });
+
 
 function run ( ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -27,6 +41,10 @@ function run ( ) {
       } );
       await page.goto ( "https://www.3i.com/our-people/?page=1" , { timeout: 0 } );
       let urls = await page.evaluate ( ( ) => {
+        //let images  = document .querySelector ( "img" ) // image selector
+        //download  the images.
+        //download ( imageUrl , "image.png" , function ( ) {
+        //console.log ( "Image downloaded" );
         let results = [ ];
         let items2 = document .querySelectorAll ( 'div.item-container' );
         items2.forEach ( ( item ) => {
@@ -34,7 +52,7 @@ function run ( ) {
               name    : item .querySelector ( 'h5' )      .innerText ,
               job     : item .querySelector ( '.area' )   .innerText ,
               market  : item .querySelector ( 'p' )   .innerText ,
-              image   : "static/live-from-space.jpg"
+              image   : item .querySelector ( 'img' )   .src ,
           } );
         } );
         return results;
