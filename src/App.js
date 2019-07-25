@@ -7,17 +7,19 @@ class App extends Component {
   state = {
     characters: [ /*{ name: "relax" , job: "boss you too much" , image: "static/live-from-space.jpg" , market: "UK/London"}*/ ] ,
     loaded: false ,
+    sitePage: ""
   };
   componentDidMount ( ) {
-    this.fetcher ( "1" );
+    this.fetcher ( "www.3i.com/our-people/" , '1' );
   }
 
-  fetcher = val => {
-    fetch ( val )
+  fetcher = ( site , get ) => {
+    this.setState ( { loaded: false , sitePage: site } )
+    fetch ( get )
       .then ( result => result.json ( ) )
         .then ( result => {
           this.setState ( {
-            characters: [ ...this.state.characters , ...result ] ,
+            characters: [...result ] ,
             loaded: true ,
           } )
       } );
@@ -27,7 +29,7 @@ class App extends Component {
       <div>
         <AppBar fetcher={this.fetcher}/>
         <hr />
-        {this.state.loaded ? <NestedGrid elements={ this.state.characters } /> : <Progress />}
+        {this.state.loaded ? <NestedGrid elements={ this.state.characters } /> : <Progress sitePage={this.state.sitePage}/>}
       </div>
     );
  }

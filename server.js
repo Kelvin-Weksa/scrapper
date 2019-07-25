@@ -69,8 +69,13 @@ function run ( ) {
 }
 
 app.get ( '/1' , function ( req , res ) {
-  console.log ( "you may be here a while! !" );
+  console.log ( "hi 1" );
   run ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/2' , function ( req , res ) {
+  console.log ( "hi 2" );
+  //run ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
 app.get ( '/*' , function ( req , res ) {

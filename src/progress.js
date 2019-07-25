@@ -8,7 +8,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function LinearBuffer() {
+export default function LinearBuffer ( props ) {
   const classes = useStyles();
   const [completed, setCompleted] = React.useState(0);
   const [buffer, setBuffer] = React.useState(10);
@@ -41,7 +41,7 @@ export default function LinearBuffer() {
 
   return (
     <div className={classes.root}>
-      Scraping in progress...
+      Scraping of --  {props.sitePage}  -- in progress...
       <LinearProgress variant="buffer" value={completed} valueBuffer={buffer} />
       <br />
       <LinearProgress color="secondary" variant="buffer" value={completed} valueBuffer={buffer} />

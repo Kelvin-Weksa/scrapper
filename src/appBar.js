@@ -98,11 +98,11 @@ class PrimarySearchAppBar extends React.Component {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleMenuClose = ( val , fetch ) => {
-    this.setState ( { anchorEl: null  , sitePage: val  } );
+  handleMenuClose = ( page , get ) => {
+    this.setState ( { anchorEl: null  , sitePage: page  } );
     this.handleMobileMenuClose ( );
     //
-    this.props.fetcher ( fetch );
+    this.props.fetcher ( page , get );
   };
 
   handleMobileMenuOpen = event => {
