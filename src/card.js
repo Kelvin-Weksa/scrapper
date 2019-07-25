@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
 export default function MediaControlCard ( props )  {
   const classes = useStyles();
   const theme = useTheme();
-  const { characterName , characterPost , characterImage } = props;
+  const { characterName , characterPost , characterImage , characterMarket } = props;
   return (
     <Card className={classes.card}>
       <div className={classes.details}>
@@ -48,6 +48,8 @@ export default function MediaControlCard ( props )  {
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
             {characterPost}
+            <hr />
+            {characterMarket}
           </Typography>
         </CardContent>
         <div className={classes.controls}>

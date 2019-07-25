@@ -25,19 +25,16 @@ function run ( ) {
           request.abort ( );
         }
       } );
-      await page.goto ( "https://www.steinigers.com/our-team/" , { timeout: 0 } );
+      await page.goto ( "https://www.3i.com/our-people/?page=1" , { timeout: 0 } );
       let urls = await page.evaluate ( ( ) => {
         let results = [ ];
-        let items2 = document .querySelectorAll ( 'div.k2UsersBlock.peoplemod' );
-        let items3 = Array.from ( items2 ) .map ( array => array .querySelectorAll ( 'td.pmt2' ) );
-        items3.forEach ( ( item ) => {
-          item.forEach ( ( element ) => {
-            results.push ( {
-                name : element .querySelector ( 'a.UserName' ) .innerText ,
-                job  : element .querySelector ( 'div.UserURL' ) .innerText ,
-                image: "static/live-from-space.jpg" ,
-            } );
-          } )
+        let items2 = document .querySelectorAll ( 'div.item-container' );
+        items2.forEach ( ( item ) => {
+          results.push ( {
+              name    : item .querySelector ( 'h5' )      .innerText ,
+              job     : item .querySelector ( '.area' )   .innerText ,
+              market  : item .querySelector ( 'p' )   .innerText ,
+          } );
         } );
         return results;
       } )
