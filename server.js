@@ -2,18 +2,6 @@ const express = require ( 'express' );
 const favicon = require ( 'express-favicon' );
 const path = require ( 'path' );
 const puppeteer = require ( 'puppeteer' );
-var fs = require('fs'),
-    request = require('request');
-
-
-//  This is main download function which takes the url of your image
-function download ( uri , filename , callback ) {
-  request.head ( uri , function ( err , res , body ) {
-    request ( uri )
-      .pipe ( fs.createWriteStream ( filename ) )
-        .on ( "close" , callback );
- });
-}
 
 
 const port = process.env.PORT || 8080;
@@ -41,10 +29,6 @@ function run ( ) {
       } );
       await page.goto ( "https://www.3i.com/our-people/?page=1" , { timeout: 0 } );
       let urls = await page.evaluate ( ( ) => {
-        //let images  = document .querySelector ( "img" ) // image selector
-        //download  the images.
-        //download ( imageUrl , "image.png" , function ( ) {
-        //console.log ( "Image downloaded" );
         let results = [ ];
         let items2 = document .querySelectorAll ( 'div.item-container' );
         items2.forEach ( ( item ) => {
