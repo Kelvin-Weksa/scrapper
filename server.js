@@ -34,6 +34,7 @@ function run ( ) {
               name    : item .querySelector ( 'h5' )      .innerText ,
               job     : item .querySelector ( '.area' )   .innerText ,
               market  : item .querySelector ( 'p' )   .innerText ,
+              image   : "static/live-from-space.jpg"
           } );
         } );
         return results;
