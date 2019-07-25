@@ -42,6 +42,7 @@ function run ( ) {
                   job     : item .querySelector ( '.area' )   .innerText ,
                   market  : item .querySelector ( 'p' )   .innerText ,
                   image   : item .querySelector ( 'img' )   .src ,
+                  from    : "Live from https://www.3i.com/our-people/"
               } );
             } );
             return results;

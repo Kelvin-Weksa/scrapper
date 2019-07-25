@@ -38,9 +38,11 @@ const useStyles = makeStyles(theme => ({
 export default function MediaControlCard ( props )  {
   const classes = useStyles();
   const theme = useTheme();
-  const { characterName , characterPost , characterImage , characterMarket } = props;
+  const { characterName , characterPost , characterImage , characterMarket , from } = props;
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card}
+    title={from}
+    >
       <div className={classes.details}>
         <CardContent className={classes.content}>
           <Typography component="h5" variant="h5">
@@ -67,7 +69,6 @@ export default function MediaControlCard ( props )  {
       <CardMedia
         className={classes.cover}
         image={characterImage}
-        title="Live from space album cover"
       />
     </Card>
   );

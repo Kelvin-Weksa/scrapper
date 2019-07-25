@@ -26,6 +26,7 @@ const NestedGrid =  props => {
             characterPost={value.job}
             characterImage={value.image}
             characterMarket={value.market}
+            from={value.from}
           />
         </Grid>
       )
