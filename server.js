@@ -48,7 +48,7 @@ function run ( ) {
         }
     })
 }
-//run ( ).then ( console.log ) .catch ( console.error );
+run ( ).then ( console.log ) .catch ( console.error );
 app.get ( '/datum' , function ( req , res ) {
   console.log ( "you may be here a while" );
   run ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
