@@ -3,7 +3,7 @@ import AppBar from './appBar'
 import NestedGrid from './demo'
 
 class App extends Component {
-  state = { characters: [ { name: "relax" , job: "boss you too much" , image: "static/live-from-space.jpg" , market: "UK/London"} ] };
+  state = { characters: [ /*{ name: "relax" , job: "boss you too much" , image: "static/live-from-space.jpg" , market: "UK/London"}*/ ] };
   componentDidMount ( ) {
     fetch ( "/datum" )
       .then ( result => result.json ( ) )
