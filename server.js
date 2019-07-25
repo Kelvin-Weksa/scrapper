@@ -46,7 +46,7 @@ function run ( ) {
     } catch ( e ) {
       return reject ( e );
     }
-  )
+  })
 }
 run ( ).then ( console.log ) .catch ( console.error );
 app.get ( '/datum' , function ( req , res ) {
