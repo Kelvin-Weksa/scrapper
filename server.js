@@ -2,18 +2,13 @@ const express = require ( 'express' );
 const favicon = require ( 'express-favicon' );
 const path = require ( 'path' );
 const puppeteer = require ( 'puppeteer' );
-
 const port = process.env.PORT || 8080;
 const app = express ( );
 
 app.use ( express.static ( __dirname ) );
 app.use ( express.static ( path.join ( __dirname , 'build' ) ) );
-app.get ( '/ping' , function ( req , res ) {
- return res.send ( 'pong' );
-});
 
-
-function run ( ) {
+function run3i ( ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] } );
@@ -68,14 +63,59 @@ function run ( ) {
   })
 }
 
+function runaacc ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if ( request .resourceType ( ) === 'document' ) {
+          request .continue ( );
+        } else {
+          request.abort ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page.goto ( "http://aaccapital.com/nl/team/" , { timeout: 0 } );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'div.col-md-4.js-collapse.cardblock.team.multiple' );
+            items.forEach ( ( item ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'h4' )  .innerText ,
+                  //job     : item.innerHTML ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'img' ) .src ,
+                  from    : "Live from http://aaccapital.com/nl/team/"
+              } );
+            } );
+            return results;
+          } )
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+//runaacc ( ) .then ( console.log ) .catch ( console.error );
+
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
-  run ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+  run3i ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
 app.get ( '/2' , function ( req , res ) {
   console.log ( "hi 2" );
-  //run ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+  runaacc ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
 app.get ( '/*' , function ( req , res ) {
