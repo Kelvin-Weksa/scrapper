@@ -9,7 +9,11 @@ class App extends Component {
     loaded: false ,
   };
   componentDidMount ( ) {
-    fetch ( "/1" )
+    this.fetcher ( "1" );
+  }
+
+  fetcher = val => {
+    fetch ( val )
       .then ( result => result.json ( ) )
         .then ( result => {
           this.setState ( {
@@ -17,11 +21,11 @@ class App extends Component {
             loaded: true ,
           } )
       } );
-    }
+  }
   render ( ) {
     return (
       <div>
-        <AppBar />
+        <AppBar fetcher={this.fetcher}/>
         <hr />
         {this.state.loaded ? <NestedGrid elements={ this.state.characters } /> : <Progress />}
       </div>
