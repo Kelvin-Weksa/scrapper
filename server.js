@@ -28,34 +28,37 @@ function run ( ) {
       } );
       let urls = [ ];
       let currentPage = 1;
-      let lastPage = 7;
-      await page.goto ( "https://www.3i.com/our-people/?page=1" , { timeout: 0 } );
-      while ( currentPage <= lastPage ){
-        let rollingUrls = await page.evaluate ( ( ) => {
-          let results = [ ];
-          let items2 = document .querySelectorAll ( 'div.item-container' );
-          items2.forEach ( ( item ) => {
-            results.push ( {
-                name    : item .querySelector ( 'h5' )      .innerText ,
-                job     : item .querySelector ( '.area' )   .innerText ,
-                market  : item .querySelector ( 'p' )   .innerText ,
-                image   : item .querySelector ( 'img' )   .src ,
+      //specific to website
+      {
+        let lastPage = 7;
+        await page.goto ( "https://www.3i.com/our-people/?page=1" , { timeout: 0 } );
+        while ( currentPage <= lastPage ){
+          let rollingUrls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items2 = document .querySelectorAll ( 'div.item-container' );
+            items2.forEach ( ( item ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'h5' )      .innerText ,
+                  job     : item .querySelector ( '.area' )   .innerText ,
+                  market  : item .querySelector ( 'p' )   .innerText ,
+                  image   : item .querySelector ( 'img' )   .src ,
+              } );
             } );
-          } );
-          return results;
-        } )
-        urls = urls.concat ( rollingUrls );
-        {
-          //go to next page
-          if ( currentPage == lastPage ) break;
-          await Promise.all ( [
-              page.waitForNavigation ( { timeout: 0 } ) ,
-              page .click ( 'li.next > a' ) ,
-              page .waitForSelector ( '.portfolio-item-list' )
-          ] )
+            return results;
+          } )
+          urls = urls.concat ( rollingUrls );
+          {
+            //go to next page
+            if ( currentPage ++ == lastPage ) break;
+            await Promise.all ( [
+                page.waitForNavigation ( { timeout: 0 } ) ,
+                page .click ( 'li.next > a' ) ,
+                page .waitForSelector ( '.portfolio-item-list' )
+            ] )
+          }
         }
-        currentPage ++;
       }
+      //
       browser.close ( );
       return resolve ( urls );
     } catch ( e ) {
@@ -63,7 +66,7 @@ function run ( ) {
     }
   })
 }
-//run ( ).then ( console.log ) .catch ( console.error );
+
 app.get ( '/datum' , function ( req , res ) {
   console.log ( "you may be here a while! !" );
   run ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
@@ -74,6 +77,3 @@ app.get ( '/*' , function ( req , res ) {
 });
 
 app.listen ( port );
-//const browser = await puppeteer.launch ( /*{ args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] }*/ );
-//document .querySelector ( 'li.next' ) .querySelector ( 'a' ).href
-//var lastChar = myString[myString.length -1];
