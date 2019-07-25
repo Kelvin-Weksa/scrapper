@@ -12,7 +12,7 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import { withStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import AccountCircle from '@material-ui/icons/AccountCircle';
+import ThreeSixtyIcon from '@material-ui/icons/ThreeSixty';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
@@ -89,17 +89,19 @@ const styles = theme => ({
 
 class PrimarySearchAppBar extends React.Component {
   state = {
-    anchorEl: null,
-    mobileMoreAnchorEl: null,
+    anchorEl: null ,
+    mobileMoreAnchorEl: null ,
+    sitePage: "www.3i.com/our-people/"
   };
 
   handleProfileMenuOpen = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
-  handleMenuClose = () => {
-    this.setState({ anchorEl: null });
-    this.handleMobileMenuClose();
+  handleMenuClose = ( val , fetch ) => {
+    this.setState ( { anchorEl: null  , sitePage: val  } );
+    this.handleMobileMenuClose ( );
+    //
   };
 
   handleMobileMenuOpen = event => {
@@ -111,11 +113,10 @@ class PrimarySearchAppBar extends React.Component {
   };
 
   render() {
-    const { anchorEl, mobileMoreAnchorEl } = this.state;
+    const { anchorEl , mobileMoreAnchorEl , sitePage } = this.state;
     const { classes } = this.props;
-    const isMenuOpen = Boolean(anchorEl);
-    const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
+    const isMenuOpen = Boolean ( anchorEl );
+    const isMobileMenuOpen = Boolean ( mobileMoreAnchorEl );
     const renderMenu = (
       <Menu
         anchorEl={anchorEl}
@@ -124,8 +125,8 @@ class PrimarySearchAppBar extends React.Component {
         open={isMenuOpen}
         onClose={this.handleMenuClose}
       >
-        <MenuItem onClick={this.handleMenuClose}>Profile</MenuItem>
-        <MenuItem onClick={this.handleMenuClose}>My account</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "www.3i.com/our-people/" , "1" )}>www.3i.com/our-people/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "aaccapital.com/nl/team/" , "2" )}>aaccapital.com/nl/team/</MenuItem>
       </Menu>
     );
 
@@ -155,7 +156,7 @@ class PrimarySearchAppBar extends React.Component {
         </MenuItem>
         <MenuItem onClick={this.handleProfileMenuOpen}>
           <IconButton color="inherit">
-            <AccountCircle />
+            <ThreeSixtyIcon />
           </IconButton>
           <p>Profile</p>
         </MenuItem>
@@ -185,7 +186,7 @@ class PrimarySearchAppBar extends React.Component {
               />
             </div>
             <div className={classes.grow} />
-            https://www.3i.com/our-people/page=?
+            { sitePage }
             <div className={classes.sectionDesktop}>
               <IconButton
                 aria-owns={isMenuOpen ? 'material-appbar' : undefined}
@@ -193,7 +194,7 @@ class PrimarySearchAppBar extends React.Component {
                 onClick={this.handleProfileMenuOpen}
                 color="inherit"
               >
-                <AccountCircle />
+                <ThreeSixtyIcon />
               </IconButton>
             </div>
             <div className={classes.sectionMobile}>

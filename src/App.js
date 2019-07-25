@@ -9,7 +9,7 @@ class App extends Component {
     loaded: false ,
   };
   componentDidMount ( ) {
-    fetch ( "/datum" )
+    fetch ( "/1" )
       .then ( result => result.json ( ) )
         .then ( result => {
           this.setState ( {

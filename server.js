@@ -68,7 +68,7 @@ function run ( ) {
   })
 }
 
-app.get ( '/datum' , function ( req , res ) {
+app.get ( '/1' , function ( req , res ) {
   console.log ( "you may be here a while! !" );
   run ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
