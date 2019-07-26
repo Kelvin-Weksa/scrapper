@@ -84,10 +84,11 @@ function runaacc ( ) {
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'div.col-md-4.js-collapse.cardblock.team.multiple' );
-            items.forEach ( ( item ) => {
+            let items2 = Array.from ( items ) .map ( array => document .getElementById ( array .getAttribute ( "data-target" ) ) );
+            Array.from ( items ).forEach ( ( item  , index ) => {
               results.push ( {
                   name    : item .querySelector ( 'h4' )  .innerText ,
-                  //job     : item.innerHTML ,
+                  job     : items2 [ index ]  .querySelector ( "h2 + h2" ).innerText ,
                   //market  : "" ,
                   image   : item .querySelector ( 'img' ) .src ,
                   from    : "Live from http://aaccapital.com/nl/team/"
