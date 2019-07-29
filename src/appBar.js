@@ -95,22 +95,22 @@ class PrimarySearchAppBar extends React.Component {
   };
 
   handleProfileMenuOpen = event => {
-    this.setState({ anchorEl: event.currentTarget });
+    //console.log ( event.currentTarget );
+    this.setState ( { anchorEl: event.currentTarget } );
   };
 
   handleMenuClose = ( page , get ) => {
     this.setState ( { anchorEl: null  , sitePage: page  } );
     this.handleMobileMenuClose ( );
-    //
     this.props.fetcher ( page , get );
   };
 
   handleMobileMenuOpen = event => {
-    this.setState({ mobileMoreAnchorEl: event.currentTarget });
+    this.setState ( { mobileMoreAnchorEl: event.currentTarget } );
   };
 
-  handleMobileMenuClose = () => {
-    this.setState({ mobileMoreAnchorEl: null });
+  handleMobileMenuClose = ( ) => {
+    this.setState ( { mobileMoreAnchorEl: null } );
   };
 
   render() {
@@ -126,8 +126,13 @@ class PrimarySearchAppBar extends React.Component {
         open={isMenuOpen}
         onClose={this.handleMenuClose}
       >
-        <MenuItem onClick={( ) => this.handleMenuClose ( "www.3i.com/our-people/" , "1" )}>www.3i.com/our-people/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "www.3i.com/our-people/" , "1" )}>3i.com/our-people/</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "aaccapital.com/nl/team/" , "2" )}>aaccapital.com/nl/team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.5square.nl/#page_458" , "3" )}>5square.nl/#page_458</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.activecapitalcompany.com/over-ons/team" , "4" )}>activecapitalcompany.com/over-ons/team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.adventinternational.com/team/" , "5" )}>adventinternational.com/team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.alpinvest.com/leadership" , "6" )}>alpinvest.com/leadership</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.antea.nl/de-mensen/de-directie/" , "7" )}>antea.nl/de-mensen/de-directie/</MenuItem>
       </Menu>
     );
 
