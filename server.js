@@ -17,10 +17,9 @@ async function autoScroll ( page ){
                 var scrollHeight = document.body.scrollHeight;
                 window.scrollBy ( 0 , distance  );
                 totalHeight += distance;
-
                 if (  totalHeight >= scrollHeight ){
                     clearInterval ( timer );
-                    resolve ( );
+                    return resolve ( scrollHeight );
                 }
             }, 50  );
         });
@@ -362,7 +361,644 @@ function runantea ( ) {
   })
 }
 
-//runantea ( ) .then ( console.log ) .catch ( console.error );
+/*function runatlanticcapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "http://www.atlanticcapital.nl/nl/wie-zijn-wij" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            results .push ( {
+              name  : document .querySelector ( 'u' ) ,
+              job   : document .querySelector ( 'p > strong' )
+            } )
+
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}*/
+
+function runbaincapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "https://www.baincapital.com/people" , { timeout : 0 , } );
+        console.log ( "begin scrolling ..." );
+        let i = 0;
+        while ( i ++ < 5 ){
+          try {
+            await page .hover  ( ".text-center"  );
+          } catch ( e ){}
+          try{
+            await page.waitForSelector ( "button#press-loading-example-btn" );
+          }catch ( e ){ break; }
+          console.log ( "scrolling for more..." );
+        }
+            console.log ( "done..." );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'div.__team_bg' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'h4 > span' )  .innerText ,
+                  job     : item .querySelector ( 'h4 > small' )  .innerText ,
+                  market  : item .querySelector ( '.__location > span' )  .innerText + ' ' + item .querySelector ( 'span.locationList' )  .innerText ,
+                  image   : item .querySelector ( '.team_img > img' ) .src ,
+                  from    : "https://www.baincapital.com/people" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function runbbcapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "http://bbcapital.nl/team/" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'div.tmm_member' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'div.tmm_names' )  .innerText ,
+                  job     : item .querySelector ( 'div.tmm_job' )  .innerText ,
+                  //market  : "" ,
+                  image   : getComputedStyle ( item .querySelector ( 'div.tmm_photo' ) ) .getPropertyValue ( 'background-image' ) .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "http://bbcapital.nl/team/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function runavedoncapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "https://avedoncapital.com/team/#main-content" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'article.team-preview.tile.mix.de' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'h3.name' )  .innerText ,
+                  job     : item .querySelector ( 'div.position' )  .innerText ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'div.profile-image' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://avedoncapital.com/team/#main-content" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function runbolsterinvestments ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "https://bolsterinvestments.nl/team/" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'div.member.in-view.is-in-view' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'h3.h2.title' )  .innerText ,
+                  job     : item .querySelector ( 'span.jobtitle' )  .innerText ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'div.member--image' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://bolsterinvestments.nl/team/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function runbridgepoint ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page .goto ( url , { timeout : 0 , } );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = document .querySelectorAll ( 'div.column_one_third.result_item_3col.first' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                    name    : item .querySelector ( 'div > p > a' )  .innerText ,
+                    job     : item .querySelector ( 'div > ul > li' )  .innerText ,
+                    market  : item .querySelector ( 'div > ul > li + li' )  .innerText ,
+                    image   : item .querySelector ( 'img' ) .src ,
+                    from    : `http://www.bridgepoint.eu/en/our-team/?&page=` ,
+                  } );
+                } );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ ];
+      let i = -1;
+      while ( i ++ < 8 ){
+        urls .push ( `http://www.bridgepoint.eu/en/our-team/?&page=${i}`  )
+      }
+      let datas = //await crawlUrl ( `http://www.bridgepoint.eu/en/our-team/?&page=0` );
+                  await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function runbrightlandsventurepartners ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "https://brightlandsventurepartners.com/team/" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'div.column.cell.team-item' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'a' )  .innerText ,
+                  job     : "Partner"  ,//item .querySelector ( 'span.jobtitle' )  .innerText ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'div.inner' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://brightlandsventurepartners.com/team/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function runcapitalapartners ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "https://www.capitalapartners.nl/team" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'article.card.card--large' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'h3.card__title' )  .innerText ,
+                  job     : item .querySelector ( 'h4.card__subtitle' )  .innerText ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'div.card__background.lazyloaded' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://www.capitalapartners.nl/team" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function runcinven ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "https://www.cinven.com/who-we-are/the-team/" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'a.item.col-md-4' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'div.name' )  .innerText ,
+                  job     : item .querySelector ( 'div.position' )  .innerText ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'img' ) .src , //style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://www.cinven.com/who-we-are/the-team/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function committedcapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "https://committedcapital.nl/team/" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'div.item.cbp-item.boxed-item.col-xs-4.no-excerpt' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'h4.member-name' )  .innerText ,
+                  job     : item .querySelector ( 'p.team-member-description.normal' )  .innerText ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'img' ) .src , //style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://committedcapital.nl/team/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function cottonwood ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "https://www.cottonwood.vc/" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'div.progression-masonry-item.progression-masonry-col-4.opacity-progression' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'h2.invested-team-title' )  .innerText ,
+                  job     : item .querySelector ( 'div.invested-excerpt-team' )  .innerText ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'img' ) .src , //style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://www.cottonwood.vc/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function cvc ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "https://www.cvc.com/people/working-at-cvc" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'div.person-wrapper' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'p.person-name' )  .innerText .replace ( '\n' ,'' ) .trim ( ) ,
+                  job     : item .querySelector ( 'p.person-designation' )  .innerText .replace ( '\n' ,'' ) .trim ( ) ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'img' ) .src , //style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://www.cvc.com/people/working-at-cvc" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function dehogedennencapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page .goto ( "https://www.dehogedennencapital.nl/team/" , { timeout : 0 , } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = document .querySelectorAll ( 'a.js-modal__link.c-full-img-link-blocks__block.c-full-img-link-blocks__block--orange' );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'h3' )  .innerText  ,
+                  job     : item .querySelector ( 'small' )  .innerText ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'div.c-full-img-link-blocks__block__img.u-bg-cover-center' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://www.dehogedennencapital.nl/team/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function delftenterprises ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "http://www.delftenterprises.nl/wat-we-doen/onze-mensen/" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        //await page.waitForSelector ( 'p[text-align=left]' );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "p:has(img)" );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : item .querySelector ( 'strong' )  .innerText  ,
+                  job     : item  .innerText .split ( '\n' ) [ 1 ] ,
+                  //market  : "" ,
+                  image   : item .querySelector ( 'img' ) .src ,
+                  from    : "http://www.delftenterprises.nl/wat-we-doen/onze-mensen/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+delftenterprises ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
@@ -399,6 +1035,70 @@ app.get ( '/7' , function ( req , res ) {
   runantea ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
+app.get ( '/8' , function ( req , res ) {
+  console.log ( "hi 8" );
+  runbaincapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/9' , function ( req , res ) {
+  console.log ( "hi 9" );
+  runbbcapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/10' , function ( req , res ) {
+  console.log ( "hi 10" );
+  runavedoncapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/11' , function ( req , res ) {
+  console.log ( "hi 11" );
+  runbolsterinvestments ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/12' , function ( req , res ) {
+  console.log ( "hi 12" );
+  runbridgepoint ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/13' , function ( req , res ) {
+  console.log ( "hi 13" );
+  runbrightlandsventurepartners ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/14' , function ( req , res ) {
+  console.log ( "hi 14" );
+  runcapitalapartners ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/15' , function ( req , res ) {
+  console.log ( "hi 15" );
+  runcinven ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/16' , function ( req , res ) {
+  console.log ( "hi 16" );
+  committedcapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/17' , function ( req , res ) {
+  console.log ( "hi 17" );
+  cottonwood ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/18' , function ( req , res ) {
+  console.log ( "hi 18" );
+  cvc ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/19' , function ( req , res ) {
+  console.log ( "hi 19" );
+  dehogedennencapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/20' , function ( req , res ) {
+  console.log ( "hi 20" );
+  delftenterprises ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
 
 app.get ( '/*' , function ( req , res ) {
   res.sendFile ( path.join ( __dirname , 'build' , 'index.html' ) );

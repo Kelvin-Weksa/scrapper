@@ -133,6 +133,19 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.adventinternational.com/team/" , "5" )}>adventinternational.com/team/</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.alpinvest.com/leadership" , "6" )}>alpinvest.com/leadership</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.antea.nl/de-mensen/de-directie/" , "7" )}>antea.nl/de-mensen/de-directie/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.baincapital.com/people" , "8" )}>baincapital.com/people</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://bbcapital.nl/team/" , "9" )}>bbcapital.nl/team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://avedoncapital.com/team/#main-content" , "10" )}>avedoncapital.com/team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://bolsterinvestments.nl/team/" , "11" )}>bolsterinvestments.nl</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.bridgepoint.eu/en/our-team/?&page=0" , "12" )}>bridgepoint.eu/en/our-team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://brightlandsventurepartners.com/team/" , "13" )}>brightlandsventurepartners.com/team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.capitalapartners.nl/team" , "14" )}>capitalapartners.nl/team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.cinven.com/who-we-are/the-team/" , "15" )}>cinven.com/who-we-are/the-team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://committedcapital.nl/team/" , "16" )}>committedcapital.nl/team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.cottonwood.vc/" , "17" )}>cottonwood.vc/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.cvc.com/people/working-at-cvc" , "18" )}>cvc.com/people/working-at-cvc</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.dehogedennencapital.nl/team/" , "19" )}>dehogedennencapital.nl/team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.delftenterprises.nl/wat-we-doen/onze-mensen/" , "20" )}>delftenterprises.nl</MenuItem>
       </Menu>
     );
 
