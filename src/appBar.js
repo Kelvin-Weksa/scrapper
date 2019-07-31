@@ -146,8 +146,18 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.cvc.com/people/working-at-cvc" , "18" )}>cvc.com/people/working-at-cvc</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.dehogedennencapital.nl/team/" , "19" )}>dehogedennencapital.nl/team/</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.delftenterprises.nl/wat-we-doen/onze-mensen/" , "20" )}>delftenterprises.nl</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.ecart.nl/en/organisatie-missie/" , "21" )}>ecart.nl/en/organisatie-missie/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://egeria.nl/team-overzicht/" , "22" )}>egeria.nl/team-overzicht/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.eqtpartners.com/Organization/Executive-Committee/" , "23" )}>eqtpartners.com/Organization/Executive-Committee/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://forbion.com/en/team/" , "24" )}>forbion.com/en/team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://gembenelux.com/over-ons/235/mensen.html" , "25" )}>gembenelux.com/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://gilde.com/team/investment-team" , "26" )}>gilde.com/team/investment-team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://gildehealthcare.com/team/" , "27" )}>gildehealthcare.com/team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.gimv.com/en/team" , "28" )}>gimv.com/en/team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.healthinnovations.nl/nl/het-team" , "29" )}>delftenterprises.nl</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.healthinvestmentpartners.nl/over-ons" , "30" )}>healthinvestmentpartners.nl/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://hollandcapital.nl/ons-team/" , "31" )}>hollandcapital.nl</MenuItem>
 
-        
       </Menu>
     );
 

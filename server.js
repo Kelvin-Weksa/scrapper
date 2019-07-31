@@ -998,7 +998,502 @@ function delftenterprises ( ) {
   })
 }
 
-//delftenterprises ( ) .then ( console.log ) .catch ( console.error );
+function ecart ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://www.ecart.nl/en/organisatie-missie/" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "div.col-md-4" );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'div.name' )  .text ( )  ,
+                  //job     : item .querySelector ( 'div.name' )  .innerText  ,
+                  //market  : "" ,
+                  image   : $ ( item ) .find ( 'img' ) .attr ( 'src' ) ,
+                  from    : "https://www.ecart.nl/en/organisatie-missie/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function egeria ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://egeria.nl/team-overzicht/" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "div.item-inner" );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'div.item-content' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
+                  job     : $ ( item ) .find ( 'div.item-footer' )  .text ( )  .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( ) ,
+                  //market  : "" ,
+                  image   : $ ( item ) .find ( 'img.img-responsive' ) .attr ( 'src' ) ,
+                  from    : "https://egeria.nl/team-overzicht/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function eqtpartners ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://www.eqtpartners.com/Organization/Executive-Committee/" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "div.delegate" );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'h2.committee' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
+                  job     : $ ( item ) .find ( 'p.block' )  .text ( )  .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( ) ,
+                  //market  : "" ,
+                  image   : $ ( item ) .find ( 'img.img-responsive' ) .attr ( 'src' ) ,
+                  from    : "https://www.eqtpartners.com/Organization/Executive-Committee/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function forbion ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://forbion.com/en/team/" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "article.team-thumb" );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'h3' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
+                  job     : $ ( item ) .find ( 'div.role' )  .text ( )  .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( ) ,
+                  //market  : "" ,
+                  image   : $ ( item ) .find ( 'img' ) .attr ( 'src' ) ,
+                  from    : "https://forbion.com/en/team/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function gembenelux ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://gembenelux.com/over-ons/235/mensen.html" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "li:has(div.image)" );;
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'div.text > h3' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
+                  job     : $ ( item ) .find ( 'div.text > span' )  .text ( )  .replace ( '(' , '' ). replace ( ')', '' ) . trim ( ) ,
+                  //market  : "" ,
+                  image   : $ ( item ) .find ( 'div.image > span' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://gembenelux.com/over-ons/235/mensen.html" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function gilde ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "http://gilde.com/team/investment-team" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "div.item-holder" );;
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'div.item-content > strong' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
+                  job     : $ ( item ) .find ( 'div.item-content > span' )  .text ( )  .replace ( '(' , '' ). replace ( ')', '' ) . trim ( ) ,
+                  //market  : "" ,
+                  image   : "none!" ,
+                  from    : "http://gilde.com/team/investment-team" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function gildehealthcare ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://gildehealthcare.com/team/" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "article.mix.mix_all.col-xs-6.col-sm-4" );;
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'h2' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
+                  job     : $ ( item ) .find ( 'p' )  .text ( )  .replace ( '(' , '' ). replace ( ')', '' ) . trim ( ) ,
+                  //market  : "" ,
+                  image   : $ ( item ) .find ( 'figure.team_image.lazy' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://gildehealthcare.com/team/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}/*some images not loading*/
+
+function gimv ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://www.gimv.com/en/team" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "div.gimv-team--item" );;
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'span.gimv-team-teaser--name > span' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
+                  job     : $ ( item ) .find ( 'div.field__item' )  .text ( )  .replace ( '\n' , '' ) .trim ( ) .split ( '\n' ) [ 0 ] ,
+                  market  : $ ( item ) .find ( 'div.field__item' )  .text ( )  .replace ( '\n' , '' ) .trim ( ) .split ( '\n' ) [ 1 ] .trim ( ) ,
+                  image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                  from    : "https://www.gimv.com/en/team" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function healthinnovations ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://www.healthinnovations.nl/nl/het-team" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "div.col.sqs-col-6.span-6" );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'h3 > a ' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
+                  job     : $ ( "div.sqs-block-content > h1" )  .text ( ) ,
+                  //market  : $ ( item ) .find ( 'div.field__item' )  .text ( )  .replace ( '\n' , '' ) .trim ( ) .split ( '\n' ) [ 1 ] .trim ( ) ,
+                  image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                  from    : "https://www.healthinnovations.nl/nl/het-team" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function healthinvestmentpartners ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://www.healthinvestmentpartners.nl/over-ons" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "div.mc1:has(h4.font_8 > span.color_15 > span)" );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'h1.font_0,h3.font_0 > span.color_15' ) .text ( )  ,
+                  job     : $ ( item ) .find ( "h4.font_8 > span.color_15 > span" )  .text ( ) ,
+                  //market  : $ ( item ) .find ( 'div.field__item' )  .text ( )  .replace ( '\n' , '' ) .trim ( ) .split ( '\n' ) [ 1 ] .trim ( ) ,
+                  image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                  from    : "https://www.healthinvestmentpartners.nl/over-ons" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function hollandcapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://hollandcapital.nl/ons-team/" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "div.et_pb_column.et_pb_column_1_3" );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'h1' ) .text ( )  ,
+                  job     : $ ( item ) .find ( 'div.et_pb_text_inner > h2' ) .text ( ) || 'Advisor' ,
+                  //market  : $ ( item ) .find ( 'div.field__item' )  .text ( )  .replace ( '\n' , '' ) .trim ( ) .split ( '\n' ) [ 1 ] .trim ( ) ,
+                  image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                  from    : "https://hollandcapital.nl/ons-team/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+//healthinvestmentpartners ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
@@ -1098,6 +1593,61 @@ app.get ( '/19' , function ( req , res ) {
 app.get ( '/20' , function ( req , res ) {
   console.log ( "hi 20" );
   delftenterprises ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/21' , function ( req , res ) {
+  console.log ( "hi 21" );
+  ecart ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/22' , function ( req , res ) {
+  console.log ( "hi 22" );
+  egeria ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/23' , function ( req , res ) {
+  console.log ( "hi 23" );
+  eqtpartners ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/24' , function ( req , res ) {
+  console.log ( "hi 24" );
+  forbion ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/25' , function ( req , res ) {
+  console.log ( "hi 25" );
+  gembenelux ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/26' , function ( req , res ) {
+  console.log ( "hi 26" );
+  gilde ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/27' , function ( req , res ) {
+  console.log ( "hi 27" );
+  gildehealthcare ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/28' , function ( req , res ) {
+  console.log ( "hi 28" );
+  gimv ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/29' , function ( req , res ) {
+  console.log ( "hi 29" );
+  healthinnovations ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/30' , function ( req , res ) {
+  console.log ( "hi 30" );
+  healthinvestmentpartners ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/31' , function ( req , res ) {
+  console.log ( "hi 31" );
+  hollandcapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
 app.get ( '/*' , function ( req , res ) {
