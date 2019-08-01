@@ -157,7 +157,18 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.healthinnovations.nl/nl/het-team" , "29" )}>delftenterprises.nl</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.healthinvestmentpartners.nl/over-ons" , "30" )}>healthinvestmentpartners.nl/</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://hollandcapital.nl/ons-team/" , "31" )}>hollandcapital.nl</MenuItem>
-
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.horizonflevoland.nl/wij" , "32" )}>horizonflevoland.nl/wij</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://hpegrowth.com/about-us/" , "33" )}>hpegrowth.com/about-us/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://ibsca.nl/about-ibs/over-ons/" , "34" )}>ibsca.nl/about-ibs/over-ons/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.innovationquarter.nl/ons-team/" , "35" )}>innovationquarter.nl/ons-team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.karmijnkapitaal.nl/25-over-ons.html" , "36" )}>karmijnkapitaal.nl/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.kkr.com/our-firm/team" , "37" )}>kkr.com/our-firm/team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.llcp.com/about/our-team" , "38" )}>llcp.com/about/our-team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://liof.nl/over-liof/contact" , "39" )}>liof.nl/over-liof/contact</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.lspvc.com/team.html" , "40" )}>lspvc.com/team.html</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://main.nl/team/" , "41" )}>main.nl/team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.mgf.nl/ons-team/" , "42" )}>mgf.nl/ons-team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.menthacapital.com/" , "43" )}>menthacapital.com/</MenuItem>
       </Menu>
     );
 

@@ -131,15 +131,6 @@ function run5sq ( ) {
       const browser = await puppeteer.launch ( {
         args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] ,
       } );
-      const page = await browser.newPage ( );
-      await page.setRequestInterception ( true );
-      page.on ( 'request' , ( request ) => {
-        if ( request .resourceType ( ) === 'document' ) {
-          request .continue ( );
-        } else {
-          request.abort ( );
-        }
-      } );
       let urls = [ ];
       //specific to website
       await page.goto ( "http://www.5square.nl/#page_458" , { timeout: 0 } );
@@ -156,6 +147,14 @@ function run5sq ( ) {
           try{
             // Open new tab.
             const page = await browser .newPage ( );
+            await page.setRequestInterception ( true );
+            page.on ( 'request' , ( request ) => {
+              if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                  request .abort ( );
+              } else {
+                  request .continue  ( );
+              }
+            } );
             await page .goto ( url , { timeout: 0 } );
             const result = await page.evaluate  ( ( ) => {
               return {
@@ -592,20 +591,20 @@ function runbridgepoint ( ) {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       const page = await browser.newPage ( );
-      await page.setRequestInterception ( true );
-      page.on ( 'request' , ( request ) => {
-        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-            request .abort ( );
-        } else {
-            request .continue  ( );
-        }
-      } );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
             try{
               let results = [ ];
               const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
               await page .goto ( url , { timeout : 0 , } );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
@@ -1493,7 +1492,635 @@ function hollandcapital ( ) {
   })
 }
 
-//healthinvestmentpartners ( ) .then ( console.log ) .catch ( console.error );
+function horizonflevoland ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://www.horizonflevoland.nl/wij" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "li:has(.col12.m-b-lg > h3)" );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( '.col12.m-b-lg > h3' ) .text ( )  ,
+                  job     : $ ( item ) .find ( 'p.small:first' ) .text ( ) || 'Advisor' ,
+                  //market  : $ ( item ) .find ( 'div.field__item' )  .text ( )  .replace ( '\n' , '' ) .trim ( ) .split ( '\n' ) [ 1 ] .trim ( ) ,
+                  image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                  from    : "https://www.horizonflevoland.nl/wij" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function hpegrowth ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await page  .goto ( "https://hpegrowth.com/about-us/" , { timeout : 0 , } );
+        await page  .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let items = $ ( "article.team-card" );
+            Array.from ( items ).forEach ( ( item  , index ) => {
+              results.push ( {
+                  name    : $ ( item ) .find ( 'div.caption > div > h5' ) .text ( )  ,
+                  job     : $ ( item ) .find ( 'div.caption > div > span' ) .text ( ) ,
+                  //market  : $ ( item ) .find ( 'div.field__item' )  .text ( )  .replace ( '\n' , '' ) .trim ( ) .split ( '\n' ) [ 1 ] .trim ( ) ,
+                  image   : $ ( item ) .find ( 'div.image' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  from    : "https://hpegrowth.com/about-us/" ,
+              } );
+            } );
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function ibsca ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( "div.teaser-person.hentry.vcard.hover" );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h2.fn' ) .text ( )  ,
+                      job     : $ ( item ) .find ( 'div.function' ) .text ( ) ,
+                      market  : $ ( item ) .find ( 'div.department-labels' )  .text ( ) .replace ( '\n' , '' ) .trim ( ) ,
+                      image   : $ ( item ) .find ( 'img.photo' ) .prop ( 'src' ) ,
+                      from    : "https://ibsca.nl/team/" ,
+                  } );
+                } );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://ibsca.nl/team/` , `https://ibsca.nl/team/page/2` , `https://ibsca.nl/team/page/3` ];
+
+      let datas = //await crawlUrl ( `http://www.bridgepoint.eu/en/our-team/?&page=0` );
+                  await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function innovationquarter ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( "figure.av-inner-masonry.main_color" );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h3.av-masonry-entry-title.entry-title' ) .text ( )  ,
+                      job     : $ ( item ) .find ( 'span.member-role' ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'div.department-labels' )  .text ( ) .replace ( '\n' , '' ) .trim ( ) ,
+                      image   : $ ( item ) .find ( 'div.av-masonry-image-container' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                      from    : "https://www.innovationquarter.nl/ons-team/" ,
+                  } );
+                } );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.innovationquarter.nl/ons-team/` ];
+
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function karmijnkapitaal ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( "div.personlist > div.person" );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'div.name' ) .text ( )  ,
+                      job     : $ ( item ) .find ( 'div.function' ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'div.department-labels' )  .text ( ) .replace ( '\n' , '' ) .trim ( ) ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : "http://www.karmijnkapitaal.nl/25-over-ons.html" ,
+                  } );
+                } );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `http://www.karmijnkapitaal.nl/25-over-ons.html` ];
+
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function kkr ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div:has(p.name-employee)' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 0 ] ,
+                      job     : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 1 ] ,
+                      market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : "https://www.kkr.com/our-firm/team" ,
+                  } );
+                } );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.kkr.com/our-firm/team` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function llcp ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.col.span_6_of_12.team-member' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h2') .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) ,
+                      job     : $ ( item ) .find ( 'p' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) || "None",
+                      from    : "https://www.llcp.com/about/our-team" ,
+                  } );
+                } );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.llcp.com/about/our-team` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function liof ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.medewerker' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'span.medewerker__naam') .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) ,
+                      job     : $ ( item ) .find ( 'span.medewerker__functie' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) || "None",
+                      from    : "https://liof.nl/over-liof/contact" ,
+                  } );
+                } );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://liof.nl/over-liof/contact` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function lspvc ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.container.site > div.content.team > div.item-info.overview > div.items' ) .children ( ) .filter( ":has(a)" );
+                Array.from ( items ) .forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'a' ) .html ( ) .replace ( '<br>' , ' ' ) .trim ( ) ,
+                      //index     : index  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) || "None",
+                      from    : "https://www.lspvc.com/team.html" ,
+                  } );
+                } );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.lspvc.com/team.html` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function main ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.team-person' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'div.team-name') .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) ,
+                      job     : $ ( item ) .find ( 'div.team-job' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item ) .find ( 'div.team-image' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                      from    : "https://main.nl/team/" ,
+                  } );
+                } );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://main.nl/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function mgf ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.et_pb_row:has(img)' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h2') .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) ,
+                      job     : $ ( item ) .find ( 'p > em' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( "src" ) ,
+                      from    : "https://www.mgf.nl/ons-team/" ,
+                  } );
+                } );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.mgf.nl/ons-team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function menthacapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [  'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , waitUntil: 'networkidle2' } );
+              //await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              //await autoScroll ( page );
+              let items = await page .$$ ( 'div.ratio_1-1 > div.w-portfolio-list > div.portfoliorow > div.w-portfolio-item > a.w-portfolio-item-anchor' );
+              var index = 0;
+              for ( item of Array.from ( items ) ) {
+                await item .focus (  );
+                await item .click (  );
+                await page .waitFor ( 1000 );
+                results.push ( await page.evaluate ( ( url , index ) => {
+                  let item_ = document.querySelector ( 'div.w-portfolio-item.active' );
+                    return {
+                        name    : item_ .querySelector ( 'div.one-half51 > p') .innerText .split ( '–' ) [ 0 ] ,
+                        job     : item_ .querySelector ( 'p > em' ) .innerText ,
+                        image   : item_ .querySelector ( 'img' ) .src ,
+                        from    : url ,
+                        index   : index ,
+                    };
+                  } , url , index ++ )
+                );
+              }
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.menthacapital.com/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+//menthacapital ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
@@ -1648,6 +2275,66 @@ app.get ( '/30' , function ( req , res ) {
 app.get ( '/31' , function ( req , res ) {
   console.log ( "hi 31" );
   hollandcapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/32' , function ( req , res ) {
+  console.log ( "hi 32" );
+  horizonflevoland ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/33' , function ( req , res ) {
+  console.log ( "hi 33" );
+  hpegrowth ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/34' , function ( req , res ) {
+  console.log ( "hi 34" );
+  ibsca ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/35' , function ( req , res ) {
+  console.log ( "hi 35" );
+  innovationquarter ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/36' , function ( req , res ) {
+  console.log ( "hi 36" );
+  karmijnkapitaal ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/37' , function ( req , res ) {
+  console.log ( "hi 37" );
+  kkr ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/38' , function ( req , res ) {
+  console.log ( "hi 38" );
+  llcp ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/39' , function ( req , res ) {
+  console.log ( "hi 39" );
+  liof ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/40' , function ( req , res ) {
+  console.log ( "hi 40" );
+  lspvc ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/41' , function ( req , res ) {
+  console.log ( "hi 41" );
+  main ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/42' , function ( req , res ) {
+  console.log ( "hi 42" );
+  mgf ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/43' , function ( req , res ) {
+  console.log ( "hi 43" );
+  menthacapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
 app.get ( '/*' , function ( req , res ) {
