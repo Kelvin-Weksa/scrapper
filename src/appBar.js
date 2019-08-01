@@ -169,6 +169,15 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://main.nl/team/" , "41" )}>main.nl/team/</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.mgf.nl/ons-team/" , "42" )}>mgf.nl/ons-team/</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.menthacapital.com/" , "43" )}>menthacapital.com/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.nom.nl/over-ons/het-team/" , "44" )}>nom.nl/over-ons/het-team/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.navitascapital.nl/het-team" , "45" )}>navitascapital.nl/het-team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://shiftinvest.com/nbi-investors/#contentbox" , "46" )}>shiftinvest.com/nbi-investors/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.zlto.nl/wieiswie" , "47" )}>shiftinvest.com/nbi-investors/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.newion.com/team" , "48" )}>newion.com/team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.nordian.nl/team" , "49" )}>nordian.nl/team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.npm-capital.com/nl/team" , "50" )}>npm-capital.com/nl/team</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://oostnl.nl/nl/medewerkers" , "51" )}>oostnl.nl/nl/medewerkers</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://o2capital.nl/over-ons/" , "52" )}>o2capital.nl/over-ons/</MenuItem>
       </Menu>
     );
 
