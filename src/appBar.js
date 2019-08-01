@@ -172,7 +172,7 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.nom.nl/over-ons/het-team/" , "44" )}>nom.nl/over-ons/het-team/</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.navitascapital.nl/het-team" , "45" )}>navitascapital.nl/het-team</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://shiftinvest.com/nbi-investors/#contentbox" , "46" )}>shiftinvest.com/nbi-investors/</MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.zlto.nl/wieiswie" , "47" )}>shiftinvest.com/nbi-investors/</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.zlto.nl/wieiswie" , "47" )}>zlto</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.newion.com/team" , "48" )}>newion.com/team</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.nordian.nl/team" , "49" )}>nordian.nl/team</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.npm-capital.com/nl/team" , "50" )}>npm-capital.com/nl/team</MenuItem>

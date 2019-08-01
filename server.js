@@ -1202,7 +1202,7 @@ function gembenelux ( ) {
             let items = $ ( "li:has(div.image)" );;
             Array.from ( items ).forEach ( ( item  , index ) => {
               results.push ( {
-                  name    : $ ( item ) .find ( 'div.text > h3' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
+                  name    : $ ( item ) .find ( 'div.text > h3 + h3' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
                   job     : $ ( item ) .find ( 'div.text > span' )  .text ( )  .replace ( '(' , '' ). replace ( ')', '' ) . trim ( ) ,
                   //market  : "" ,
                   image   : $ ( item ) .find ( 'div.image > span' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
@@ -2075,7 +2075,7 @@ function menthacapital ( ) {
               const page = await browser .newPage ( );
               await page.setRequestInterception ( true );
               page.on ( 'request' , ( request ) => {
-                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                if (  [ 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
                     request .abort ( );
                 } else {
                     request .continue  ( );
@@ -2092,13 +2092,14 @@ function menthacapital ( ) {
                 await page .waitFor ( 1000 );
                 results.push ( await page.evaluate ( ( url , index ) => {
                   let item_ = document.querySelector ( 'div.w-portfolio-item.active' );
-                    return {
+                  let data = {
                         name    : item_ .querySelector ( 'div.one-half51 > p') .innerText .split ( '–' ) [ 0 ] ,
                         job     : item_ .querySelector ( 'p > em' ) .innerText ,
                         image   : item_ .querySelector ( 'img' ) .src ,
                         from    : url ,
                         index   : index ,
                     };
+                    return data;
                   } , url , index ++ )
                 );
               }
@@ -2606,7 +2607,7 @@ function o2capital ( ) {
   })
 }
 
-o2capital ( ) .then ( console.log ) .catch ( console.error );
+//gembenelux ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
