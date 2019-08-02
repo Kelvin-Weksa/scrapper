@@ -2607,7 +2607,370 @@ function o2capital ( ) {
   })
 }
 
-//gembenelux ( ) .then ( console.log ) .catch ( console.error );
+function parcomcapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.col-md-3.col-sm-3' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h5' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
+                      job     : $ ( item ) .find ( 'p.title' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } , url );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.parcomcapital.com/about/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function plainvanilla ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      let urls = [  ];
+      const page = await browser .newPage ( );
+      await page .goto ( `https://plainvanilla.nl/team/` , { timeout: 0 } );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      //await autoScroll ( page );
+      urls = await page.evaluate ( ( ) => {
+        let links = [ ];
+        let items = document .querySelectorAll ( 'div.vc_gitem-zone-b > a.vc_gitem-link.vc-zone-link' );
+        Array.from ( items ).forEach ( ( item  , index ) => {
+          links.push ( item .href );
+        } );
+        return links;
+      } );
+      await page.close ( );
+
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                //Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( 'div.wpb_wrapper > h1' ) .first ( ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
+                      job     : $ ( 'div.wpb_wrapper > h2' ) .first ( ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( 'div.vc_single_image-wrapper.vc_box_rounded.vc_box_border_grey > img' ) .first ( ) .prop ( 'src' ) ,
+                      from    : url ,
+                      //index   : index ,
+                  } );
+              //  }  );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function pridecapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'a.team-item' ) .filter ( ':has(p > strong)' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'p > strong' ) .text ( )  ,
+                      job     : $ ( item ) .find ( 'p' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .split ( '\n' ) [ 2 ] .trim ( )  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } , url );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://pridecapital.nl/over-ons/#team` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function primeventures ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              //await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.row.fullheight' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'div.inner > h2' ) .text ( )  ,
+                      job     : $ ( item ) .find ( 'div.inner > h3' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'div.bg-image.left.parallax' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } , url );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.primeventures.com/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function raboprivateequity ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              //await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.team-alt-item.active' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'div.title' ) .text ( )  ,
+                      job     : $ ( item ) .find ( 'div.subtitle' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img.team-alt-image' ) .prop ('src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } , url );
+                return results;
+              } );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `http://raboprivateequity.com/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function riversideeurope ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      let urls = [ ];
+      const page = await browser .newPage ( );
+      await page .goto ( 'http://www.riversideeurope.com/Team.aspx' , { timeout: 0 } );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      //await autoScroll ( page );
+      urls = await page.evaluate ( ( ) => {
+        let links = [ ];
+        let items = document .querySelectorAll ( 'ul.alphabet.clearthis > li > a' );
+        Array.from ( items ).forEach ( ( item  , index ) => {
+          links.push ( item .href );
+        } );
+        return links;
+      } );
+      await page.close ( );
+
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'ul.listMembers' ) .children (  );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'a + a' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
+                      job     : $ ( item ) .text ( )  .replace ( /[\t]+/g , ' ' ) .split ( '\n' ) [ 7 ] .trim ( )  ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                }  );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+//riversideeurope ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
@@ -2867,6 +3230,36 @@ app.get ( '/51' , function ( req , res ) {
 app.get ( '/52' , function ( req , res ) {
   console.log ( "hi 52" );
   o2capital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/53' , function ( req , res ) {
+  console.log ( "hi 53" );
+  parcomcapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/54' , function ( req , res ) {
+  console.log ( "hi 54" );
+  plainvanilla ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/55' , function ( req , res ) {
+  console.log ( "hi 55" );
+  pridecapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/56' , function ( req , res ) {
+  console.log ( "hi 56" );
+  primeventures ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/57' , function ( req , res ) {
+  console.log ( "hi 57" );
+  raboprivateequity ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/58' , function ( req , res ) {
+  console.log ( "hi 58" );
+  riversideeurope ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
 app.get ( '/*' , function ( req , res ) {
