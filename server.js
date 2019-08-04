@@ -3348,7 +3348,7 @@ function tiincapital ( ) {
   })
 }
 
-tiincapital ( ) .then ( console.log ) .catch ( console.error );
+//tiincapital ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
