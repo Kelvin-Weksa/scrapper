@@ -3979,8 +3979,8 @@ function wmp ( ) {
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   let id = $ ( item ) .attr ( 'aria-controls' );
                   results.push ( {
-                      id      :  id ,
-                      tag     : `#${id}` ,
+                      //id      :  id ,
+                      //tag     : `#${id}` ,
                       name    : $ ( `#${id}` ) .find ( 'p' ) .eq ( 0 ) .text ( ) ,
                       job     : $ ( `#${id}` ) .find ( 'p' ) .eq ( 3 ) .text ( ) ,
                       //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
