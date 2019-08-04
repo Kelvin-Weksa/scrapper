@@ -3952,7 +3952,7 @@ function impulszeeland ( ) {
   })
 }
 
-//function wmp ( ) {
+function wmp ( ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
@@ -4007,7 +4007,7 @@ function impulszeeland ( ) {
   })
 }
 
-wmp ( ) .then ( console.log ) .catch ( console.error );
+//wmp ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
