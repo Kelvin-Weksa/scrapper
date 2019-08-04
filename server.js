@@ -3964,7 +3964,7 @@ function wmp ( ) {
               const page = await browser .newPage ( );
               await page.setRequestInterception ( true );
               page.on ( 'request' , ( request ) => {
-                if (  [ 'font' , 'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                if (  [ 'font' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
                     request .abort ( );
                 } else {
                     request .continue  ( );
