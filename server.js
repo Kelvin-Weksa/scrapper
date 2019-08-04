@@ -3980,7 +3980,7 @@ function wmp ( ) {
                   let id = $ ( item ) .attr ( 'aria-controls' );
                   results.push ( {
                       name    : $ ( `#${id}` ) .find ( 'p' ) .eq ( 0 ) .text ( ) ,
-                      job     : $ ( `#${id}` ) .find ( 'p' ) .eq ( 3 ) .text ( ) || $ ( `#${id}` ) .find ( 'p' ) .eq ( 4 ) .text ( ) .slice ( 0 , 45  ) + "..." ,
+                      job     : $ ( `#${id}` ) .find ( 'p' ) .eq ( 3 ) .text ( )  .trim ( ) || $ ( `#${id}` ) .find ( 'p' ) .eq ( 4 ) .text ( ) .slice ( 0 , 45  ) + "..." ,
                       //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'div.museBGSize.colelem' ) .css ( 'background-image' ) .slice ( 4 , -1 ) .replace ( /"/g , ''  ) ,
                       from    : url ,
@@ -4052,6 +4052,61 @@ function keadyn ( ) {
         } )
       }
       let urls = [ `http://www.keadyn.com/heroes` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function uniiq ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' , 'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.col-md-3.masonry-brick' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .find ( 'strong' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'p' ) .text ( ) .replace ( '\n' , '' ) .trim (  )  .slice ( 0 , 55 ) + "...",
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://uniiq.nl/#hetteam` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
@@ -4452,6 +4507,11 @@ app.get ( '/77' , function ( req , res ) {
 app.get ( '/78' , function ( req , res ) {
   console.log ( "hi 78" );
   keadyn ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/79' , function ( req , res ) {
+  console.log ( "hi 79" );
+  uniiq ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
 app.get ( '/*' , function ( req , res ) {
