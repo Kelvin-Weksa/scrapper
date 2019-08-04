@@ -3979,10 +3979,8 @@ function wmp ( ) {
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   let id = $ ( item ) .attr ( 'aria-controls' );
                   results.push ( {
-                      //id      :  id ,
-                      //tag     : `#${id}` ,
                       name    : $ ( `#${id}` ) .find ( 'p' ) .eq ( 0 ) .text ( ) ,
-                      job     : $ ( `#${id}` ) .find ( 'p' ) .eq ( 3 ) .text ( ) ,
+                      job     : $ ( `#${id}` ) .find ( 'p' ) .eq ( 3 ) .text ( ) || $ ( `#${id}` ) .find ( 'p' ) .eq ( 4 ) .text ( ) .slice ( 0 , 45  ) + "..." ,
                       //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'div.museBGSize.colelem' ) .css ( 'background-image' ) .slice ( 4 , -1 ) .replace ( /"/g , ''  ) ,
                       from    : url ,
