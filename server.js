@@ -4030,12 +4030,12 @@ function keadyn ( ) {
               await autoScroll ( page );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
-                let items = $ ( 'div.col-lg-6' );
+                let items = $ ( 'div.col-md-3.masonry-brick' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
                       //item    : $ ( item ) .html ( ) ,
-                      name    : $ ( item ) .find ( 'h3.h4.card-title' ) .text ( ) ,
-                      job     : $ ( item ) .find ( 'h4.h6.card-subtitle' ) .text ( ) ,
+                      name    : $ ( item ) .find ( 'strong' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'p' ) .text ( ) .replace ( '\n' , '' ) .trim (  )  .slice ( 0 , 55 ) + "...",
                       //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
@@ -4062,7 +4062,7 @@ function keadyn ( ) {
   })
 }
 
-//wmp ( ) .then ( console.log ) .catch ( console.error );
+wmp ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
