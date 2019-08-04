@@ -3348,7 +3348,65 @@ function tiincapital ( ) {
   })
 }
 
-//tiincapital ( ) .then ( console.log ) .catch ( console.error );
+function synergia ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , waitUntil: 'networkidle2' } );
+              //await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              let items = await page .$$ ( 'a.teammember' );
+              var index = 0;
+              for ( item of Array.from ( items ) ) {
+                await item .focus (  );
+                await item .click (  );
+                await page .waitFor ( 1000 );
+                results.push ( await page.evaluate ( ( url , index ) => {
+                  let item_ = document.querySelector ( 'div.w-portfolio-item.active' );
+                  let data = {
+                        name    : item_ .querySelector ( 'span.name') .innerText ,
+                        job     : item_ .querySelector ( 'span.function' ) .innerText ,
+                        image   : item_ .querySelector ( 'div.image > img' ) .src ,
+                        from    : url ,
+                        index   : index ,
+                    };
+                    return data;
+                  } , url , index ++ )
+                );
+              }
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.synergia.nl/nl/over-synergia#leo-schenk` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+synergia ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
@@ -3673,6 +3731,11 @@ app.get ( '/64' , function ( req , res ) {
 app.get ( '/65' , function ( req , res ) {
   console.log ( "hi 65" );
   tiincapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/66' , function ( req , res ) {
+  console.log ( "hi 66" );
+  synergia ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
 app.get ( '/*' , function ( req , res ) {

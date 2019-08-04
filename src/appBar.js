@@ -191,6 +191,12 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.strongrootcapital.nl/" , "63" )}>strongrootcapital</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.thujacapital.com/new-page-3" , "64" )}>thujacapital</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://tiincapital.nl/over-ons/het-team/" , "65" )}>tiincapital</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.synergia.nl/nl/over-synergia#leo-schenk" , "66" )}>synergia</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "67" )}></MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "68" )}></MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "69" )}></MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "70" )}></MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "71" )}></MenuItem>
       </Menu>
     );
 
