@@ -3351,7 +3351,7 @@ function tiincapital ( ) {
 function synergia ( ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -3360,34 +3360,30 @@ function synergia ( ) {
               const page = await browser .newPage ( );
               await page.setRequestInterception ( true );
               page.on ( 'request' , ( request ) => {
-                if (  [ 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
                     request .abort ( );
                 } else {
                     request .continue  ( );
                 }
               } );
-              await page .goto ( url , { timeout : 0 , waitUntil: 'networkidle2' } );
-              //await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
               await autoScroll ( page );
-              let items = await page .$$ ( 'a.teammember' );
-              var index = 0;
-              for ( item of Array.from ( items ) ) {
-                await item .focus (  );
-                await item .click (  );
-                await page .waitFor ( 1000 );
-                results.push ( await page.evaluate ( ( url , index ) => {
-                  let item_ = document.querySelector ( 'div.w-portfolio-item.active' );
-                  let data = {
-                        name    : item_ .querySelector ( 'span.name') .innerText ,
-                        job     : item_ .querySelector ( 'span.function' ) .innerText ,
-                        image   : item_ .querySelector ( 'div.image > img' ) .src ,
-                        from    : url ,
-                        index   : index ,
-                    };
-                    return data;
-                  } , url , index ++ )
-                );
-              }
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.team-lid' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'span.name' ) .text ( )   ,
+                      job     : $ ( item ) .find ( 'span.function' ) .text ( )   ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -3395,7 +3391,7 @@ function synergia ( ) {
             }
         } )
       }
-      let urls = [ `https://www.synergia.nl/nl/over-synergia#leo-schenk` ];
+      let urls = [ `https://www.synergia.nl/nl/over-synergia#richard-verkleij_3` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
@@ -3406,7 +3402,612 @@ function synergia ( ) {
   })
 }
 
-synergia ( ) .then ( console.log ) .catch ( console.error );
+function torqxcapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.item' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .find ( 'div.hover-info.hidden-xs > h3' ) .text ( )   ,
+                      job     : $ ( item ) .find ( 'div.hover-info.hidden-xs > h4' ) .text ( )   ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.torqxcapital.com/about-us/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function vepartners ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.team_item' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .find ( 'h3.title' ) .text ( )   ,
+                      job     : $ ( item ) .find ( 'h2.subtitle' ) .text ( )   ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'div.image.equal_team' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://vepartners.com/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function vendiscapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.team-member' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .text ( ) .split ( '\n' ) [ 0 ] ,
+                      job     : $ ( item ) .find ( 'em' ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.vendiscapital.com/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function victusparticipations ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.et_pb_column.et_pb_column_1_4.et_pb_css_mix_blend_mode_passthrough:has(img)' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .find ( 'h4' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'p.et_pb_member_position' ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://victusparticipations.com/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function vortexcp ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.team__item' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .find ( 'h4.team-member__name' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'p.team-member__function' ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://vortexcp.com/about/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function transequity ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.et_pb_column.et_pb_column_1_3.et_pb_css_mix_blend_mode_passthrough:has(img)' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .find ( 'h4.et_pb_module_header' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'p.et_pb_member_position' ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://transequity.nl/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function wadinko ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'address.employee.employee--archive.flex.line-margin' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .find ( 'h3' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'span' ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.wadinko.nl/medewerkers/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function waterland ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.fusion-column-wrapper:has(img)' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .find ( 'h2.title-heading-center' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'p' ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.waterland.nu/nl/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function vpcapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.so-widget-intracto-image-text-widget' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .find ( 'h3' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'span' ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://vpcapital.eu/over-ons/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function impulszeeland ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' , 'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.col-lg-6' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      //item    : $ ( item ) .html ( ) ,
+                      name    : $ ( item ) .find ( 'h3.h4.card-title' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'h4.h6.card-subtitle' ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.impulszeeland.nl/nl/over/team` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+//function wmp ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' , 'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div#u68925 > div.popup_anchor > div.Thumb.popup_element.clearfix:has(div.museBGSize.colelem)' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  let id = $ ( item ) .attr ( 'aria-controls' );
+                  results.push ( {
+                      name    : $ ( `#${id}` ) .find ( 'p' ) .eq ( 0 ) .text ( ) ,
+                      job     : $ ( `#${id}` ) .find ( 'p' ) .eq ( 3 ) .text ( ) ,
+                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      image   : $ ( item )  .find ( 'div.museBGSize.colelem' ) .css ( 'background-image' ) .slice ( 4 , -1 ) .replace ( /"/g , ''  ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.wmp.nl/team_wmp.html` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+wmp ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
@@ -3736,6 +4337,61 @@ app.get ( '/65' , function ( req , res ) {
 app.get ( '/66' , function ( req , res ) {
   console.log ( "hi 66" );
   synergia ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/67' , function ( req , res ) {
+  console.log ( "hi 67" );
+  torqxcapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/68' , function ( req , res ) {
+  console.log ( "hi 68" );
+  vepartners ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/69' , function ( req , res ) {
+  console.log ( "hi 69" );
+  vendiscapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/70' , function ( req , res ) {
+  console.log ( "hi 70" );
+  victusparticipations ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/71' , function ( req , res ) {
+  console.log ( "hi 71" );
+  vortexcp ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/72' , function ( req , res ) {
+  console.log ( "hi 72" );
+  transequity ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/73' , function ( req , res ) {
+  console.log ( "hi 73" );
+  wadinko ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/74' , function ( req , res ) {
+  console.log ( "hi 74" );
+  waterland ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/75' , function ( req , res ) {
+  console.log ( "hi 75" );
+  vpcapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/76' , function ( req , res ) {
+  console.log ( "hi 76" );
+  impulszeeland ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/77' , function ( req , res ) {
+  console.log ( "hi 77" );
+  wmp ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
 app.get ( '/*' , function ( req , res ) {

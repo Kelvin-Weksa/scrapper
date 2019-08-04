@@ -192,11 +192,19 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.thujacapital.com/new-page-3" , "64" )}>thujacapital</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://tiincapital.nl/over-ons/het-team/" , "65" )}>tiincapital</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.synergia.nl/nl/over-synergia#leo-schenk" , "66" )}>synergia</MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "67" )}></MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "68" )}></MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "69" )}></MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "70" )}></MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "71" )}></MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.torqxcapital.com/about-us/" , "67" )}>torqxcapital</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://vepartners.com/team/" , "68" )}>vepartners</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.vendiscapital.com/team/" , "69" )}>vendiscapital</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://victusparticipations.com/team/" , "70" )}>victusparticipations</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://vortexcp.com/about/" , "71" )}>vortexcp</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://transequity.nl/team/" , "72" )}>transequity</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.wadinko.nl/medewerkers/" , "73" )}>wadinko</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.waterland.nu/nl/team/" , "74" )}>waterland</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://vpcapital.eu/over-ons/team/" , "75" )}>vpcapital</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.impulszeeland.nl/nl/over/team" , "76" )}>impulszeeland</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.wmp.nl/team_wmp.html" , "77" )}>wmp</MenuItem>
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
       </Menu>
     );
 
