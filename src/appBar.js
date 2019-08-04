@@ -204,12 +204,12 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.impulszeeland.nl/nl/over/team" , "76" )}>impulszeeland</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.wmp.nl/team_wmp.html" , "77" )}>wmp</MenuItem>
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "78" )}></MenuItem>
+        /*<MenuItem onClick={( ) => this.handleMenuClose ( "" , "78" )}></MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "" , "79" )}></MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "" , "80" )}></MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "" , "81" )}></MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "" , "82" )}></MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "83" )}></MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "83" )}></MenuItem>*/
       </Menu>
     );
 
