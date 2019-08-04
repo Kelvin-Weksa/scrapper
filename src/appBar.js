@@ -184,6 +184,13 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.primeventures.com/team/" , "56" )}>primeventures</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "http://raboprivateequity.com/" , "57" )}>raboprivateequity</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.riversideeurope.com/Team.aspx" , "58" )}>riversideeurope</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.setventures.com/#Team" , "59" )}>setventures</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://smile-invest.com/team-3/" , "60" )}>smile_invest</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.startgreen.nl/nl/overons/team/" , "61" )}>startgreen</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://seaminvestments.nl/#team" , "62" )}>seaminvestments</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.strongrootcapital.nl/" , "63" )}>strongrootcapital</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.thujacapital.com/new-page-3" , "64" )}>thujacapital</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://tiincapital.nl/over-ons/het-team/" , "65" )}>tiincapital</MenuItem>
       </Menu>
     );
 
