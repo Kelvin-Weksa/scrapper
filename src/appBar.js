@@ -210,11 +210,11 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.mkbfondsen-flevoland.nl/organisatie/" , "81" )}>mkbfondsen_flevoland</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.vectrix.nl/over-ons/" , "82" )}>vectrix</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://aglaia-oncology.com/team/" , "83" )}>aglaia-oncology</MenuItem>
-        {/*<MenuItem onClick={( ) => this.handleMenuClose ( "https://www.sbicparticipations.com/team/" , "84" )}>sbicparticipations</MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "85" )}>85</MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "86" )}>86</MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "87" )}>87</MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "" , "88" )}>88</MenuItem>*/}
+        {/*<MenuItem onClick={( ) => this.handleMenuClose ( "https://www.sbicparticipations.com/team/" , "84" )}>sbicparticipations</MenuItem>*/}
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.hollandstartup.com/index.php/team" , "85" )}>hollandstartup</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.thenextwomen.com/about-us/" , "86" )}>thenextwomen</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.liof.com/en/Contact" , "87" )}>liof</MenuItem>
+        {/*<MenuItem onClick={( ) => this.handleMenuClose ( "http://www.bfly.vc/" , "88" )}>bfly</MenuItem>*/}
       </Menu>
     );
 
