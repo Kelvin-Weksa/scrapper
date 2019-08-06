@@ -216,6 +216,17 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.thenextwomen.com/about-us/" , "86" )}>thenextwomen</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.liof.com/en/Contact" , "87" )}>liof</MenuItem>
         {/*<MenuItem onClick={( ) => this.handleMenuClose ( "http://www.bfly.vc/" , "88" )}>bfly</MenuItem>*/}
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.voccp.com/english/#team" , "89" )}>voccp</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://blckprty.com/#team" , "90" )}>blckprty</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.vcxc.com/en/team/" , "91" )}>vcxc</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.bom.nl/over-bom/medewerkers" , "92" )}>bom</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.dsif.nl/our-team/" , "93" )}>dsif</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.brooklyn-ventures.com/testimonials" , "94" )}>brooklyn_ventures</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.biogenerationventures.com/team/" , "95" )}>biogenerationventures</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.socialimpactventures.nl/about-us" , "96" )}>socialimpactventures</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://henq.vc/about/" , "97" )}>henq</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.volta.ventures/team" , "98" )}>volta</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.slingshot.ventures/#team" , "99" )}>slingshot</MenuItem>
       </Menu>
     );
 
