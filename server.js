@@ -4972,7 +4972,7 @@ function brooklyn_ventures ( ) {
 function biogenerationventures ( ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true , userDataDir: './data', } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true , } );
       let urls = [  ];
       const page = await browser .newPage ( );
       await page.setRequestInterception ( true );
