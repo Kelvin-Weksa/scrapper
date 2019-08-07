@@ -154,7 +154,7 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "http://gilde.com/team/investment-team" , "26" )}>gilde</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://gildehealthcare.com/team/" , "27" )}>gildehealthcare</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.gimv.com/en/team" , "28" )}>gimv</MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.healthinnovations.nl/nl/het-team" , "29" )}>delftenterprises</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.healthinnovations.nl/nl/het-team" , "29" )}>healthinnovations</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.healthinvestmentpartners.nl/over-ons" , "30" )}>healthinvestmentpartners</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://hollandcapital.nl/ons-team/" , "31" )}>hollandcapital</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.horizonflevoland.nl/wij" , "32" )}>horizonflevoland</MenuItem>
@@ -222,11 +222,32 @@ class PrimarySearchAppBar extends React.Component {
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.bom.nl/over-bom/medewerkers" , "92" )}>bom</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.dsif.nl/our-team/" , "93" )}>dsif</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.brooklyn-ventures.com/testimonials" , "94" )}>brooklyn_ventures</MenuItem>
-        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.biogenerationventures.com/team/" , "95" )}>biogenerationventures</MenuItem>
+        {/*<MenuItem onClick={( ) => this.handleMenuClose ( "https://www.biogenerationventures.com/team/" , "95" )}>biogenerationventures</MenuItem>*/}
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.socialimpactventures.nl/about-us" , "96" )}>socialimpactventures</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://henq.vc/about/" , "97" )}>henq</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.volta.ventures/team" , "98" )}>volta</MenuItem>
         <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.slingshot.ventures/#team" , "99" )}>slingshot</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://shiftinvest.com/about-us" , "100" )}>shiftinvest</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://peak.capital/info/" , "101" )}>peak</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.capitalmills.nl/team-cmi/" , "102" )}>capitalmills</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.mainportinnovationfund.nl/team" , "103" )}>mainportinnovationfund</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.investion.net/about-us" , "104" )}>investion</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.inkefcapital.com/team/" , "105" )}>inkefcapital</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.icoscapital.com/team-2/" , "106" )}>icoscapital</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.ogc-partners.com/about-1" , "107" )}>ogc-partners</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://investinfuture.nl/en/about-iif/" , "108" )}>investinfuture</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.otterlooventures.nl/over-ov/team/" , "109" )}>otterlooventures</MenuItem>
+        {/*<MenuItem onClick={( ) => this.handleMenuClose ( "https://www.solidventures.nl/" , "110" )}>solidventures</MenuItem>*/}
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.doen.nl/about-doen/the-doen-team.htm" , "111" )}>doen</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://endeit.com/#team" , "112" )}>endeit</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.keenventurepartners.com/#our-people" , "113" )}>keenventurepartners</MenuItem>
+        {/*<MenuItem onClick={( ) => this.handleMenuClose ( "https://filsa.nl/over-ons/" , "114" )}>filsa</MenuItem>*/}
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.catenainvestments.com/investment-team/" , "115" )}>catenainvestments</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "http://www.anterracapital.com/team" , "116" )}>anterracapital</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://www.walvis.com/walvis-participaties/" , "117" )}>walvis</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://percivalparticipations.com/team.php" , "118" )}>percivalparticipations</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://o2investment.com/our-team/" , "119" )}>o2investment</MenuItem>
+        <MenuItem onClick={( ) => this.handleMenuClose ( "https://cleverclover.vc/team/" , "120" )}>cleverclover</MenuItem>
       </Menu>
     );
 

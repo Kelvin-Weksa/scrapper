@@ -5036,7 +5036,7 @@ function biogenerationventures ( ) {
       return reject ( e );
     }
   })
-}
+}/*taling more than 30 secs*/
 
 function socialimpactventures ( ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5254,7 +5254,1160 @@ function slingshot ( ) {
   })
 }
 
-//biogenerationventures ( ) .then ( console.log ) .catch ( console.error );
+function shiftinvest ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+
+                let items = $ ( 'div.fourcol.memberbox:has(p.membertitle)' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'p.membername' ) .eq ( 0 ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'p.membertitle' ) .eq ( 0 ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://shiftinvest.com/about-us` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function peak ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+
+                let items = $ ( 'div#Equal_heights' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h3' ) .eq ( 0 ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'h4' ) .eq ( 0 ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://peak.capital/info/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function capitalmills ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+
+                let items = $ ( 'figure.av-inner-masonry.main_color' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h3' ) .eq ( 0 ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'div.av-masonry-entry-content.entry-content' ) .eq ( 0 ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `http://www.capitalmills.nl/team-cmi/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function mainportinnovationfund ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+
+                let items = $ ( 'div.lefty_fundmanagers' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'div.fundmanager' ) .eq ( 0 ) .text ( ) .split ( '.' ) [ 0 ] .replace ( '–' , '-'  ) .split ( '-' ) [ 0 ] .trim (  )  ,
+                      job     : $ ( item ) .find ( 'div.fundmanager' ) .eq ( 0 ) .text ( ) .split ( '.' ) [ 0 ] .replace ( '–' , '-'  ) .split ( '-' ) [ 1 ] .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+
+                items = $ ( 'ul.da-thumbs' ) .children ( );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'span' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'span > p' ) .eq ( 1 ) .text ( ) .split ( '.' ) [ 0 ] .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.mainportinnovationfund.nl/team` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function investion ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+
+                let items = $ ( 'div.about-teammember-env.w-col.w-col-4' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h5' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'h6' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.investion.net/about-us` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function inkefcapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.member-box' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'span.name' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'span.job-title' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'div.member-picture' ) .css ( 'background-image' ) .slice ( 4 , -1 )  .replace ( /"/g , '' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.inkefcapital.com/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function icoscapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const page = await browser .newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'font' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      await page .goto ( `http://www.icoscapital.com/team-2/` , { timeout : 0 , waitUntill : 'networkidle2' } );
+      await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+      await autoScroll ( page );
+      let urls = await page.evaluate ( (  ) => {
+        let href = [ ];
+        let items = $ ( 'div.czr-wp-the-content > p > a' );
+        Array.from ( items ).forEach ( ( item  , index ) => {
+          href.push ( $ ( item ) .attr ( 'href' ) );
+        } );
+        return href;
+      } );
+      await page.close ( );
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let element = $ ( 'div.czr-wp-the-content' );
+
+                let credentials = $ ( element ) .find ( 'h4' ) .eq ( 0 ) .text ( ) .replace ( /[\n]/g , ',' )  .trim (  ) .split ( ',' );
+                if ( ! credentials .join ( ) )
+                    credentials = $ ( element ) .find ( 'h4' ) .eq ( 2 ) .text ( ) .replace ( /[\n]/g , ',' )  .trim (  ) .split ( ',' );
+                if ( ! credentials .join ( ) )
+                    credentials  = $ ( element ) .find ( 'p' ) .eq ( 0 ) .text ( ) .replace ( /[\n]/g , ',' )  .trim (  ) .split ( ',' );
+
+                results.push ( {
+                    name    :  credentials .shift (  ),
+                    job     : credentials .join ( ) ,
+                    image   :  $ ( element ) .find ( 'a > img' ) .eq ( 0 ) .prop ( 'src' ) ,
+                    from    : url ,
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let datas = await Promise.all ( [  ...urls . map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}/*taking too long to load*/
+
+function ogc_partners ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                results.push ( {
+                    name    : $ ( 'div#comp-jg6fvxqn > h2.font_2 > span.color_12' ) .eq ( 0 ) .text (  )  ,
+                    job     : "co-founder and Partner" ,
+                    image   : $ ( 'img#comp-jg6fvxqeimgimage' ) .eq ( 0 ) .prop ( 'src' )  ,
+                    from    : url ,
+                } );
+                results.push ( {
+                    name    : $ ( 'div#comp-jg6fvxqv > h2.font_2 > span.color_12' ) .eq ( 0 ) .text (  )  ,
+                    job     : "co-founder and Partner" ,
+                    image   : $ ( 'img#comp-jg6fvxr3imgimage' ) .eq ( 0 ) .prop ( 'src' )  ,
+                    from    : url ,
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.ogc-partners.com/about-1` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function investinfuture ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.wpb_column.vc_column_container.vc_col-sm-4' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h3.caption.no_icon' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'h5' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://investinfuture.nl/en/about-iif/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function otterlooventures ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                results.push ( {
+                    name    : "Sieuwert van Otterloo"  ,
+                    job     : "Founder" ,
+                    image   : $ ( 'img.alignleft' ) .eq ( 0 ) .prop ( 'src' )  ,
+                    from    : url ,
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `http://www.otterlooventures.nl/over-ov/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function solidventures ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.mc1container:has(h3.font_0 > span.color_15)' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h3.font_0 > span.color_15' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'p.font_8' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.solidventures.nl/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function doen ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.card.card--person' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'strong' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'div.meta' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.doen.nl/about-doen/the-doen-team.htm` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function endeit ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.team-slide' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'div.bio-title' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'div.bio-function' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://endeit.com/#team` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function keenventurepartners ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.employee' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'div.name' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'div.function' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      image   : window.location.origin + $ ( item ) .find ( 'source' ) .prop ( 'srcset' ) ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.keenventurepartners.com/#our-people` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+/*function filsa ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                results.push ( {
+                    name    : $ ( 'div#comp-jg6fvxqn > h2.font_2 > span.color_12' ) .eq ( 0 ) .text (  )  ,
+                    job     : "co-founder and Partner" ,
+                    image   : $ ( 'img#comp-jg6fvxqeimgimage' ) .eq ( 0 ) .prop ( 'src' )  ,
+                    from    : url ,
+                } );
+                results.push ( {
+                    name    : $ ( 'div#comp-jg6fvxqv > h2.font_2 > span.color_12' ) .eq ( 0 ) .text (  )  ,
+                    job     : "co-founder and Partner" ,
+                    image   : $ ( 'img#comp-jg6fvxr3imgimage' ) .eq ( 0 ) .prop ( 'src' )  ,
+                    from    : url ,
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://filsa.nl/over-ons/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}*/
+
+function catenainvestments ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.et_pb_column.et_pb_column_1_2' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h4.et_pb_module_header' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'p.et_pb_member_position' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `http://www.catenainvestments.com/investment-team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function anterracapital ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.col.sqs-col-4.span-4:has(img)' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'p' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'p' ) .eq ( 1 ) .text ( ) .trim (  )  ,
+                      market  : $ ( item ) .find ( 'p' ) .eq ( 2 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `http://www.anterracapital.com/team` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function walvis ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'span.tab__link.tab__col ' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h4.team__name' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'p.team__job' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.walvis.com/walvis-participaties/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function percivalparticipations ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'article.box-person' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'p' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      job     : $ ( item ) .find ( 'p' ) .eq ( 1 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://percivalparticipations.com/team.php` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function o2investment ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.col-md-4' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h4' ) .eq ( 1 ) .html ( ) .split ( '<br>' ) [ 0 ] .trim (  )  ,
+                      job     : $ ( item ) .find ( 'h4' ) .eq ( 1 ) .html ( ) .split ( '<br>' ) [ 1 ] .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://o2investment.com/our-team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function cleverclover ( ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { url: 'https://code.jquery.com/jquery-3.2.1.min.js'  } );
+              await autoScroll ( page );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.awsm-grid-list.awsm-grid-card' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h3' ) .eq ( 0 ) .text ( )  .trim (  )  ,
+                      job     : $ ( item ) .find ( 'span' ) .eq ( 0 ) .text ( )  .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
+                      from    : url ,
+                      index   : index ,
+                  } );
+                } );
+                return results;
+              } , url );
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://cleverclover.vc/team/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+//cleverclover ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/1' , function ( req , res ) {
   console.log ( "hi 1" );
@@ -5751,6 +6904,110 @@ app.get ( '/99' , function ( req , res ) {
   slingshot ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
 });
 
+app.get ( '/100' , function ( req , res ) {
+  console.log ( "hi 100" );
+  shiftinvest ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/101' , function ( req , res ) {
+  console.log ( "hi 101" );
+  peak ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/102' , function ( req , res ) {
+  console.log ( "hi 102" );
+  capitalmills ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/103' , function ( req , res ) {
+  console.log ( "hi 103" );
+  mainportinnovationfund ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/104' , function ( req , res ) {
+  console.log ( "hi 104" );
+  investion ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/105' , function ( req , res ) {
+  console.log ( "hi 105" );
+  inkefcapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/106' , function ( req , res ) {
+  console.log ( "hi 106" );
+  icoscapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/107' , function ( req , res ) {
+  console.log ( "hi 107" );
+  ogc_partners ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/108' , function ( req , res ) {
+  console.log ( "hi 108" );
+  investinfuture ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/109' , function ( req , res ) {
+  console.log ( "hi 109" );
+  otterlooventures ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/110' , function ( req , res ) {
+  console.log ( "hi 110" );
+  solidventures ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/111' , function ( req , res ) {
+  console.log ( "hi 111" );
+  doen ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/112' , function ( req , res ) {
+  console.log ( "hi 112" );
+  endeit ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/113' , function ( req , res ) {
+  console.log ( "hi 113" );
+  keenventurepartners ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/114' , function ( req , res ) {
+  console.log ( "hi 114" );
+  filsa ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/115' , function ( req , res ) {
+  console.log ( "hi 115" );
+  catenainvestments ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/116' , function ( req , res ) {
+  console.log ( "hi 116" );
+  anterracapital ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/117' , function ( req , res ) {
+  console.log ( "hi 117" );
+  walvis ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/118' , function ( req , res ) {
+  console.log ( "hi 118" );
+  percivalparticipations ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/119' , function ( req , res ) {
+  console.log ( "hi 119" );
+  o2investment ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
+
+app.get ( '/120' , function ( req , res ) {
+  console.log ( "hi 120" );
+  cleverclover ( ) .then ( results => res.json ( results ) ) .catch ( console.error );
+});
 
 app.get ( '/*' , function ( req , res ) {
   res.sendFile ( path.join ( __dirname , 'build' , 'index.html' ) );
