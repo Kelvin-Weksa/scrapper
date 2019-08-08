@@ -13,12 +13,15 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
+//import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+//import InboxIcon from '@material-ui/icons/MoveToInbox';
+//import MailIcon from '@material-ui/icons/Mail';
 import IconBreadcrumbs from './breadCrumb'
 import Listing from './list'
+//import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+//import Avatar from '@material-ui/core/Avatar';
+import CardMedia from '@material-ui/core/CardMedia';
 
 const drawerWidth = 240;
 
@@ -75,6 +78,11 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     marginLeft: 0,
+  },
+  media: {
+    height: 30,
+    width: 40,
+    transform:'scale(0.3,0.4)'
   },
 }));
 
@@ -147,8 +155,11 @@ export default function PersistentDrawerLeft ( props ) {
         <Divider />
         <List>
           {Listing .filter ( item => item .includes ( filter ) ) .map ( (list , index ) => (// eslint-disable-next-line
-            <ListItem button key={index} onClick={( ) => loadData ( list [ 0 ] , list [ 1 ] )} >
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+            <ListItem button key={index} onClick={( ) => loadData ( list [ 0 ] , list [ 1 ] )} title={list [ 0 ]}>
+                <CardMedia
+                  className={classes.media}
+                  image={list [ 3 ]}
+                />
               <ListItemText primary={list [ 2 ]} />
             </ListItem>
           ))}
