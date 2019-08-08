@@ -132,7 +132,15 @@ function run5sq ( ) {
         args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] ,
       } );
       let urls = [ ];
-      //specific to website
+      const page = await browser .newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
       await page.goto ( "http://www.5square.nl/#page_458" , { timeout: 0 } );
       urls = await page.evaluate ( ( ) => {
         let links = [ ];
