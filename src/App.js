@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import AppBar from './appBar'
 import NestedGrid from './demo'
 import Progress from './progress'
+import Drawer from './persistentDrawer'
 
 class App extends Component {
   state = {
@@ -28,8 +29,13 @@ class App extends Component {
     return (
       <div>
         <AppBar fetcher={this.fetcher}/>
-        <hr />
-        {this.state.loaded ? <NestedGrid elements={ this.state.characters } /> : <Progress sitePage={this.state.sitePage}/>}
+        <Drawer
+          sitePage={this.state.sitePage}
+          fetcher={this.fetcher}
+          content={this.state.loaded ?
+            <NestedGrid elements={ this.state.characters } />
+            : <Progress sitePage={this.state.sitePage}/>}
+        />
       </div>
     );
  }
