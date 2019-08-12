@@ -95,7 +95,7 @@ const Listing = [
   [ "https://www.bom.nl/over-bom/medewerkers" , "92" , "bom" , "https://www.bom.nl/assets/website/images/logos/bom-corporate.svg" , "VC" ] ,
   [ "https://www.dsif.nl/our-team/" , "93" , "dsif" , "https://www.dsif.nl/wp-content/uploads/2018/07/DSIF-logo-with-title-1.png" , "VC" ] ,
   [ "https://www.brooklyn-ventures.com/testimonials" , "94" , "brooklyn-ventures" , "https://static1.squarespace.com/static/570694de555986cc4c1d8ab7/t/570b93c8ab48de71645941f2/1564131957041/?format=1500w" , "VC" ] ,
-  //[ "https://www.biogenerationventures.com/team/" , "95" , "biogenerationventures" , "" , "VC" ] ,
+  [ "https://www.biogenerationventures.com/team/" , "95" , "biogenerationventures" , "https://www.biogenerationventures.com/wp-content/uploads/2017/10/logo-bgv-1.jpg" , "VC" ] ,
   [ "https://www.socialimpactventures.nl/about-us" , "96" , "socialimpactventures" , "https://www.socialimpactventures.nl/userfiles/socialimpactventures.nl/images/footer-logo2.png" , "VC" ] ,
   [ "https://henq.vc/about/" , "97" , "henq" , "https://henq.vc/wp-content/uploads/2019/05/Henq_icon_grey-blue.png" , "VC" ] ,
   [ "https://www.volta.ventures/team" , "98", "volta" , "http://user-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,h_540,w_720/tkhtqzdzaw1z85pgnckq.png" , "VC" ] ,
