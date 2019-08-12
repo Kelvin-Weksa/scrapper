@@ -88,8 +88,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function PersistentDrawerLeft ( props ) {
   const classes = useStyles ( );
-  const theme = useTheme ( );
-  const [ open , setOpen ] = React .useState ( false );
+  const theme = useTheme ( );// eslint-disable-next-line
+  const [ open , setOpen ] = React .useState ( false );// eslint-disable-next-line
   const [ filter , setFilter ] = React .useState ( "PE" );
 
   function handleDrawerOpen ( ) {
@@ -100,7 +100,7 @@ export default function PersistentDrawerLeft ( props ) {
     setOpen ( false );
   }
 
-  function loadData ( page , get ) {
+  function loadData ( page , get ) {// eslint-disable-next-line
     props .fetcher ( page , get );
   }
 
@@ -153,13 +153,13 @@ export default function PersistentDrawerLeft ( props ) {
         </div>
         <Divider />
         <Divider />
-        <List>
+        <List>{/* eslint-disable-next-line*/}
           {Listing .filter ( item => item .includes ( filter ) ) .map ( (list , index ) => (// eslint-disable-next-line
             <ListItem button key={index} onClick={( ) => loadData ( list [ 0 ] , list [ 1 ] )} title={list [ 0 ]}>
                 <CardMedia
                   className={classes.media}
                   image={list [ 3 ]}
-                />
+                />{/* eslint-disable-next-line*/}
               <ListItemText primary={list [ 2 ]} />
             </ListItem>
           ))}

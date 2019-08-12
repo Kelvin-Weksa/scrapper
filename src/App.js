@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import AppBar from './appBar'
 import NestedGrid from './demo'
-import Progress from './progress'
+//import Progress from './progress'
 import Drawer from './persistentDrawer'
+//import YouTube from './skeleton.js'
 
 class App extends Component {
   state = {
@@ -15,7 +16,7 @@ class App extends Component {
   }
 
   fetcher = ( site , get ) => {
-    this.setState ( { loaded: false , sitePage: site } )
+    this.setState ( { loaded: false , sitePage: site  , characters: [ ] } )
     fetch ( get )
       .then ( result => result.json ( ) )
         .then ( result => {
@@ -32,9 +33,7 @@ class App extends Component {
         <Drawer
           sitePage={this.state.sitePage}
           fetcher={this.fetcher}
-          content={this.state.loaded ?
-            <NestedGrid elements={ this.state.characters } />
-            : <Progress sitePage={this.state.sitePage}/>}
+          content={<NestedGrid elements={ this.state.characters } loaded={this.state.loaded}/>}
         />
       </div>
     );

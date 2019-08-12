@@ -1,7 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import Card from './kard'
+import Card from './kard';
+//import Skeleton from '@material-ui/lab/Skeleton';
 
 const useStyles = makeStyles ( theme => ( {
   root: {
@@ -18,7 +19,9 @@ const NestedGrid =  props => {
   const classes = useStyles();
   function FormRow (  ) {
     const items = [ ];
-    for ( const [ index , value ] of props.elements.entries ( ) ) {
+    let data = [ ];// eslint-disable-next-line
+    ! props.loaded ? data = new Array ( 8 ) .fill ( { } ) .entries ( ) : data = props.elements .entries ( );
+    for ( const [ index , value ] of data ) {
       items.push (
         <Grid item xs={3} key={index}>
           <Card
