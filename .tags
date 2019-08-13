@@ -1,6 +1,3 @@
-class.characters	/home/kelvin/Desktop/my-app/src/App.js	/^  state = {$/;"	property	line:11
-componentDidMount	/home/kelvin/Desktop/my-app/src/App.js	/^  componentDidMount ( ) {$/;"	function	line:16
-render	/home/kelvin/Desktop/my-app/src/App.js	/^  render ( ) {$/;"	function	line:37
 autoScroll	/home/kelvin/Desktop/my-app/server.js	/^async function autoScroll ( page ){$/;"	function	line:19
 run3i	/home/kelvin/Desktop/my-app/server.js	/^function run3i ( ) {$/;"	function	line:37
 run3i	/home/kelvin/Desktop/my-app/server.js	/^function run3i ( ) {$/;"	function	line:37
@@ -215,3 +212,6 @@ o2investment	/home/kelvin/Desktop/my-app/server.js	/^function o2investment ( ) {
 crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6325
 cleverclover	/home/kelvin/Desktop/my-app/server.js	/^function cleverclover ( ) {$/;"	function	line:6373
 crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6378
+class.characters	/home/kelvin/Desktop/my-app/src/App.js	/^  state = {$/;"	property	line:11
+componentDidMount	/home/kelvin/Desktop/my-app/src/App.js	/^  componentDidMount ( ) {$/;"	function	line:16
+render	/home/kelvin/Desktop/my-app/src/App.js	/^  render ( ) {$/;"	function	line:37

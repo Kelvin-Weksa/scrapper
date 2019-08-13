@@ -5,7 +5,7 @@ import NestedGrid from './demo'
 import Drawer from './persistentDrawer'
 //import YouTube from './skeleton.js'
 const io = require ( 'socket.io-client' );
-const socket = io.connect ( 'http://localhost:8080' );
+const socket = io.connect ( 'https://kelvin-weksa.herokuapp.com' );
 
 class App extends Component {
   state = {
