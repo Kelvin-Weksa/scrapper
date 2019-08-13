@@ -6432,9 +6432,8 @@ app.get ( '/*' , function ( req , res ) {
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
-  //var address = socket.handshake.headers [ 'x-forwarded-for' ];
   console.log ( 'New connection from ' + address + ':' + address.port );
-  console.log ( var address = socket.handshake.headers );
+  console.log ( socket.handshake.headers );
   console.log ( geoip .lookup ( adress ) ); //
 
 
