@@ -1,217 +1,218 @@
 class.characters	/home/kelvin/Desktop/my-app/src/App.js	/^  state = {$/;"	property	line:11
 componentDidMount	/home/kelvin/Desktop/my-app/src/App.js	/^  componentDidMount ( ) {$/;"	function	line:16
 render	/home/kelvin/Desktop/my-app/src/App.js	/^  render ( ) {$/;"	function	line:37
-autoScroll	/home/kelvin/Desktop/my-app/server.js	/^async function autoScroll ( page ){$/;"	function	line:17
-run3i	/home/kelvin/Desktop/my-app/server.js	/^function run3i ( ) {$/;"	function	line:35
-run3i	/home/kelvin/Desktop/my-app/server.js	/^function run3i ( ) {$/;"	function	line:35
-runaacc	/home/kelvin/Desktop/my-app/server.js	/^function runaacc ( ) {$/;"	function	line:90
-runaacc	/home/kelvin/Desktop/my-app/server.js	/^function runaacc ( ) {$/;"	function	line:90
-run5sq	/home/kelvin/Desktop/my-app/server.js	/^function run5sq ( ) {$/;"	function	line:134
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:159
-run5sq	/home/kelvin/Desktop/my-app/server.js	/^function run5sq ( ) {$/;"	function	line:134
-runactivecapital	/home/kelvin/Desktop/my-app/server.js	/^function runactivecapital ( ) {$/;"	function	line:197
-runadventinternational	/home/kelvin/Desktop/my-app/server.js	/^function runadventinternational ( ) {$/;"	function	line:240
-runalpinvest	/home/kelvin/Desktop/my-app/server.js	/^function runalpinvest ( ) {$/;"	function	line:289
-runantea	/home/kelvin/Desktop/my-app/server.js	/^function runantea ( ) {$/;"	function	line:333
-runatlanticcapital	/home/kelvin/Desktop/my-app/server.js	/^\/*function runatlanticcapital ( ) {$/;"	function	line:377
-runbaincapital	/home/kelvin/Desktop/my-app/server.js	/^function runbaincapital ( ) {$/;"	function	line:416
-runbbcapital	/home/kelvin/Desktop/my-app/server.js	/^function runbbcapital ( ) {$/;"	function	line:471
-runavedoncapital	/home/kelvin/Desktop/my-app/server.js	/^function runavedoncapital ( ) {$/;"	function	line:515
-runbolsterinvestments	/home/kelvin/Desktop/my-app/server.js	/^function runbolsterinvestments ( ) {$/;"	function	line:559
-runbridgepoint	/home/kelvin/Desktop/my-app/server.js	/^function runbridgepoint ( ) {$/;"	function	line:603
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:609
-runbrightlandsventurepartners	/home/kelvin/Desktop/my-app/server.js	/^function runbrightlandsventurepartners ( ) {$/;"	function	line:660
-runcapitalapartners	/home/kelvin/Desktop/my-app/server.js	/^function runcapitalapartners ( ) {$/;"	function	line:704
-runcinven	/home/kelvin/Desktop/my-app/server.js	/^function runcinven ( ) {$/;"	function	line:748
-committedcapital	/home/kelvin/Desktop/my-app/server.js	/^function committedcapital ( ) {$/;"	function	line:792
-cottonwood	/home/kelvin/Desktop/my-app/server.js	/^function cottonwood ( ) {$/;"	function	line:836
-cvc	/home/kelvin/Desktop/my-app/server.js	/^function cvc ( ) {$/;"	function	line:880
-dehogedennencapital	/home/kelvin/Desktop/my-app/server.js	/^function dehogedennencapital ( ) {$/;"	function	line:924
-delftenterprises	/home/kelvin/Desktop/my-app/server.js	/^function delftenterprises ( ) {$/;"	function	line:968
-ecart	/home/kelvin/Desktop/my-app/server.js	/^function ecart ( ) {$/;"	function	line:1014
-egeria	/home/kelvin/Desktop/my-app/server.js	/^function egeria ( ) {$/;"	function	line:1059
-eqtpartners	/home/kelvin/Desktop/my-app/server.js	/^function eqtpartners ( ) {$/;"	function	line:1104
-forbion	/home/kelvin/Desktop/my-app/server.js	/^function forbion ( ) {$/;"	function	line:1149
-gembenelux	/home/kelvin/Desktop/my-app/server.js	/^function gembenelux ( ) {$/;"	function	line:1194
-gilde	/home/kelvin/Desktop/my-app/server.js	/^function gilde ( ) {$/;"	function	line:1239
-gildehealthcare	/home/kelvin/Desktop/my-app/server.js	/^function gildehealthcare ( ) {$/;"	function	line:1284
-gimv	/home/kelvin/Desktop/my-app/server.js	/^function gimv ( ) {$/;"	function	line:1329
-healthinnovations	/home/kelvin/Desktop/my-app/server.js	/^function healthinnovations ( ) {$/;"	function	line:1374
-healthinvestmentpartners	/home/kelvin/Desktop/my-app/server.js	/^function healthinvestmentpartners ( ) {$/;"	function	line:1419
-hollandcapital	/home/kelvin/Desktop/my-app/server.js	/^function hollandcapital ( ) {$/;"	function	line:1464
-horizonflevoland	/home/kelvin/Desktop/my-app/server.js	/^function horizonflevoland ( ) {$/;"	function	line:1509
-hpegrowth	/home/kelvin/Desktop/my-app/server.js	/^function hpegrowth ( ) {$/;"	function	line:1554
-ibsca	/home/kelvin/Desktop/my-app/server.js	/^function ibsca ( ) {$/;"	function	line:1599
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1604
-innovationquarter	/home/kelvin/Desktop/my-app/server.js	/^function innovationquarter ( ) {$/;"	function	line:1654
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1659
-karmijnkapitaal	/home/kelvin/Desktop/my-app/server.js	/^function karmijnkapitaal ( ) {$/;"	function	line:1708
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1713
-kkr	/home/kelvin/Desktop/my-app/server.js	/^function kkr ( ) {$/;"	function	line:1762
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1767
-llcp	/home/kelvin/Desktop/my-app/server.js	/^function llcp ( ) {$/;"	function	line:1815
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1820
-liof	/home/kelvin/Desktop/my-app/server.js	/^function liof ( ) {$/;"	function	line:1868
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1873
-lspvc	/home/kelvin/Desktop/my-app/server.js	/^function lspvc ( ) {$/;"	function	line:1921
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1926
-main	/home/kelvin/Desktop/my-app/server.js	/^function main ( ) {$/;"	function	line:1974
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1979
-mgf	/home/kelvin/Desktop/my-app/server.js	/^function mgf ( ) {$/;"	function	line:2027
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2032
-menthacapital	/home/kelvin/Desktop/my-app/server.js	/^function menthacapital ( ) {$/;"	function	line:2080
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2085
-nom	/home/kelvin/Desktop/my-app/server.js	/^function nom ( ) {$/;"	function	line:2138
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2143
-navitascapital	/home/kelvin/Desktop/my-app/server.js	/^function navitascapital ( ) {$/;"	function	line:2192
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2197
-shiftinvest	/home/kelvin/Desktop/my-app/server.js	/^function shiftinvest ( ) {$/;"	function	line:2246
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2251
-zlto	/home/kelvin/Desktop/my-app/server.js	/^function zlto ( ) {$/;"	function	line:2300
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2305
-newion	/home/kelvin/Desktop/my-app/server.js	/^function newion ( ) {$/;"	function	line:2354
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2359
-nordian	/home/kelvin/Desktop/my-app/server.js	/^function nordian ( ) {$/;"	function	line:2408
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2413
-npm_capital	/home/kelvin/Desktop/my-app/server.js	/^function npm_capital ( ) {$/;"	function	line:2462
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2467
-oostnl	/home/kelvin/Desktop/my-app/server.js	/^function oostnl ( ) {$/;"	function	line:2516
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2521
-o2capital	/home/kelvin/Desktop/my-app/server.js	/^function o2capital ( ) {$/;"	function	line:2570
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2575
-parcomcapital	/home/kelvin/Desktop/my-app/server.js	/^function parcomcapital ( ) {$/;"	function	line:2624
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2629
-plainvanilla	/home/kelvin/Desktop/my-app/server.js	/^function plainvanilla ( ) {$/;"	function	line:2678
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2704
-pridecapital	/home/kelvin/Desktop/my-app/server.js	/^function pridecapital ( ) {$/;"	function	line:2751
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2756
-primeventures	/home/kelvin/Desktop/my-app/server.js	/^function primeventures ( ) {$/;"	function	line:2805
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2810
-raboprivateequity	/home/kelvin/Desktop/my-app/server.js	/^function raboprivateequity ( ) {$/;"	function	line:2859
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2864
-riversideeurope	/home/kelvin/Desktop/my-app/server.js	/^function riversideeurope ( ) {$/;"	function	line:2913
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2939
-setventures	/home/kelvin/Desktop/my-app/server.js	/^function setventures ( ) {$/;"	function	line:2987
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2992
-smile_invest	/home/kelvin/Desktop/my-app/server.js	/^function smile_invest ( ) {$/;"	function	line:3041
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3046
-startgreen	/home/kelvin/Desktop/my-app/server.js	/^function startgreen ( ) {$/;"	function	line:3095
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3100
-seaminvestments	/home/kelvin/Desktop/my-app/server.js	/^function seaminvestments ( ) {$/;"	function	line:3149
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3154
-strongrootcapital	/home/kelvin/Desktop/my-app/server.js	/^function strongrootcapital ( ) {$/;"	function	line:3203
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3208
-thujacapital	/home/kelvin/Desktop/my-app/server.js	/^function thujacapital ( ) {$/;"	function	line:3257
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3262
-tiincapital	/home/kelvin/Desktop/my-app/server.js	/^function tiincapital ( ) {$/;"	function	line:3311
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3316
-synergia	/home/kelvin/Desktop/my-app/server.js	/^function synergia ( ) {$/;"	function	line:3365
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3370
-torqxcapital	/home/kelvin/Desktop/my-app/server.js	/^function torqxcapital ( ) {$/;"	function	line:3419
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3424
-vepartners	/home/kelvin/Desktop/my-app/server.js	/^function vepartners ( ) {$/;"	function	line:3474
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3479
-vendiscapital	/home/kelvin/Desktop/my-app/server.js	/^function vendiscapital ( ) {$/;"	function	line:3529
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3534
-victusparticipations	/home/kelvin/Desktop/my-app/server.js	/^function victusparticipations ( ) {$/;"	function	line:3584
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3589
-vortexcp	/home/kelvin/Desktop/my-app/server.js	/^function vortexcp ( ) {$/;"	function	line:3639
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3644
-transequity	/home/kelvin/Desktop/my-app/server.js	/^function transequity ( ) {$/;"	function	line:3694
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3699
-wadinko	/home/kelvin/Desktop/my-app/server.js	/^function wadinko ( ) {$/;"	function	line:3749
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3754
-waterland	/home/kelvin/Desktop/my-app/server.js	/^function waterland ( ) {$/;"	function	line:3804
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3809
-vpcapital	/home/kelvin/Desktop/my-app/server.js	/^function vpcapital ( ) {$/;"	function	line:3859
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3864
-impulszeeland	/home/kelvin/Desktop/my-app/server.js	/^function impulszeeland ( ) {$/;"	function	line:3914
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3919
-wmp	/home/kelvin/Desktop/my-app/server.js	/^function wmp ( ) {$/;"	function	line:3969
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3974
-keadyn	/home/kelvin/Desktop/my-app/server.js	/^function keadyn ( ) {$/;"	function	line:4024
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4029
-uniiq	/home/kelvin/Desktop/my-app/server.js	/^function uniiq ( ) {$/;"	function	line:4079
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4084
-nascentventures	/home/kelvin/Desktop/my-app/server.js	/^function nascentventures ( ) {$/;"	function	line:4134
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4139
-mkbfondsen_flevoland	/home/kelvin/Desktop/my-app/server.js	/^function mkbfondsen_flevoland ( ) {$/;"	function	line:4189
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4194
-vectrix	/home/kelvin/Desktop/my-app/server.js	/^function vectrix ( ) {$/;"	function	line:4244
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4249
-aglaia_oncology	/home/kelvin/Desktop/my-app/server.js	/^function aglaia_oncology ( ) {$/;"	function	line:4299
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4304
-sbicparticipations	/home/kelvin/Desktop/my-app/server.js	/^\/*function sbicparticipations ( ) {$/;"	function	line:4367
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4372
-hollandstartup	/home/kelvin/Desktop/my-app/server.js	/^function hollandstartup ( ) {$/;"	function	line:4422
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4427
-thenextwomen	/home/kelvin/Desktop/my-app/server.js	/^function thenextwomen ( ) {$/;"	function	line:4477
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4482
-liof	/home/kelvin/Desktop/my-app/server.js	/^function liof ( ) {$/;"	function	line:4532
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4537
-bfly	/home/kelvin/Desktop/my-app/server.js	/^function bfly ( ) {$/;"	function	line:4587
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4592
-voccp	/home/kelvin/Desktop/my-app/server.js	/^function voccp ( ) {$/;"	function	line:4642
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4647
-blckprty	/home/kelvin/Desktop/my-app/server.js	/^function blckprty ( ) {$/;"	function	line:4695
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4700
-vcxc	/home/kelvin/Desktop/my-app/server.js	/^function vcxc ( ) {$/;"	function	line:4748
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4753
-bom	/home/kelvin/Desktop/my-app/server.js	/^function bom ( ) {$/;"	function	line:4801
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4806
-dsif	/home/kelvin/Desktop/my-app/server.js	/^function dsif ( ) {$/;"	function	line:4857
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4862
-brooklyn_ventures	/home/kelvin/Desktop/my-app/server.js	/^function brooklyn_ventures ( ) {$/;"	function	line:4933
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4938
-biogenerationventures	/home/kelvin/Desktop/my-app/server.js	/^function biogenerationventures ( ) {$/;"	function	line:4986
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5012
-socialimpactventures	/home/kelvin/Desktop/my-app/server.js	/^function socialimpactventures ( ) {$/;"	function	line:5055
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5060
-henq	/home/kelvin/Desktop/my-app/server.js	/^function henq ( ) {$/;"	function	line:5109
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5114
-volta	/home/kelvin/Desktop/my-app/server.js	/^function volta ( ) {$/;"	function	line:5163
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5168
-slingshot	/home/kelvin/Desktop/my-app/server.js	/^function slingshot ( ) {$/;"	function	line:5217
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5222
-shiftinvest	/home/kelvin/Desktop/my-app/server.js	/^function shiftinvest ( ) {$/;"	function	line:5271
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5276
-peak	/home/kelvin/Desktop/my-app/server.js	/^function peak ( ) {$/;"	function	line:5325
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5330
-capitalmills	/home/kelvin/Desktop/my-app/server.js	/^function capitalmills ( ) {$/;"	function	line:5379
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5384
-mainportinnovationfund	/home/kelvin/Desktop/my-app/server.js	/^function mainportinnovationfund ( ) {$/;"	function	line:5433
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5438
-investion	/home/kelvin/Desktop/my-app/server.js	/^function investion ( ) {$/;"	function	line:5498
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5503
-inkefcapital	/home/kelvin/Desktop/my-app/server.js	/^function inkefcapital ( ) {$/;"	function	line:5552
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5557
-icoscapital	/home/kelvin/Desktop/my-app/server.js	/^function icoscapital ( ) {$/;"	function	line:5605
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5630
-ogc_partners	/home/kelvin/Desktop/my-app/server.js	/^function ogc_partners ( ) {$/;"	function	line:5681
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5686
-investinfuture	/home/kelvin/Desktop/my-app/server.js	/^function investinfuture ( ) {$/;"	function	line:5736
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5741
-otterlooventures	/home/kelvin/Desktop/my-app/server.js	/^function otterlooventures ( ) {$/;"	function	line:5789
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5794
-solidventures	/home/kelvin/Desktop/my-app/server.js	/^function solidventures ( ) {$/;"	function	line:5838
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5843
-doen	/home/kelvin/Desktop/my-app/server.js	/^function doen ( ) {$/;"	function	line:5891
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5896
-endeit	/home/kelvin/Desktop/my-app/server.js	/^function endeit ( ) {$/;"	function	line:5944
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5949
-keenventurepartners	/home/kelvin/Desktop/my-app/server.js	/^function keenventurepartners ( ) {$/;"	function	line:5997
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6002
-filsa	/home/kelvin/Desktop/my-app/server.js	/^\/*function filsa ( ) {$/;"	function	line:6050
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6055
-catenainvestments	/home/kelvin/Desktop/my-app/server.js	/^function catenainvestments ( ) {$/;"	function	line:6105
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6110
-anterracapital	/home/kelvin/Desktop/my-app/server.js	/^function anterracapital ( ) {$/;"	function	line:6158
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6163
-walvis	/home/kelvin/Desktop/my-app/server.js	/^function walvis ( ) {$/;"	function	line:6212
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6217
-percivalparticipations	/home/kelvin/Desktop/my-app/server.js	/^function percivalparticipations ( ) {$/;"	function	line:6265
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6270
-o2investment	/home/kelvin/Desktop/my-app/server.js	/^function o2investment ( ) {$/;"	function	line:6318
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6323
-cleverclover	/home/kelvin/Desktop/my-app/server.js	/^function cleverclover ( ) {$/;"	function	line:6371
-crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6376
+geoip	/home/kelvin/Desktop/my-app/server.js	/^var geoip = require('geoip-lite');$/;"	variable	line:7
+autoScroll	/home/kelvin/Desktop/my-app/server.js	/^async function autoScroll ( page ){$/;"	function	line:18
+run3i	/home/kelvin/Desktop/my-app/server.js	/^function run3i ( ) {$/;"	function	line:36
+run3i	/home/kelvin/Desktop/my-app/server.js	/^function run3i ( ) {$/;"	function	line:36
+runaacc	/home/kelvin/Desktop/my-app/server.js	/^function runaacc ( ) {$/;"	function	line:91
+runaacc	/home/kelvin/Desktop/my-app/server.js	/^function runaacc ( ) {$/;"	function	line:91
+run5sq	/home/kelvin/Desktop/my-app/server.js	/^function run5sq ( ) {$/;"	function	line:135
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:160
+run5sq	/home/kelvin/Desktop/my-app/server.js	/^function run5sq ( ) {$/;"	function	line:135
+runactivecapital	/home/kelvin/Desktop/my-app/server.js	/^function runactivecapital ( ) {$/;"	function	line:198
+runadventinternational	/home/kelvin/Desktop/my-app/server.js	/^function runadventinternational ( ) {$/;"	function	line:241
+runalpinvest	/home/kelvin/Desktop/my-app/server.js	/^function runalpinvest ( ) {$/;"	function	line:290
+runantea	/home/kelvin/Desktop/my-app/server.js	/^function runantea ( ) {$/;"	function	line:334
+runatlanticcapital	/home/kelvin/Desktop/my-app/server.js	/^\/*function runatlanticcapital ( ) {$/;"	function	line:378
+runbaincapital	/home/kelvin/Desktop/my-app/server.js	/^function runbaincapital ( ) {$/;"	function	line:417
+runbbcapital	/home/kelvin/Desktop/my-app/server.js	/^function runbbcapital ( ) {$/;"	function	line:472
+runavedoncapital	/home/kelvin/Desktop/my-app/server.js	/^function runavedoncapital ( ) {$/;"	function	line:516
+runbolsterinvestments	/home/kelvin/Desktop/my-app/server.js	/^function runbolsterinvestments ( ) {$/;"	function	line:560
+runbridgepoint	/home/kelvin/Desktop/my-app/server.js	/^function runbridgepoint ( ) {$/;"	function	line:604
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:610
+runbrightlandsventurepartners	/home/kelvin/Desktop/my-app/server.js	/^function runbrightlandsventurepartners ( ) {$/;"	function	line:661
+runcapitalapartners	/home/kelvin/Desktop/my-app/server.js	/^function runcapitalapartners ( ) {$/;"	function	line:705
+runcinven	/home/kelvin/Desktop/my-app/server.js	/^function runcinven ( ) {$/;"	function	line:749
+committedcapital	/home/kelvin/Desktop/my-app/server.js	/^function committedcapital ( ) {$/;"	function	line:793
+cottonwood	/home/kelvin/Desktop/my-app/server.js	/^function cottonwood ( ) {$/;"	function	line:837
+cvc	/home/kelvin/Desktop/my-app/server.js	/^function cvc ( ) {$/;"	function	line:881
+dehogedennencapital	/home/kelvin/Desktop/my-app/server.js	/^function dehogedennencapital ( ) {$/;"	function	line:925
+delftenterprises	/home/kelvin/Desktop/my-app/server.js	/^function delftenterprises ( ) {$/;"	function	line:969
+ecart	/home/kelvin/Desktop/my-app/server.js	/^function ecart ( ) {$/;"	function	line:1015
+egeria	/home/kelvin/Desktop/my-app/server.js	/^function egeria ( ) {$/;"	function	line:1060
+eqtpartners	/home/kelvin/Desktop/my-app/server.js	/^function eqtpartners ( ) {$/;"	function	line:1105
+forbion	/home/kelvin/Desktop/my-app/server.js	/^function forbion ( ) {$/;"	function	line:1150
+gembenelux	/home/kelvin/Desktop/my-app/server.js	/^function gembenelux ( ) {$/;"	function	line:1195
+gilde	/home/kelvin/Desktop/my-app/server.js	/^function gilde ( ) {$/;"	function	line:1240
+gildehealthcare	/home/kelvin/Desktop/my-app/server.js	/^function gildehealthcare ( ) {$/;"	function	line:1285
+gimv	/home/kelvin/Desktop/my-app/server.js	/^function gimv ( ) {$/;"	function	line:1330
+healthinnovations	/home/kelvin/Desktop/my-app/server.js	/^function healthinnovations ( ) {$/;"	function	line:1375
+healthinvestmentpartners	/home/kelvin/Desktop/my-app/server.js	/^function healthinvestmentpartners ( ) {$/;"	function	line:1420
+hollandcapital	/home/kelvin/Desktop/my-app/server.js	/^function hollandcapital ( ) {$/;"	function	line:1465
+horizonflevoland	/home/kelvin/Desktop/my-app/server.js	/^function horizonflevoland ( ) {$/;"	function	line:1510
+hpegrowth	/home/kelvin/Desktop/my-app/server.js	/^function hpegrowth ( ) {$/;"	function	line:1555
+ibsca	/home/kelvin/Desktop/my-app/server.js	/^function ibsca ( ) {$/;"	function	line:1600
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1605
+innovationquarter	/home/kelvin/Desktop/my-app/server.js	/^function innovationquarter ( ) {$/;"	function	line:1655
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1660
+karmijnkapitaal	/home/kelvin/Desktop/my-app/server.js	/^function karmijnkapitaal ( ) {$/;"	function	line:1709
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1714
+kkr	/home/kelvin/Desktop/my-app/server.js	/^function kkr ( ) {$/;"	function	line:1763
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1768
+llcp	/home/kelvin/Desktop/my-app/server.js	/^function llcp ( ) {$/;"	function	line:1816
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1821
+liof	/home/kelvin/Desktop/my-app/server.js	/^function liof ( ) {$/;"	function	line:1869
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1874
+lspvc	/home/kelvin/Desktop/my-app/server.js	/^function lspvc ( ) {$/;"	function	line:1922
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1927
+main	/home/kelvin/Desktop/my-app/server.js	/^function main ( ) {$/;"	function	line:1975
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:1980
+mgf	/home/kelvin/Desktop/my-app/server.js	/^function mgf ( ) {$/;"	function	line:2028
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2033
+menthacapital	/home/kelvin/Desktop/my-app/server.js	/^function menthacapital ( ) {$/;"	function	line:2081
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2086
+nom	/home/kelvin/Desktop/my-app/server.js	/^function nom ( ) {$/;"	function	line:2139
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2144
+navitascapital	/home/kelvin/Desktop/my-app/server.js	/^function navitascapital ( ) {$/;"	function	line:2193
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2198
+shiftinvest	/home/kelvin/Desktop/my-app/server.js	/^function shiftinvest ( ) {$/;"	function	line:2247
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2252
+zlto	/home/kelvin/Desktop/my-app/server.js	/^function zlto ( ) {$/;"	function	line:2301
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2306
+newion	/home/kelvin/Desktop/my-app/server.js	/^function newion ( ) {$/;"	function	line:2355
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2360
+nordian	/home/kelvin/Desktop/my-app/server.js	/^function nordian ( ) {$/;"	function	line:2409
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2414
+npm_capital	/home/kelvin/Desktop/my-app/server.js	/^function npm_capital ( ) {$/;"	function	line:2463
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2468
+oostnl	/home/kelvin/Desktop/my-app/server.js	/^function oostnl ( ) {$/;"	function	line:2517
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2522
+o2capital	/home/kelvin/Desktop/my-app/server.js	/^function o2capital ( ) {$/;"	function	line:2571
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2576
+parcomcapital	/home/kelvin/Desktop/my-app/server.js	/^function parcomcapital ( ) {$/;"	function	line:2625
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2630
+plainvanilla	/home/kelvin/Desktop/my-app/server.js	/^function plainvanilla ( ) {$/;"	function	line:2679
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2705
+pridecapital	/home/kelvin/Desktop/my-app/server.js	/^function pridecapital ( ) {$/;"	function	line:2752
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2757
+primeventures	/home/kelvin/Desktop/my-app/server.js	/^function primeventures ( ) {$/;"	function	line:2806
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2811
+raboprivateequity	/home/kelvin/Desktop/my-app/server.js	/^function raboprivateequity ( ) {$/;"	function	line:2860
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2865
+riversideeurope	/home/kelvin/Desktop/my-app/server.js	/^function riversideeurope ( ) {$/;"	function	line:2914
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2940
+setventures	/home/kelvin/Desktop/my-app/server.js	/^function setventures ( ) {$/;"	function	line:2988
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:2993
+smile_invest	/home/kelvin/Desktop/my-app/server.js	/^function smile_invest ( ) {$/;"	function	line:3042
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3047
+startgreen	/home/kelvin/Desktop/my-app/server.js	/^function startgreen ( ) {$/;"	function	line:3096
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3101
+seaminvestments	/home/kelvin/Desktop/my-app/server.js	/^function seaminvestments ( ) {$/;"	function	line:3150
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3155
+strongrootcapital	/home/kelvin/Desktop/my-app/server.js	/^function strongrootcapital ( ) {$/;"	function	line:3204
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3209
+thujacapital	/home/kelvin/Desktop/my-app/server.js	/^function thujacapital ( ) {$/;"	function	line:3258
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3263
+tiincapital	/home/kelvin/Desktop/my-app/server.js	/^function tiincapital ( ) {$/;"	function	line:3312
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3317
+synergia	/home/kelvin/Desktop/my-app/server.js	/^function synergia ( ) {$/;"	function	line:3366
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3371
+torqxcapital	/home/kelvin/Desktop/my-app/server.js	/^function torqxcapital ( ) {$/;"	function	line:3420
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3425
+vepartners	/home/kelvin/Desktop/my-app/server.js	/^function vepartners ( ) {$/;"	function	line:3475
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3480
+vendiscapital	/home/kelvin/Desktop/my-app/server.js	/^function vendiscapital ( ) {$/;"	function	line:3530
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3535
+victusparticipations	/home/kelvin/Desktop/my-app/server.js	/^function victusparticipations ( ) {$/;"	function	line:3585
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3590
+vortexcp	/home/kelvin/Desktop/my-app/server.js	/^function vortexcp ( ) {$/;"	function	line:3640
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3645
+transequity	/home/kelvin/Desktop/my-app/server.js	/^function transequity ( ) {$/;"	function	line:3695
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3700
+wadinko	/home/kelvin/Desktop/my-app/server.js	/^function wadinko ( ) {$/;"	function	line:3750
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3755
+waterland	/home/kelvin/Desktop/my-app/server.js	/^function waterland ( ) {$/;"	function	line:3805
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3810
+vpcapital	/home/kelvin/Desktop/my-app/server.js	/^function vpcapital ( ) {$/;"	function	line:3860
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3865
+impulszeeland	/home/kelvin/Desktop/my-app/server.js	/^function impulszeeland ( ) {$/;"	function	line:3915
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3920
+wmp	/home/kelvin/Desktop/my-app/server.js	/^function wmp ( ) {$/;"	function	line:3970
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:3975
+keadyn	/home/kelvin/Desktop/my-app/server.js	/^function keadyn ( ) {$/;"	function	line:4025
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4030
+uniiq	/home/kelvin/Desktop/my-app/server.js	/^function uniiq ( ) {$/;"	function	line:4080
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4085
+nascentventures	/home/kelvin/Desktop/my-app/server.js	/^function nascentventures ( ) {$/;"	function	line:4135
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4140
+mkbfondsen_flevoland	/home/kelvin/Desktop/my-app/server.js	/^function mkbfondsen_flevoland ( ) {$/;"	function	line:4190
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4195
+vectrix	/home/kelvin/Desktop/my-app/server.js	/^function vectrix ( ) {$/;"	function	line:4245
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4250
+aglaia_oncology	/home/kelvin/Desktop/my-app/server.js	/^function aglaia_oncology ( ) {$/;"	function	line:4300
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4305
+sbicparticipations	/home/kelvin/Desktop/my-app/server.js	/^\/*function sbicparticipations ( ) {$/;"	function	line:4368
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4373
+hollandstartup	/home/kelvin/Desktop/my-app/server.js	/^function hollandstartup ( ) {$/;"	function	line:4423
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4428
+thenextwomen	/home/kelvin/Desktop/my-app/server.js	/^function thenextwomen ( ) {$/;"	function	line:4478
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4483
+liof	/home/kelvin/Desktop/my-app/server.js	/^function liof ( ) {$/;"	function	line:4533
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4538
+bfly	/home/kelvin/Desktop/my-app/server.js	/^function bfly ( ) {$/;"	function	line:4588
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4593
+voccp	/home/kelvin/Desktop/my-app/server.js	/^function voccp ( ) {$/;"	function	line:4643
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4648
+blckprty	/home/kelvin/Desktop/my-app/server.js	/^function blckprty ( ) {$/;"	function	line:4696
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4701
+vcxc	/home/kelvin/Desktop/my-app/server.js	/^function vcxc ( ) {$/;"	function	line:4749
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4754
+bom	/home/kelvin/Desktop/my-app/server.js	/^function bom ( ) {$/;"	function	line:4802
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4807
+dsif	/home/kelvin/Desktop/my-app/server.js	/^function dsif ( ) {$/;"	function	line:4858
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4863
+brooklyn_ventures	/home/kelvin/Desktop/my-app/server.js	/^function brooklyn_ventures ( ) {$/;"	function	line:4934
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:4939
+biogenerationventures	/home/kelvin/Desktop/my-app/server.js	/^function biogenerationventures ( ) {$/;"	function	line:4987
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5013
+socialimpactventures	/home/kelvin/Desktop/my-app/server.js	/^function socialimpactventures ( ) {$/;"	function	line:5056
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5061
+henq	/home/kelvin/Desktop/my-app/server.js	/^function henq ( ) {$/;"	function	line:5110
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5115
+volta	/home/kelvin/Desktop/my-app/server.js	/^function volta ( ) {$/;"	function	line:5164
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5169
+slingshot	/home/kelvin/Desktop/my-app/server.js	/^function slingshot ( ) {$/;"	function	line:5218
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5223
+shiftinvest	/home/kelvin/Desktop/my-app/server.js	/^function shiftinvest ( ) {$/;"	function	line:5272
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5277
+peak	/home/kelvin/Desktop/my-app/server.js	/^function peak ( ) {$/;"	function	line:5326
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5331
+capitalmills	/home/kelvin/Desktop/my-app/server.js	/^function capitalmills ( ) {$/;"	function	line:5380
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5385
+mainportinnovationfund	/home/kelvin/Desktop/my-app/server.js	/^function mainportinnovationfund ( ) {$/;"	function	line:5434
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5439
+investion	/home/kelvin/Desktop/my-app/server.js	/^function investion ( ) {$/;"	function	line:5499
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5504
+inkefcapital	/home/kelvin/Desktop/my-app/server.js	/^function inkefcapital ( ) {$/;"	function	line:5553
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5558
+icoscapital	/home/kelvin/Desktop/my-app/server.js	/^function icoscapital ( ) {$/;"	function	line:5606
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5631
+ogc_partners	/home/kelvin/Desktop/my-app/server.js	/^function ogc_partners ( ) {$/;"	function	line:5682
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5687
+investinfuture	/home/kelvin/Desktop/my-app/server.js	/^function investinfuture ( ) {$/;"	function	line:5737
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5742
+otterlooventures	/home/kelvin/Desktop/my-app/server.js	/^function otterlooventures ( ) {$/;"	function	line:5790
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5795
+solidventures	/home/kelvin/Desktop/my-app/server.js	/^function solidventures ( ) {$/;"	function	line:5839
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5844
+doen	/home/kelvin/Desktop/my-app/server.js	/^function doen ( ) {$/;"	function	line:5892
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5897
+endeit	/home/kelvin/Desktop/my-app/server.js	/^function endeit ( ) {$/;"	function	line:5945
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:5950
+keenventurepartners	/home/kelvin/Desktop/my-app/server.js	/^function keenventurepartners ( ) {$/;"	function	line:5998
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6003
+filsa	/home/kelvin/Desktop/my-app/server.js	/^\/*function filsa ( ) {$/;"	function	line:6051
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6056
+catenainvestments	/home/kelvin/Desktop/my-app/server.js	/^function catenainvestments ( ) {$/;"	function	line:6106
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6111
+anterracapital	/home/kelvin/Desktop/my-app/server.js	/^function anterracapital ( ) {$/;"	function	line:6159
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6164
+walvis	/home/kelvin/Desktop/my-app/server.js	/^function walvis ( ) {$/;"	function	line:6213
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6218
+percivalparticipations	/home/kelvin/Desktop/my-app/server.js	/^function percivalparticipations ( ) {$/;"	function	line:6266
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6271
+o2investment	/home/kelvin/Desktop/my-app/server.js	/^function o2investment ( ) {$/;"	function	line:6319
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6324
+cleverclover	/home/kelvin/Desktop/my-app/server.js	/^function cleverclover ( ) {$/;"	function	line:6372
+crawlUrl	/home/kelvin/Desktop/my-app/server.js	/^      function crawlUrl ( url ) {$/;"	function	line:6377

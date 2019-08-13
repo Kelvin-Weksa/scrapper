@@ -4,6 +4,7 @@ const path = require ( 'path' );
 const puppeteer = require ( 'puppeteer' );
 const http = require  ( "http" );
 const socketIo = require  ( "socket.io" );
+var geoip = require('geoip-lite');
 
 const port = process.env.PORT || 8080;
 
@@ -6431,7 +6432,7 @@ app.get ( '/*' , function ( req , res ) {
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.address;
-  console.log ( 'New connection from ' + address.address + ':' + address.port );
+  console.log ( 'New connection from ' + address + ':' + address.port );
   console.log ( socket );
 
   socket .on ( "1" , function ( data ) {
