@@ -6432,7 +6432,7 @@ app.get ( '/*' , function ( req , res ) {
 io .on ( "connection" , socket => {
   var address = socket.handshake.address;
   console.log ( 'New connection from ' + address.address + ':' + address.port );
-  console.log ( socket.handshake.headers );
+  console.log ( socket );
 
   socket .on ( "1" , function ( data ) {
     console.log ( data );
@@ -7092,12 +7092,12 @@ io .on ( "connection" , socket => {
         .catch ( console.error );
   } );
 
-  socket .on ( "95" , function ( data ) {
+  /*socket .on ( "95" , function ( data ) {
     console.log ( data );
     biogenerationventures ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
-  } );
+  } );*/
 
   socket .on ( "96" , function ( data ) {
     console.log ( data );
