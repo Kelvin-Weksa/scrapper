@@ -5,7 +5,7 @@ import NestedGrid from './demo'
 import Drawer from './persistentDrawer'
 //import YouTube from './skeleton.js'
 const io = require ( 'socket.io-client' );
-const socket = io.connect ( 'https://kelvin-weksa.herokuapp.com' );
+const socket = io ( );
 
 class App extends Component {
   state = {
@@ -17,8 +17,8 @@ class App extends Component {
     this.fetcher ( "www.3i.com/our-people/" , '1' );
     socket.on ( "outgoing data", ( data ) => {
       this.setState ( { characters: [...data ] , loaded: true ,  } )
-      //console.log ( "we have Nathan R" );
-      //console.log ( data );
+      console.log ( "we have Nathan R" );
+      console.log ( data );
     } );
   }
 

@@ -7035,498 +7035,582 @@ io .on ( "connection" , socket => {
   console .log ( "New client connected" );
 
   socket .on ( "1" , function ( data ) {
+    console.log ( data );
     run3i ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "2" , function ( data ) {
+    console.log ( data );
     runaacc ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "3" , function ( data ) {
+    console.log ( data );
     run5sq ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "4" , function ( data ) {
+    console.log ( data );
     runactivecapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "5" , function ( data ) {
+    console.log ( data );
     runadventinternational ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "6" , function ( data ) {
+    console.log ( data );
     runalpinvest ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "7" , function ( data ) {
+    console.log ( data );
     runantea ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "8" , function ( data ) {
+    console.log ( data );
     runbaincapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "9" , function ( data ) {
+    console.log ( data );
     runbbcapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "10" , function ( data ) {
+    console.log ( data );
     runavedoncapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "11" , function ( data ) {
+    console.log ( data );
     runbolsterinvestments ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "12" , function ( data ) {
+    console.log ( data );
     runbridgepoint ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "13" , function ( data ) {
+    console.log ( data );
     runbrightlandsventurepartners ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "14" , function ( data ) {
+    console.log ( data );
     runcapitalapartners ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "15" , function ( data ) {
+    console.log ( data );
     runcinven ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "16" , function ( data ) {
+    console.log ( data );
     committedcapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "17" , function ( data ) {
+    console.log ( data );
     cottonwood ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "18" , function ( data ) {
+    console.log ( data );
     cvc ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "19" , function ( data ) {
+    console.log ( data );
     dehogedennencapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "20" , function ( data ) {
+    console.log ( data );
     delftenterprises ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "21" , function ( data ) {
+    console.log ( data );
     ecart ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "22" , function ( data ) {
+    console.log ( data );
     egeria ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "23" , function ( data ) {
+    console.log ( data );
     eqtpartners ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "24" , function ( data ) {
+    console.log ( data );
     forbion ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "25" , function ( data ) {
+    console.log ( data );
     gembenelux ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "26" , function ( data ) {
+    console.log ( data );
     gilde ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "27" , function ( data ) {
+    console.log ( data );
     gildehealthcare ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "28" , function ( data ) {
+    console.log ( data );
     gimv ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "29" , function ( data ) {
+    console.log ( data );
     healthinnovations ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "30" , function ( data ) {
+    console.log ( data );
     healthinvestmentpartners ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "31" , function ( data ) {
+    console.log ( data );
     hollandcapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "32" , function ( data ) {
+    console.log ( data );
     horizonflevoland ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "33" , function ( data ) {
+    console.log ( data );
     hpegrowth ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "34" , function ( data ) {
+    console.log ( data );
     ibsca ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "35" , function ( data ) {
+    console.log ( data );
     innovationquarter ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "36" , function ( data ) {
+    console.log ( data );
     karmijnkapitaal ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "37" , function ( data ) {
+    console.log ( data );
     kkr ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "38" , function ( data ) {
+    console.log ( data );
     llcp ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "39" , function ( data ) {
+    console.log ( data );
     liof ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "40" , function ( data ) {
+    console.log ( data );
     lspvc ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "41" , function ( data ) {
+    console.log ( data );
     main ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "42" , function ( data ) {
+    console.log ( data );
     mgf ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "43" , function ( data ) {
+    console.log ( data );
     menthacapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "44" , function ( data ) {
+    console.log ( data );
     nom ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "45" , function ( data ) {
+    console.log ( data );
     navitascapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "46" , function ( data ) {
+    console.log ( data );
     shiftinvest ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "47" , function ( data ) {
+    console.log ( data );
     zlto ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "48" , function ( data ) {
+    console.log ( data );
     newion ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "49" , function ( data ) {
+    console.log ( data );
     nordian ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "50" , function ( data ) {
+    console.log ( data );
     npm_capital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "51" , function ( data ) {
+    console.log ( data );
     oostnl ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "52" , function ( data ) {
+    console.log ( data );
     o2capital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "53" , function ( data ) {
+    console.log ( data );
     parcomcapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "54" , function ( data ) {
+    console.log ( data );
     plainvanilla ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "55" , function ( data ) {
+    console.log ( data );
     pridecapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "56" , function ( data ) {
+    console.log ( data );
     primeventures ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "57" , function ( data ) {
+    console.log ( data );
     raboprivateequity ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "58" , function ( data ) {
+    console.log ( data );
     riversideeurope ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "59" , function ( data ) {
+    console.log ( data );
     setventures ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "60" , function ( data ) {
+    console.log ( data );
     smile_invest ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "61" , function ( data ) {
+    console.log ( data );
     startgreen ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "62" , function ( data ) {
+    console.log ( data );
     seaminvestments ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "63" , function ( data ) {
+    console.log ( data );
     strongrootcapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "64" , function ( data ) {
+    console.log ( data );
     thujacapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "65" , function ( data ) {
+    console.log ( data );
     tiincapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "66" , function ( data ) {
+    console.log ( data );
     synergia ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "67" , function ( data ) {
+    console.log ( data );
     torqxcapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "68" , function ( data ) {
+    console.log ( data );
     vepartners ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "69" , function ( data ) {
+    console.log ( data );
     vendiscapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "70" , function ( data ) {
+    console.log ( data );
     victusparticipations ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "71" , function ( data ) {
+    console.log ( data );
     vortexcp ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "72" , function ( data ) {
+    console.log ( data );
     transequity ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "73" , function ( data ) {
+    console.log ( data );
     wadinko ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "74" , function ( data ) {
+    console.log ( data );
     waterland ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "75" , function ( data ) {
+    console.log ( data );
     vpcapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "76" , function ( data ) {
+    console.log ( data );
     impulszeeland ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "77" , function ( data ) {
+    console.log ( data );
     wmp ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "78" , function ( data ) {
+    console.log ( data );
     keadyn ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "79" , function ( data ) {
+    console.log ( data );
     uniiq ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "80" , function ( data ) {
+    console.log ( data );
     nascentventures ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "81" , function ( data ) {
+    console.log ( data );
     mkbfondsen_flevoland ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "82" , function ( data ) {
+    console.log ( data );
     vectrix ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "83" , function ( data ) {
+    console.log ( data );
+
     aglaia_oncology ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
@@ -7539,18 +7623,21 @@ io .on ( "connection" , socket => {
   } );*/
 
   socket .on ( "85" , function ( data ) {
+    console.log ( data );
     hollandstartup ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "86" , function ( data ) {
+    console.log ( data );
     thenextwomen ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "87" , function ( data ) {
+    console.log ( data );
     liof ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
@@ -7563,156 +7650,183 @@ io .on ( "connection" , socket => {
   } );*/
 
   socket .on ( "89" , function ( data ) {
+    console.log ( data );
+
     voccp ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "90" , function ( data ) {
+    console.log ( data );
     blckprty ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "91" , function ( data ) {
+    console.log ( data );
     vcxc ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "92" , function ( data ) {
+    console.log ( data );
     bom ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "93" , function ( data ) {
+    console.log ( data );
     dsif ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "94" , function ( data ) {
+    console.log ( data );
     brooklyn_ventures ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "95" , function ( data ) {
+    console.log ( data );
     biogenerationventures ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "96" , function ( data ) {
+    console.log ( data );
     socialimpactventures ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "97" , function ( data ) {
+    console.log ( data );
     henq ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "98" , function ( data ) {
+    console.log ( data );
     volta ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "99" , function ( data ) {
+    console.log ( data );
     slingshot ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "100" , function ( data ) {
+    console.log ( data );
     shiftinvest ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "101" , function ( data ) {
+    console.log ( data );
     peak ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "102" , function ( data ) {
+    console.log ( data );
     capitalmills ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "103" , function ( data ) {
+    console.log ( data );
     mainportinnovationfund ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "104" , function ( data ) {
+    console.log ( data );
     investion ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "105" , function ( data ) {
+    console.log ( data );
     inkefcapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "106" , function ( data ) {
+    console.log ( data );
     icoscapital ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "107" , function ( data ) {
+    console.log ( data );
     ogc_partners ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "108" , function ( data ) {
+    console.log ( data );
     investinfuture ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "109" , function ( data ) {
+    console.log ( data );
     otterlooventures ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "110" , function ( data ) {
+    console.log ( data );
     solidventures ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "111" , function ( data ) {
+    console.log ( data );
     doen ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "112" , function ( data ) {
+    console.log ( data );
     endeit ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "113" , function ( data ) {
+    console.log ( data );
     keenventurepartners ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
   } );
 
   socket .on ( "114" , function ( data ) {
+    console.log ( data );
     filsa ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
