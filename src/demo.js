@@ -40,7 +40,7 @@ const NestedGrid =  props => {
       </React.Fragment>
     );
   }
-  console.log ( JSON.stringify ( props ) );
+  //console.log ( JSON.stringify ( props ) );
   return (
     <div className={classes.root}>
       <Grid container spacing={1}>
