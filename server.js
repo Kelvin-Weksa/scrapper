@@ -6430,7 +6430,9 @@ app.get ( '/*' , function ( req , res ) {
 //app.listen ( port );
 
 io .on ( "connection" , socket => {
-  console .log ( "New client connected" );
+  var address = socket.handshake.address;
+  console.log ( 'New connection from ' + address.address + ':' + address.port );
+  console.log ( socket.handshake.headers );
 
   socket .on ( "1" , function ( data ) {
     console.log ( data );
