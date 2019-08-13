@@ -6432,9 +6432,9 @@ app.get ( '/*' , function ( req , res ) {
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
-  console.log ( 'New connection from ' + address + ':' + address.port );
+  console.log ( 'New connection from ' + address + ':' + "443" );
   console.log ( socket.handshake.headers );
-  console.log ( geoip .lookup ( adress ) ); //
+  console.log ( geoip .lookup ( address ) ); //
 
 
   socket .on ( "1" , function ( data ) {
