@@ -6433,7 +6433,7 @@ app.get ( '/*' , function ( req , res ) {
 io .on ( "connection" , socket => {
   var address = socket.handshake.address;
   console.log ( 'New connection from ' + address + ':' + address.port );
-  console.log ( socket.handshake.headers );
+  console.log ( socket.handshake.headers [ 'x-forwarded-for' ] );
   console.log ( geoip .lookup ( '105.231.165.203' ) ); //
 
 
