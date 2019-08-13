@@ -6433,9 +6433,9 @@ app.get ( '/*' , function ( req , res ) {
 io .on ( "connection" , socket => {
   var address = socket.handshake.address;
   console.log ( 'New connection from ' + address + ':' + address.port );
-  console.log ( socket );
+  console.log ( socket.handshake.headers );
   console.log ( geoip .lookup ( '105.231.165.203' ) ); //
-  //console.log ( geoip .lookup ( '10.35.194.184' ) );
+  //console.log ( geoip .lookup ( '10.5.172.81' ) );
 
   socket .on ( "1" , function ( data ) {
     console.log ( data );
