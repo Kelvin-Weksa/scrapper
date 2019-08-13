@@ -5042,7 +5042,7 @@ function biogenerationventures ( ) {
             }
         } )
       }
-      let datas = await Promise.all ( [ ...urls .map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      let datas = await Promise .all ( [ ...urls .map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
       return resolve ( [ ] .concat ( ...datas ) );
