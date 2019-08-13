@@ -6434,6 +6434,8 @@ io .on ( "connection" , socket => {
   var address = socket.handshake.address;
   console.log ( 'New connection from ' + address + ':' + address.port );
   console.log ( socket );
+  console.log ( geoip .lookup ( '105.231.165.203' ) ); //
+  //console.log ( geoip .lookup ( '10.35.194.184' ) );
 
   socket .on ( "1" , function ( data ) {
     console.log ( data );
