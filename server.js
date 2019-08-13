@@ -6431,10 +6431,11 @@ app.get ( '/*' , function ( req , res ) {
 //app.listen ( port );
 
 io .on ( "connection" , socket => {
-  var address = socket.handshake.address;
+  var address = socket.handshake.headers [ 'x-forwarded-for' ];
+  //var address = socket.handshake.headers [ 'x-forwarded-for' ];
   console.log ( 'New connection from ' + address + ':' + address.port );
-  console.log ( socket.handshake.headers [ 'x-forwarded-for' ] );
-  console.log ( geoip .lookup ( '105.231.165.203' ) ); //
+  console.log ( var address = socket.handshake.headers );
+  console.log ( geoip .lookup ( adress ) ); //
 
 
   socket .on ( "1" , function ( data ) {
