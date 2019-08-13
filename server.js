@@ -11,8 +11,6 @@ const app = express ( );
 const server = http .createServer ( app );
 const io = socketIo ( server );
 
-
-
 app.use ( express.static ( __dirname ) );
 app.use ( express.static ( path.join ( __dirname , 'build' ) ) );
 
@@ -5044,7 +5042,7 @@ function biogenerationventures ( ) {
             }
         } )
       }
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      let datas = await Promise.all ( [  ...urls .slice ( 0 , 6 ). map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
       return resolve ( [ ] .concat ( ...datas ) );
