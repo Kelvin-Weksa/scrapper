@@ -101,20 +101,32 @@ const useStyles = makeStyles ( theme =>  ({
 export default function MediaCard ( props ) {
   const classes = useStyles();
   const { characterName , characterPost , characterImage , characterMarket , from } = props;
-  const characterImage_ = characterImage? characterImage.split( '?' )[ 0 ]: null;
+  const characterImage_ = characterImage;//? characterImage.split( '?' )[ 0 ]: null;
   const [ open , setOpen ] = React.useState ( false );
   let image = React.createRef ( );
   let outer_card = React.createRef ( );
   let hidden_icon = React.createRef ( );
 
-  React.useEffect(() => {
+  console.log ( characterImage );
+
+  React.useEffect ( () => {
     if ( 'ResizeObserver' in window ) {
       const myObserver = new ResizeObserver ( loaded );
-      // Observe one or multiple elements
       myObserver.observe ( outer_card.current );
+    }else{
+      window.addEventListener ( 'resize' , loaded );
+      // Create an observer instance linked to the callback function
+      const observer = new MutationObserver ( loaded );
+      // Options for the observer (which mutations to observe)
+      const config = { attributes: true, childList: true, subtree: true };
+      // Start observing the target node for configured mutations
+      observer.observe ( outer_card.current , config );
     }
+    //component unmounts
+    return () => {
+      //observer.disconnect();
+    };
   });
-
 
   function handleClickOpen ( ) {
     setOpen ( true );
@@ -135,7 +147,6 @@ export default function MediaCard ( props ) {
       let percent = (( img.offsetHeight * 90 ) - ( icon.offsetHeight * 100 )) / cont.offsetHeight;
       icon.style.top = percent.toString (  ) + '%';
     }
-
   }
 
   return (
@@ -146,10 +157,9 @@ export default function MediaCard ( props ) {
         {characterName ? (
         <CardMedia
           component='img'
-          alt="Contemplative Reptile"
+          alt="KW"
           height="150"
           image={characterImage_}
-          title="Contemplative Reptile"
           className={classes.inner_card}
           onLoad={loaded}
           ref={image}
