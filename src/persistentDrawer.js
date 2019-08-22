@@ -22,6 +22,7 @@ import Listing from './list'
 //import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 //import Avatar from '@material-ui/core/Avatar';
 import CardMedia from '@material-ui/core/CardMedia';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const drawerWidth = 240;
 
@@ -50,6 +51,7 @@ const useStyles = makeStyles(theme => ({
     display: 'none',
   },
   drawer: {
+    position:"relative",
     width: drawerWidth,
     flexShrink: 0,
   },
@@ -57,11 +59,15 @@ const useStyles = makeStyles(theme => ({
     width: drawerWidth,
   },
   drawerHeader: {
+    //position: "fixed",
     display: 'flex',
     alignItems: 'center',
     padding: '0 8px',
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
+
+    top: -100,
+    width: '100%'
   },
   content: {
     flexGrow: 1,
@@ -84,6 +90,14 @@ const useStyles = makeStyles(theme => ({
     width: 40,
     transform:'scale(0.3,0.4)'
   },
+  light: {
+    backgroundColor: fade(theme.palette.secondary.main, 0.25),
+  },
+  sticky: {
+  position: "fixed",
+  top: 0,
+  width: '100%'
+}
 }));
 
 export default function PersistentDrawerLeft ( props ) {
@@ -147,18 +161,17 @@ export default function PersistentDrawerLeft ( props ) {
       >
         <div className={classes.drawerHeader}>
           <IconBreadcrumbs toggle={toggleFilter}/>
-          <IconButton onClick={handleDrawerClose}>
+          <IconButton color="secondary" onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </div>
-        <Divider />
-        <Divider />
+        <Divider light={true} className={classes.light}/>
         <List>{/* eslint-disable-next-line*/}
           {Listing .filter ( item => item .includes ( filter ) ) .map ( (list , index ) => (// eslint-disable-next-line
             <ListItem button key={index} onClick={( ) => loadData ( list [ 0 ] , list [ 1 ] )} title={list [ 0 ]}>
                 <CardMedia
                   className={classes.media}
-                  image={list [ 3 ]}
+                  image={list[ 3 ]}
                 />{/* eslint-disable-next-line*/}
               <ListItemText primary={list [ 2 ]} />
             </ListItem>

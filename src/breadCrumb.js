@@ -9,6 +9,7 @@ import Money from '@material-ui/icons/Money';
 //import GrainIcon from '@material-ui/icons/Grain';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 
 const useStyles = theme => ({
   root: {
@@ -21,6 +22,9 @@ const useStyles = theme => ({
     marginRight: theme.spacing(0.5),
     width: 20,
     height: 20,
+  },
+  separator: {
+    color: theme.palette.secondary.light ,
   },
 });
 
@@ -43,12 +47,12 @@ class IconBreadcrumbs extends Component {
     const { classes } = this.props;
     return (
       <Paper elevation={0} className={classes.root}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Link color={this.state.pe} href="/" onClick={this.handleClick} className={classes.link}>
+        <Breadcrumbs aria-label="breadcrumb" separator={<CompareArrowsIcon color="secondary"/>}>
+          <Link color={this.state.pe} href="" onClick={this.handleClick} className={classes.link}>
             <LocalAtm className={classes.icon} />
             PE
           </Link>
-          <Link color={this.state.vc} href="/" onClick={this.handleClick} className={classes.link}>
+          <Link color={this.state.vc} href="" onClick={this.handleClick} className={classes.link}>
             <Money className={classes.icon} />
             VC
           </Link>

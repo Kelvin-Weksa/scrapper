@@ -33,62 +33,65 @@ async function autoScroll ( page ){
     });
 }
 
-function run3i ( ) {
+let sleep = ms => new Promise ( resolve => setTimeout ( resolve , ms ) );
+
+function run3i ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] } );
-      const page = await browser.newPage ( );
-      await page.setRequestInterception ( true );
-      page.on ( 'request' , ( request ) => {
-        if ( request .resourceType ( ) === 'document' ) {
-          request .continue ( );
-        } else {
-          request.abort ( );
-        }
-      } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       let urls = [ ];
-      let currentPage = 1;
-      //specific to website
-      {
-        let lastPage = 7;
-        await page.goto ( "https://www.3i.com/our-people/?page=1" , { timeout: 0 } );
-        while ( currentPage <= lastPage ){
-          let rollingUrls = await page.evaluate ( ( ) => {
-            let results = [ ];
-            let items2 = document .querySelectorAll ( 'div.item-container' );
-            items2.forEach ( ( item ) => {
-              results.push ( {
+      for ( i = 1; i < 9; i ++  )
+        urls .push ( `https://www.3i.com/our-people/?page=${i}` );
+      function crawlUrl ( url ) {
+        return new Promise ( async ( resolve , reject ) => {
+          try{
+            const page = await browser.newPage ( );
+            await page .setRequestInterception ( true );
+            page .on ( 'request' , ( request ) => {
+              if (  [ 'font' , 'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                  request .abort ( );
+              } else {
+                  request .continue  ( );
+              }
+            } );
+            await page.goto ( url , { timeout: 0 } );
+            await autoScroll ( page );
+            let elems = await page .$$ ( 'div.item-container' );
+            socket .emit ( "logs" , elems .length );
+            let rollingUrls = await page .evaluate ( ( url ) => {
+              let results = [ ];
+              items2 = document .querySelectorAll ( 'div.item-container' );
+              items2.forEach ( async ( item ) => {
+                results.push ( {
                   name    : item .querySelector ( 'h5' )      .innerText ,
                   job     : item .querySelector ( '.area' )   .innerText ,
                   market  : item .querySelector ( 'p' )   .innerText ,
                   image   : item .querySelector ( 'img' )   .src ,
-                  from    : "Live from https://www.3i.com/our-people/"
+                  from    : url ,
+                } );
               } );
-            } );
-            return results;
-          } )
-          urls = urls.concat ( rollingUrls );
-          {
-            //go to next page
-            if ( currentPage ++ == lastPage ) break;
-            await Promise.all ( [
-                page.waitForNavigation ( { timeout: 0 } ) ,
-                page .click ( 'li.next > a' ) ,
-                page .waitForSelector ( '.portfolio-item-list' )
-            ] )
-          }
-        }
+              return results;
+            } , url )
+            await page .close ( );
+            socket .emit ( "outgoing data" , rollingUrls )
+            socket .emit ( "logs" , url )
+            return resolve ( rollingUrls );
+          }catch ( e ){ return reject ( e ) }
+        } )
       }
       //
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       browser.close ( );
-      return resolve ( urls );
+      monitor .confirm = true;
+      return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor .confirm = true;
       return reject ( e );
     }
   })
 }
 
-function runaacc ( ) {
+function runaacc ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] } );
@@ -104,8 +107,20 @@ function runaacc ( ) {
       let urls = [ ];
       //specific to website
       {
+        if ( monitor .cancel ){
+          socket .emit ( "logs" , "operation has been canceled!" );
+          browser .close ( );
+          monitor .confirm = true;
+          return resolve ( [{} ] )
+        }
         await page.goto ( "http://aaccapital.com/nl/team/" , { timeout: 0 } );
         {
+          if ( monitor .cancel ){
+            browser .close ( );
+            monitor .confirm = true;
+            socket .emit ( "logs" , "operation has been canceled!" );
+            return resolve ( [ {} ] )
+          }
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'div.col-md-4.js-collapse.cardblock.team.multiple' );
@@ -125,8 +140,10 @@ function runaacc ( ) {
       }
       //
       browser.close ( );
+      monitor .confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor .confirm = true;
       return reject ( e );
     }
   })
@@ -4984,9 +5001,10 @@ function brooklyn_ventures ( ) {
   })
 }
 
-function biogenerationventures ( ) {
+function biogenerationventures ( socket ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
+      socket.emit ( "logs" , "request has been received!" )
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true , } );
       let urls = [  ];
       const page = await browser .newPage ( );
@@ -6109,40 +6127,40 @@ function catenainvestments ( ) {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       //specific to website
       function crawlUrl ( url ) {
-          return new Promise ( async ( resolve , reject ) => {
-            try{
+        return new Promise ( async ( resolve , reject ) => {
+          try{
+            let results = [ ];
+            const page = await browser .newPage ( );
+            await page.setRequestInterception ( true );
+            page.on ( 'request' , ( request ) => {
+              if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                  request .abort ( );
+              } else {
+                  request .continue  ( );
+              }
+            } );
+            await page .goto ( url , { timeout : 0 , } );
+            await page .addScriptTag ( { path: 'jquery.js'  } );
+            await autoScroll ( page );
+            results = await page.evaluate ( ( url ) => {
               let results = [ ];
-              const page = await browser .newPage ( );
-              await page.setRequestInterception ( true );
-              page.on ( 'request' , ( request ) => {
-                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-                    request .abort ( );
-                } else {
-                    request .continue  ( );
-                }
-              } );
-              await page .goto ( url , { timeout : 0 , } );
-              await page .addScriptTag ( { path: 'jquery.js'  } );
-              await autoScroll ( page );
-              results = await page.evaluate ( ( url ) => {
-                let results = [ ];
-                let items = $ ( 'div.et_pb_column.et_pb_column_1_2' );
-                Array.from ( items ).forEach ( ( item  , index ) => {
-                  results.push ( {
-                      name    : $ ( item ) .find ( 'h4.et_pb_module_header' ) .eq ( 0 ) .text ( ) .trim (  )  ,
-                      job     : $ ( item ) .find ( 'p.et_pb_member_position' ) .eq ( 0 ) .text ( ) .trim (  )  ,
-                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
-                      from    : url ,
-                      index   : index ,
-                  } );
+              let items = $ ( 'div.et_pb_column.et_pb_column_1_2' );
+              Array.from ( items ).forEach ( ( item  , index ) => {
+                results.push ( {
+                    name    : $ ( item ) .find ( 'h4.et_pb_module_header' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                    job     : $ ( item ) .find ( 'p.et_pb_member_position' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                    image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
+                    from    : url ,
+                    index   : index ,
                 } );
-                return results;
-              } , url );
-              await page.close ( );
-              return resolve ( results )
-            }catch ( e ){
-              return reject ( e )
-            }
+              } );
+              return results;
+            } , url );
+            await page.close ( );
+            return resolve ( results )
+          }catch ( e ){
+            return reject ( e )
+          }
         } )
       }
       let urls = [ `http://www.catenainvestments.com/investment-team/` ];
@@ -6431,38 +6449,63 @@ app.get ( '/*' , function ( req , res ) {
 //app.listen ( port );
 
 io .on ( "connection" , socket => {
-  var address = socket.handshake.headers [ 'x-forwarded-for' ]; 
+  var address = socket.handshake.headers [ 'x-forwarded-for' ];
   var port = socket.handshake.headers [ 'x-forwarded-port' ];
   console.log ( 'New connection from ' + address + ':' + port );
   console.log ( geoip .lookup ( address ) );
 
-  socket .on ( "1" , function ( data ) {
-    console.log ( data );
-    run3i ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
-  } );
+  let monitor = { cancel: false , confirm: true };
 
-  socket .on ( "2" , function ( data ) {
-    console.log ( data );
-    runaacc ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
-  } );
+  const sync_ = async ( ) => {
+    monitor .cancel = true;
+    while ( ! monitor .confirm ){
+      await sleep ( 50 );
+    }
+    monitor = { cancel: false , confirm: false };
+    return monitor;
+  }
 
-  socket .on ( "3" , function ( data ) {
-    console.log ( data );
-    run5sq ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
-  } );
+  //run3i ( socket , { cancel: false , confirm: false } ) .then ( console.log ) .catch ( console.error );
 
-  socket .on ( "4" , function ( data ) {
-    console.log ( data );
-    runactivecapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
-  } );
+  socket .on ( "1" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      run3i ( socket , prefect )
+        .then ( console .log )
+          .catch ( console.error );
+    }
+  );
+
+  socket .on ( "2" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      runaacc ( socket , prefect )
+        .then ( results => socket .emit ( "outgoing data" , results ) )
+          .catch ( console.error );
+    }
+  );
+
+  socket .on ( "3" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      run5sq ( socket , prefect )
+        .then ( results => socket .emit ( "outgoing data" , results ) )
+          .catch ( console.error );
+    }
+  );
+
+  socket .on ( "4" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      runactivecapital ( socket , prefect )
+        .then ( results => socket .emit ( "outgoing data" , results ) )
+          .catch ( console.error );
+    }
+  );
 
   socket .on ( "5" , function ( data ) {
     console.log ( data );
@@ -7094,12 +7137,12 @@ io .on ( "connection" , socket => {
         .catch ( console.error );
   } );
 
-  /*socket .on ( "95" , function ( data ) {
+  socket .on ( "95" , function ( data ) {
     console.log ( data );
-    biogenerationventures ( )
+    biogenerationventures ( socket )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
-  } );*/
+  } );
 
   socket .on ( "96" , function ( data ) {
     console.log ( data );
@@ -7276,7 +7319,10 @@ io .on ( "connection" , socket => {
         .catch ( console.error );
   } );
 
-  socket .on ( "disconnect" , () => console.log ( "Client disconnected" ) );
+  socket .on ( "disconnect" , () => {
+      console.log ( "Client disconnected");
+      sync_ ( );
+  } );
 });
 
 server .listen ( port , () => console.log ( `Listening on port ${port}` ) );
