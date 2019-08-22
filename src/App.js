@@ -25,7 +25,7 @@ class App extends Component {
     } );
   }
   fetcher = ( site , get ) => {
-    this.setState ( { loaded: false , sitePage: site  , characters: [ /*{ name: "relax" , job: "boss you too much" , image: "static/live-from-space.jpg" , market: "UK/London"}*/ ] } )
+    this.setState ( { loaded: false , sitePage: site  , characters: [ /*{ name: "burna boy" , job: "temperature " , image: "static/live-from-space.jpg" , market: "UK/London"}*/ ] } )
     /*fetch ( get )
       .then ( result => result.json ( ) )
         .then ( result => {
@@ -38,7 +38,7 @@ class App extends Component {
   }
   render ( ) {
     return (
-      <div>
+      <div style={{backgroundColor:"#D3D3D3"}}>
         <AppBar fetcher={this.fetcher}/>
         <Drawer
           sitePage={this.state.sitePage}

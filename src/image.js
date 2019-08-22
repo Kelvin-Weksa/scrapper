@@ -64,7 +64,7 @@ export default function ImageCard ( props ) {
 
     let thresholdW = parseInt ( getStyle ( item , 'width' ).replace ( 'px' , '' ) );
 
-    console.log ( "thresholdW " + ( img.width < thresholdW ) );
+    //console.log ( "thresholdW " + ( img.width < thresholdW ) );
 
     let topOffset =  parseInt ( getStyle ( item1 , 'top' ).replace ( 'px' , '' ) ) + img.height - 20;
     item2.style.top = topOffset.toString( ) + 'px'
@@ -76,7 +76,7 @@ export default function ImageCard ( props ) {
 
     if ( img.width < thresholdW ){
       let drift = ( ( thresholdW - img.width ) * 100 / thresholdW ) / 2;
-      console.log ( "thresholdW " + drift );
+      //console.log ( "thresholdW " + drift );
       //item1.style.marginLeft = (drift - 2).toString ( ) + '%';
       item2.style.marginLeft = (drift - 2).toString ( ) + '%';
     }

@@ -92,7 +92,7 @@ const useStyles = makeStyles ( theme =>  ({
     position:"absolute",
     color: theme.palette.secondary.light ,
     padding:'0px',
-    top:"49.5%" ,
+    top:"50%" ,
     left:"35%",
     zIndex:theme.zIndex.mobileStepper ,
   },
@@ -103,6 +103,18 @@ export default function MediaCard ( props ) {
   const { characterName , characterPost , characterImage , characterMarket , from } = props;
   const characterImage_ = characterImage? characterImage.split( '?' )[ 0 ]: null;
   const [ open , setOpen ] = React.useState ( false );
+  let image = React.createRef ( );
+  let outer_card = React.createRef ( );
+  let hidden_icon = React.createRef ( );
+
+  React.useEffect(() => {
+    if ( 'ResizeObserver' in window ) {
+      const myObserver = new ResizeObserver ( loaded );
+      // Observe one or multiple elements
+      myObserver.observe ( outer_card.current );
+    }
+  });
+
 
   function handleClickOpen ( ) {
     setOpen ( true );
@@ -111,25 +123,43 @@ export default function MediaCard ( props ) {
   function handleClose ( ) {
     setOpen ( false );
   }
+
+  function loaded ( ){
+    let img = image.current;
+    let cont = outer_card.current;
+    let icon = hidden_icon.current
+    //console.log ( "image " + img.offsetHeight );
+    //console.log ( "outer_card " + cont.offsetHeight );
+    //console.log ( "img / outer_card " +  percent );
+    if ( img ){
+      let percent = (( img.offsetHeight * 90 ) - ( icon.offsetHeight * 100 )) / cont.offsetHeight;
+      icon.style.top = percent.toString (  ) + '%';
+    }
+
+  }
+
   return (
     <div>
 
     <div className={classes.card}>
-      <Card className={classes.outer_card} title={from} height={200} >
-        {characterName ? ( <CardMedia
+      <Card className={classes.outer_card} title={from} ref={outer_card}>
+        {characterName ? (
+        <CardMedia
           component='img'
           alt="Contemplative Reptile"
           height="150"
           image={characterImage_}
           title="Contemplative Reptile"
           className={classes.inner_card}
+          onLoad={loaded}
+          ref={image}
         />
         ):(
           <Skeleton variant="rect" height={150} className={classes.media} />
         )}
         {characterName ? (
         <Tooltip title="View" placement="right">
-          <Button className={classes.hidden_icon} onClick={handleClickOpen}>
+          <Button className={classes.hidden_icon} onClick={handleClickOpen} ref={hidden_icon}>
             <ViewListIcon/>
           </Button>
         </Tooltip>

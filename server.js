@@ -35,16 +35,26 @@ async function autoScroll ( page ){
 
 let sleep = ms => new Promise ( resolve => setTimeout ( resolve , ms ) );
 
+function check_if_canceled( browser , monitor , socket  ){
+  if ( monitor .cancel ){
+    socket .emit ( "logs" , "operation has been canceled!" );
+    browser.close ( );
+    monitor .confirm = true;
+  }
+};
+
 function run3i ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      check_if_canceled ( browser , monitor , socket );
       let urls = [ ];
       for ( i = 1; i < 9; i ++  )
         urls .push ( `https://www.3i.com/our-people/?page=${i}` );
       function crawlUrl ( url ) {
         return new Promise ( async ( resolve , reject ) => {
           try{
+            check_if_canceled ( browser , monitor , socket );
             const page = await browser.newPage ( );
             await page .setRequestInterception ( true );
             page .on ( 'request' , ( request ) => {
@@ -54,10 +64,13 @@ function run3i ( socket , monitor ) {
                   request .continue  ( );
               }
             } );
+            check_if_canceled ( browser , monitor , socket );
             await page.goto ( url , { timeout: 0 } );
             await autoScroll ( page );
+            check_if_canceled ( browser , monitor , socket );
             let elems = await page .$$ ( 'div.item-container' );
-            socket .emit ( "logs" , elems .length );
+            
+            check_if_canceled ( browser , monitor , socket );
             let rollingUrls = await page .evaluate ( ( url ) => {
               let results = [ ];
               items2 = document .querySelectorAll ( 'div.item-container' );
@@ -68,11 +81,13 @@ function run3i ( socket , monitor ) {
                   market  : item .querySelector ( 'p' )   .innerText ,
                   image   : item .querySelector ( 'img' )   .src ,
                   from    : url ,
+
                 } );
               } );
               return results;
             } , url )
             await page .close ( );
+            check_if_canceled ( browser , monitor , socket );
             socket .emit ( "outgoing data" , rollingUrls )
             socket .emit ( "logs" , url )
             return resolve ( rollingUrls );
@@ -80,10 +95,10 @@ function run3i ( socket , monitor ) {
         } )
       }
       //
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { socket .emit ( "logs" , e .message ) } );
       browser.close ( );
       monitor .confirm = true;
-      return resolve ( [ ] .concat ( ...datas ) );
+      return resolve ( datas ? [ ] .concat ( ...datas ) : [ ] );
     } catch ( e ) {
       monitor .confirm = true;
       return reject ( e );
