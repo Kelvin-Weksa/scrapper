@@ -68,37 +68,48 @@ function run3i ( socket , monitor ) {
             await page.goto ( url , { timeout: 0 } );
             await autoScroll ( page );
             check_if_canceled ( browser , monitor , socket );
-            let elems = await page .$$ ( 'div.item-container' );
-            
-            check_if_canceled ( browser , monitor , socket );
-            let rollingUrls = await page .evaluate ( ( url ) => {
-              let results = [ ];
-              items2 = document .querySelectorAll ( 'div.item-container' );
-              items2.forEach ( async ( item ) => {
-                results.push ( {
-                  name    : item .querySelector ( 'h5' )      .innerText ,
-                  job     : item .querySelector ( '.area' )   .innerText ,
-                  market  : item .querySelector ( 'p' )   .innerText ,
-                  image   : item .querySelector ( 'img' )   .src ,
-                  from    : url ,
-
-                } );
-              } );
-              return results;
-            } , url )
+            let items = await page.$$ ( 'div.item-container' );
+            let rollingUrls = [];
+            let index = 0
+            for ( item of Array.from ( items ) ) {
+              //await item .focus (  );
+              await item .click (  );
+              //await page .waitFor ( 1000 );
+              rollingUrls.push ( await page.evaluate ( ( url , index ) => {
+                let item_ = document.querySelector ( 'li.portfolio-item.active' );
+                let fax = item_ .querySelector ( '.fax' );
+                let map = item_ .querySelector ( '.map > a' );
+                let data = {
+                    name    : item_ .querySelector ( 'h5') .innerText .split ( '–' ) [ 0 ] ,
+                    job     : item_ .querySelector ( '.area' ) .innerText ,
+                    image   : item_ .querySelector ( 'img' ) .src ,
+                    from    : url ,
+                    index   : index ,
+                    about   : item_ .querySelectorAll ( 'div.pure-u-1.pure-u-md-12-24' ) [ 0 ] .innerText ,
+                    phone   : item_ .querySelector ( '.phone' ) .innerText ,
+                    fax     : fax ? fax.innerText : "no fax",
+                    map     : map ? map.href  : "no map",
+                  };
+                  return data;
+                } , url )
+              );
+            }
             await page .close ( );
             check_if_canceled ( browser , monitor , socket );
             socket .emit ( "outgoing data" , rollingUrls )
             socket .emit ( "logs" , url )
             return resolve ( rollingUrls );
-          }catch ( e ){ return reject ( e ) }
+          }catch ( e ){
+            return reject ( e );
+          }
         } )
       }
       //
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { socket .emit ( "logs" , e .message ) } );
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       browser.close ( );
       monitor .confirm = true;
-      return resolve ( datas ? [ ] .concat ( ...datas ) : [ ] );
+      return resolve ( [ ] .concat ( ...datas ) );
+      //return resolve ( datas );
     } catch ( e ) {
       monitor .confirm = true;
       return reject ( e );
@@ -207,10 +218,11 @@ function run5sq ( ) {
               return {
                 name  : document .querySelector ( 'span.underline' ) .innerText ,
                 image : document .querySelector ( 'div.title-box + img' ) .src ,
-                job   : document .querySelector ( 'div.col-6  p' ) .innerText.trim ( ) || "ADVISOR" ,
+                job   : document .querySelector ( 'div.col-6 p' ) .innerText.trim ( ) ,//|| "ADVISOR" ,
               };
             } )
             await page.close ( );
+            check_if_canceled ( browser , monitor , socket );
             //console.log ( result );
             return resolve ( result )
           }catch ( e ){
@@ -220,6 +232,7 @@ function run5sq ( ) {
       };
       let datas = await Promise.all ( [ ...urls.map ( crawlUrl ) ] ).catch ( e => { console.log ( e ) } );
       browser.close ( );
+      monitor .confirm = true;
       return resolve ( datas );
     } catch ( e ) {
       return reject ( e );
@@ -6480,7 +6493,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //run3i ( socket , { cancel: false , confirm: false } ) .then ( console.log ) .catch ( console.error );
+  //runaacc ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( e => { console.log } );
 
   socket .on ( "1" ,
     async function ( data ) {

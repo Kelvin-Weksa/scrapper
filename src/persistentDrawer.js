@@ -90,6 +90,11 @@ const useStyles = makeStyles(theme => ({
     width: 40,
     transform:'scale(0.3,0.4)'
   },
+  logo: {
+    height: 40,
+    width: 80,
+    //transform:'scale(0.3,0.4)'
+  },
   light: {
     backgroundColor: fade(theme.palette.secondary.main, 0.25),
   },
@@ -109,8 +114,8 @@ export default function PersistentDrawerLeft ( props ) {
     setOpen ( false );
   }
 
-  function loadData ( page , get ) {// eslint-disable-next-line
-    props .fetcher ( page , get );
+  function loadData ( page , get , logo ) {// eslint-disable-next-line
+    props .fetcher ( page , get , logo );
   }
 
   function toggleFilter ( ) {
@@ -140,9 +145,17 @@ export default function PersistentDrawerLeft ( props ) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
-          {props.sitePage}
-          </Typography>
+
+            <CardMedia
+              className={classes.logo}
+              image={props.logo}
+              component='img'
+            />{/* eslint-disable-next-line*/}
+            <Divider orientation="vertical" className={classes.light}/>
+            <Typography variant="h6" noWrap>
+            {props.sitePage}
+            </Typography>
+
         </Toolbar>
       </AppBar>
       <Drawer
@@ -163,7 +176,7 @@ export default function PersistentDrawerLeft ( props ) {
         <Divider light={true} className={classes.light}/>
         <List>{/* eslint-disable-next-line*/}
           {Listing .filter ( item => item .includes ( filter ) ) .map ( (list , index ) => (// eslint-disable-next-line
-            <ListItem button key={index} onClick={( ) => loadData ( list [ 0 ] , list [ 1 ] )} title={list [ 0 ]}>
+            <ListItem button key={index} onClick={( ) => loadData ( list [ 2 ] , list [ 1 ] , list [ 3 ] )} title={list [ 0 ]}>
                 <CardMedia
                   className={classes.media}
                   image={list[ 3 ]}

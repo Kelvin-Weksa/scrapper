@@ -4,9 +4,10 @@ import Paper from '@material-ui/core/Paper';
 import Linkedin from 'mdi-material-ui/LinkedinBox';
 import Email from '@material-ui/icons/EmailOutlined';
 import CallIcon from '@material-ui/icons/CallOutlined';
-import MapOutlinedIcon from '@material-ui/icons/MapOutlined';
+import PermPhoneMsgOutlinedIcon from '@material-ui/icons/PermPhoneMsgOutlined';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+
 
 // core components
 const useStyles = makeStyles ( theme =>  ( {
@@ -35,7 +36,7 @@ const useStyles = makeStyles ( theme =>  ( {
   },
   text:{
     position: 'absolute',
-    //left:"20%" ,
+    textAlign:"left" ,
     color: theme.palette.secondary.light,
   }
 } ) );
@@ -48,6 +49,7 @@ export default function ImageCard ( props ) {
   let layer3 = React.createRef ( );
   let paper = React.createRef ( );
 
+  const { phone , mail , fax , map } = props
   const [ shown , setShown ] = React.useState ( "" );
 
   function show ( node ) {
@@ -103,20 +105,36 @@ export default function ImageCard ( props ) {
         />
       </div>
       <div className={classes.layer2} ref={layer2}>
-        <Button size="small" color="primary" onClick={()=>show(<div><Linkedin/>LinkedIn...</div>)}>
+        <Button size="small" color="primary" onClick={()=>show(
+          <div>
+            <Linkedin/>
+            LinkedIn...
+          </div>)}>
           <Linkedin/>
         </Button>
-        <Button size="small" color="primary" onClick={()=>show(<div><Email/>email...</div>)}>
+        <Button size="small" color="primary" onClick={()=>show(
+          <div>
+            <Email/>
+            {mail? mail : "mail..."}
+          </div>)}>
           <Email/>
         </Button>
-        <Button size="small" color="primary" onClick={()=>show(<div><CallIcon/>phone...</div>)}>
+        <Button size="small" color="primary" onClick={()=>show(
+          <div>
+            <CallIcon/>
+            {phone ? phone : "phone..."}
+          </div>)}>
           <CallIcon/>
         </Button>
-        <Button size="small" color="primary" onClick={()=>show(<div><MapOutlinedIcon/>map...</div>)}>
-          <MapOutlinedIcon/>
+        <Button size="small" color="primary" onClick={()=>show(
+          <div>
+            <PermPhoneMsgOutlinedIcon/>
+            {fax ? fax : "fax..."}
+          </div>)}>
+          <PermPhoneMsgOutlinedIcon/>
         </Button>
       </div>
-      <Typography className={classes.text} ref={layer3} variant="h3">
+      <Typography className={classes.text} ref={layer3} variant="h5">
         {shown}
       </Typography>
     </Paper>

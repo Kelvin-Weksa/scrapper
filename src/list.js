@@ -1,5 +1,5 @@
 const Listing = [
-  [ "www.3i.com/our-people/" , "1" , '3i' , "https://www.3i.com/images/logo.svg" ,  "PE" ] ,
+  [ "www.3i.com/our-people/" , "1" , '3i Group' , "https://www.3i.com/images/logo.svg" ,  "PE" ] ,
   [ "aaccapital.com/nl/team/" , "2" , 'aaccapital' , "http://aaccapital.com/assets/toolkit/images/logo_color.png" ,  "PE" ] ,
   [ "http://www.5square.nl/#page_458" , "3" , '5square' , "http://www.5square.nl/wp-content/uploads/2013/05/splash-logo.png" ,  "PE" , "VC"] ,
   [ "http://www.activecapitalcompany.com/over-ons/team" , "4" , 'activecapitalcompany' , "http://www.activecapitalcompany.com/themes/activecapital/assets/images/logo.png" ,  "PE" ] ,

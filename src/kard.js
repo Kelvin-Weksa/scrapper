@@ -17,6 +17,8 @@ import Grid from '@material-ui/core/Grid';
 import ImageContainer from './image'
 import ViewListIcon from '@material-ui/icons/ViewList';
 import Tooltip from '@material-ui/core/Tooltip';
+import Divider from '@material-ui/core/Divider';
+import MapOutlinedIcon from '@material-ui/icons/MapOutlined';
 //import Red from '@material-ui/core/colors/red';
 //import CardActionArea from '@material-ui/core/CardActionArea';
 //import CardActions from '@material-ui/core/CardActions';
@@ -96,13 +98,22 @@ const useStyles = makeStyles ( theme =>  ({
     left:"35%",
     zIndex:theme.zIndex.mobileStepper ,
   },
+  text:{
+    //position: 'absolute',
+    textAlign:"left" ,
+    color: theme.palette.primary.light,
+  }
 }) );
 
 export default function MediaCard ( props ) {
   const classes = useStyles();
-  const { characterName , characterPost , characterImage , characterMarket , from } = props;
+  const { characterName , characterPost , characterImage , characterPhone , characterFax ,
+    characterMail , characterMap ,
+    characterMarket , characterAbout , from } = props;
   const characterImage_ = characterImage;//? characterImage.split( '?' )[ 0 ]: null;
   const [ open , setOpen ] = React.useState ( false );
+  const [ shown , setShown ] = React.useState ( "" );
+
   let image = React.createRef ( );
   let outer_card = React.createRef ( );
   let hidden_icon = React.createRef ( );
@@ -149,6 +160,10 @@ export default function MediaCard ( props ) {
     }
   }
 
+  function show ( node ) {
+    setShown( node );
+  }
+
   return (
     <div>
 
@@ -181,7 +196,7 @@ export default function MediaCard ( props ) {
           <Typography gutterBottom variant="h6" component="h2">
             {characterName}
           </Typography>
-          <Typography variant="subtitle2" color="textSecondary" component="p">
+          <Typography variant="subtitle2" color="textPrimary" component="p">
             {characterPost}
           </Typography>
         </CardContent>
@@ -204,9 +219,14 @@ export default function MediaCard ( props ) {
           </Toolbar>
         </AppBar>
         <div className={classes.root}>
-        <Grid container spacing={5}>
+        <Grid container spacing={3}>
           <Grid item xs={4}>
-            <ImageContainer src={characterImage_}/>
+            <ImageContainer src={characterImage_}
+              phone={characterPhone}
+              mail={characterMail}
+              fax={characterFax}
+
+            />
           </Grid>
           <Grid item xs={8}>
             <Paper className={classes.paper} >
@@ -219,10 +239,24 @@ export default function MediaCard ( props ) {
               <Typography variant="subtitle2" className={classes.Subtitle}>
                 {characterMarket}
               </Typography>
-              <Typography variant="body">
-                Person Description
+              <Typography variant="body1" color="textSecondary" style={{textAlign:"left"}}>
+                {characterAbout}
+              </Typography>
+              <Divider variant="middle" />
+              <Typography className={classes.text}>
+                {shown}
               </Typography>
             </Paper>
+            <div>
+              <Button size="small" color="primary" style={{textAlign:'left'}}onClick={()=>show(
+                <div>
+                  <MapOutlinedIcon/>
+                  {characterMap}
+                </div>)}>
+                <MapOutlinedIcon/>
+              </Button>
+            </div>
+            <Divider variant="middle" />
           </Grid>
         </Grid>
         </div>
