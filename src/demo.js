@@ -20,7 +20,7 @@ const NestedGrid =  props => {
   function FormRow (  ) {
     const items = [ ];
     let data = [ ];// eslint-disable-next-line
-    ! props.loaded ? data = new Array ( 8 ) .fill ( { } ) .entries ( ) : data = props.elements .entries ( );
+    ! props.loaded ? data = new Array ( 6 ) .fill ( { } ) .entries ( ) : data = props.elements .entries ( );
     for ( const [ index , value ] of data ) {
       items.push (
         <Grid item xs={3} key={index}>
@@ -34,7 +34,7 @@ const NestedGrid =  props => {
             characterFax={value.fax}
             characterMail={value.mail}
             characterMap={value.map}
-
+            characterLinkedIn={value.linkedIn}
             from={value.from}
           />
         </Grid>

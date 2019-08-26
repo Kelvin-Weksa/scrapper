@@ -1,9 +1,9 @@
 const Listing = [
   [ "www.3i.com/our-people/" , "1" , '3i Group' , "https://www.3i.com/images/logo.svg" ,  "PE" ] ,
-  [ "aaccapital.com/nl/team/" , "2" , 'aaccapital' , "http://aaccapital.com/assets/toolkit/images/logo_color.png" ,  "PE" ] ,
-  [ "http://www.5square.nl/#page_458" , "3" , '5square' , "http://www.5square.nl/wp-content/uploads/2013/05/splash-logo.png" ,  "PE" , "VC"] ,
-  [ "http://www.activecapitalcompany.com/over-ons/team" , "4" , 'activecapitalcompany' , "http://www.activecapitalcompany.com/themes/activecapital/assets/images/logo.png" ,  "PE" ] ,
-  [ "https://www.adventinternational.com/team/" , "5" , 'adventinternational' , "https://s17401.pcdn.co/wp-content/themes/advent/img/advent-international.png" ,  "PE" ] ,
+  [ "aaccapital.com/nl/team/" , "2" , 'AAC Capital' , "http://aaccapital.com/assets/toolkit/images/logo_color.png" ,  "PE" ] ,
+  [ "http://www.5square.nl/#page_458" , "3" , '5SQUARE' , "http://www.5square.nl/wp-content/uploads/2013/05/splash-logo.png" ,  "PE" , "VC"] ,
+  [ "http://www.activecapitalcompany.com/over-ons/team" , "4" , 'Active Capital Company' , "http://www.activecapitalcompany.com/themes/activecapital/assets/images/logo.png" ,  "PE" ] ,
+  [ "https://www.adventinternational.com/team/" , "5" , 'Advent International' , "https://s17401.pcdn.co/wp-content/themes/advent/img/advent-international.png" ,  "PE" ] ,
   [ "http://www.alpinvest.com/leadership" , "6" , 'alpinvest' , "http://www.alpinvest.com/images/logo.gif" ,  "PE" ] ,
   [ "https://www.antea.nl/de-mensen/de-directie/" , "7" , 'antea' , "https://www.antea.nl/wp-content/uploads/2015/07/antea_logo.png" ,  "PE" ] ,
   [ "https://www.baincapital.com/people" , "8" , 'baincapital' , "https://www.baincapital.com/sites/all/themes/baincapital/assets/images/bain-capital-logo.svg" ,  "PE" ] ,

@@ -108,7 +108,7 @@ const useStyles = makeStyles ( theme =>  ({
 export default function MediaCard ( props ) {
   const classes = useStyles();
   const { characterName , characterPost , characterImage , characterPhone , characterFax ,
-    characterMail , characterMap ,
+    characterMail , characterMap , characterLinkedIn ,
     characterMarket , characterAbout , from } = props;
   const characterImage_ = characterImage;//? characterImage.split( '?' )[ 0 ]: null;
   const [ open , setOpen ] = React.useState ( false );
@@ -118,7 +118,7 @@ export default function MediaCard ( props ) {
   let outer_card = React.createRef ( );
   let hidden_icon = React.createRef ( );
 
-  console.log ( characterImage );
+  //console.log ( characterImage );
 
   React.useEffect ( () => {
     if ( 'ResizeObserver' in window ) {

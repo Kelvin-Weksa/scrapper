@@ -24,7 +24,9 @@ import Listing from './list'
 import CardMedia from '@material-ui/core/CardMedia';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
-const drawerWidth = 240;
+//import Image from
+
+const drawerWidth = 265;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     }),
   },
   menuButton: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(1),
   },
   hide: {
     display: 'none',
@@ -57,17 +59,16 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaper: {
     width: drawerWidth,
+    backgroundImage:`url(static/pexels.jpeg)`,
+    paddingLeft : 0 ,
+    //overflow: 'hidden'
   },
   drawerHeader: {
-    //position: "fixed",
     display: 'flex',
     alignItems: 'center',
     padding: '0 8px',
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
-
-    top: -100,
-    width: '100%'
   },
   content: {
     flexGrow: 1,
@@ -98,6 +99,12 @@ const useStyles = makeStyles(theme => ({
   light: {
     backgroundColor: fade(theme.palette.secondary.main, 0.25),
   },
+  sticky:{
+    position : 'sticky' ,
+    top : 0 ,
+    zIndex: theme.zIndex.appBar ,
+    
+  }
 }));
 
 export default function PersistentDrawerLeft ( props ) {
@@ -105,6 +112,7 @@ export default function PersistentDrawerLeft ( props ) {
   const theme = useTheme ( );// eslint-disable-next-line
   const [ open , setOpen ] = React .useState ( false );// eslint-disable-next-line
   const [ filter , setFilter ] = React .useState ( "PE" );
+  const drawer = React.createRef ( );
 
   function handleDrawerOpen ( ) {
     setOpen ( true );
@@ -123,6 +131,11 @@ export default function PersistentDrawerLeft ( props ) {
       setFilter ( "VC" );
     }else if ( filter === "VC" ){
       setFilter ( "PE" );
+    }
+    if ( drawer.current ){
+      var topPos = drawer.current.offsetTop;
+      console.log ( "i have to scroll! " + topPos )
+      drawer.current.scrollTop = 0;
     }
   }
 
@@ -145,7 +158,6 @@ export default function PersistentDrawerLeft ( props ) {
           >
             <MenuIcon />
           </IconButton>
-
             <CardMedia
               className={classes.logo}
               image={props.logo}
@@ -155,10 +167,10 @@ export default function PersistentDrawerLeft ( props ) {
             <Typography variant="h6" noWrap>
             {props.sitePage}
             </Typography>
-
         </Toolbar>
       </AppBar>
       <Drawer
+        ref={drawer}
         className={classes.drawer}
         variant="persistent"
         anchor="left"
@@ -167,13 +179,15 @@ export default function PersistentDrawerLeft ( props ) {
           paper: classes.drawerPaper,
         }}
       >
-        <div className={classes.drawerHeader}>
-          <IconBreadcrumbs toggle={toggleFilter}/>
-          <IconButton color="secondary" onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
+        <div className={classes.sticky} >
+          <div className={classes.drawerHeader}>
+            <IconBreadcrumbs toggle={toggleFilter} />
+            <IconButton color="secondary" onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </div>
+          <Divider light={true} className={classes.light}/>
         </div>
-        <Divider light={true} className={classes.light}/>
         <List>{/* eslint-disable-next-line*/}
           {Listing .filter ( item => item .includes ( filter ) ) .map ( (list , index ) => (// eslint-disable-next-line
             <ListItem button key={index} onClick={( ) => loadData ( list [ 2 ] , list [ 1 ] , list [ 3 ] )} title={list [ 0 ]}>
@@ -191,7 +205,6 @@ export default function PersistentDrawerLeft ( props ) {
           [classes.contentShift]: open,
         })}
       >
-        {/*<div className={classes.drawerHeader} />*/}
         {props.content}
       </main>
     </div>

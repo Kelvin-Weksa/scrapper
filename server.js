@@ -35,12 +35,21 @@ async function autoScroll ( page ){
 
 let sleep = ms => new Promise ( resolve => setTimeout ( resolve , ms ) );
 
-function check_if_canceled( browser , monitor , socket  ){
+async function check_if_canceled( browser , monitor , socket  ){
   if ( monitor .cancel ){
     socket .emit ( "logs" , "operation has been canceled!" );
-    browser.close ( );
+    console.log ( "operation has been canceled!" )
+    await browser.close ( );
     monitor .confirm = true;
   }
+};
+
+function  paragraphs  ( array ) {
+  let paragraph = '';
+  array.forEach ( ( para ) =>{
+    paragraph += para.innerText += '\n';
+  } );
+  return paragraph;
 };
 
 function run3i ( socket , monitor ) {
@@ -72,9 +81,8 @@ function run3i ( socket , monitor ) {
             let rollingUrls = [];
             let index = 0
             for ( item of Array.from ( items ) ) {
-              //await item .focus (  );
+              check_if_canceled ( browser , monitor , socket );
               await item .click (  );
-              //await page .waitFor ( 1000 );
               rollingUrls.push ( await page.evaluate ( ( url , index ) => {
                 let item_ = document.querySelector ( 'li.portfolio-item.active' );
                 let fax = item_ .querySelector ( '.fax' );
@@ -104,7 +112,7 @@ function run3i ( socket , monitor ) {
           }
         } )
       }
-      //
+      check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       browser.close ( );
       monitor .confirm = true;
@@ -133,31 +141,31 @@ function runaacc ( socket , monitor ) {
       let urls = [ ];
       //specific to website
       {
-        if ( monitor .cancel ){
-          socket .emit ( "logs" , "operation has been canceled!" );
-          browser .close ( );
-          monitor .confirm = true;
-          return resolve ( [{} ] )
-        }
+        check_if_canceled ( browser , monitor , socket );
         await page.goto ( "http://aaccapital.com/nl/team/" , { timeout: 0 } );
         {
-          if ( monitor .cancel ){
-            browser .close ( );
-            monitor .confirm = true;
-            socket .emit ( "logs" , "operation has been canceled!" );
-            return resolve ( [ {} ] )
-          }
-          urls = await page.evaluate ( ( ) => {
+          check_if_canceled ( browser , monitor , socket );
+          urls = await page.evaluate ( (  ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'div.col-md-4.js-collapse.cardblock.team.multiple' );
             let items2 = Array.from ( items ) .map ( array => document .getElementById ( array .getAttribute ( "data-target" ) ) );
+            function  paragraphs  ( array ) {
+              let paragraph = '';
+              array.forEach ( ( para ) =>{
+                paragraph += para.innerText += '\n';
+              } );
+              return paragraph;
+            }
             Array.from ( items ).forEach ( ( item  , index ) => {
               results.push ( {
-                  name    : item .querySelector ( 'h4' )  .innerText ,
-                  job     : items2 [ index ]  .querySelector ( "h2 + h2" ).innerText ,
-                  //market  : "" ,
-                  image   : item .querySelector ( 'img' ) .src ,
-                  from    : "Live from http://aaccapital.com/nl/team/"
+                  name      : item .querySelector ( 'h4' )  .innerText ,
+                  job       : items2 [ index ]  .querySelector ( "h2 + h2" ).innerText ,
+                  mail      : items2 [ index ]  .querySelector ( "span.mail-c" ).innerText ,
+                  phone     : items2 [ index ]  .querySelector ( "span.phone-c" ).innerText ,
+                  linkedIn  : items2 [ index ]  .querySelector ( "span.linkedin-c > a" ).href ,
+                  about     : paragraphs ( items2 [ index ]  .querySelectorAll ( "div.col-lg-8 > p" ) ) ,
+                  image     : item .querySelector ( 'img' ) .src ,
+                  from      : "Live from http://aaccapital.com/nl/team/"
               } );
             } );
             return results;
@@ -166,6 +174,7 @@ function runaacc ( socket , monitor ) {
       }
       //
       browser.close ( );
+      socket .emit ( "outgoing data" , urls )
       monitor .confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -175,7 +184,7 @@ function runaacc ( socket , monitor ) {
   })
 }
 
-function run5sq ( ) {
+function run5sq ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( {
@@ -192,6 +201,7 @@ function run5sq ( ) {
         }
       } );
       await page.goto ( "http://www.5square.nl/#page_458" , { timeout: 0 } );
+      check_if_canceled ( browser , monitor , socket );
       urls = await page.evaluate ( ( ) => {
         let links = [ ];
         let items = document .querySelectorAll ( 'div#page_458 > ul.da-thumbs > li > a' );
@@ -203,7 +213,7 @@ function run5sq ( ) {
       function crawlUrl ( url ) {
         return new Promise ( async ( resolve , reject ) => {
           try{
-            // Open new tab.
+            check_if_canceled ( browser , monitor , socket );
             const page = await browser .newPage ( );
             await page.setRequestInterception ( true );
             page.on ( 'request' , ( request ) => {
@@ -213,23 +223,35 @@ function run5sq ( ) {
                   request .continue  ( );
               }
             } );
+            check_if_canceled ( browser , monitor , socket );
             await page .goto ( url , { timeout: 0 } );
+            check_if_canceled ( browser , monitor , socket );
             const result = await page.evaluate  ( ( ) => {
+              function  paragraphs  ( array ) {
+                let paragraph = '';
+                array.forEach ( ( para ) =>{
+                  paragraph += para.innerText += '\n';
+                } );
+                return paragraph;
+              }
               return {
-                name  : document .querySelector ( 'span.underline' ) .innerText ,
-                image : document .querySelector ( 'div.title-box + img' ) .src ,
-                job   : document .querySelector ( 'div.col-6 p' ) .innerText.trim ( ) ,//|| "ADVISOR" ,
+                name      : document .querySelector ( 'span.underline' ) .innerText ,
+                image     : document .querySelector ( 'div.title-box + img' ) .src ,
+                job       : document .querySelector ( 'div.col-6 p' ) .innerText.trim ( ) || "ADVISOR" ,
+                linkedIn  : document .querySelector ( 'ul.social > li > a' ) .href ,
+                about     : paragraphs ( document .querySelectorAll ( 'div.col-6 > p' ) ) ,
               };
             } )
             await page.close ( );
             check_if_canceled ( browser , monitor , socket );
-            //console.log ( result );
+            socket .emit ( "outgoing data" , [ result ] )
             return resolve ( result )
           }catch ( e ){
             return reject ( e )
           }
         } )
       };
+      check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [ ...urls.map ( crawlUrl ) ] ).catch ( e => { console.log ( e ) } );
       browser.close ( );
       monitor .confirm = true;
@@ -240,7 +262,7 @@ function run5sq ( ) {
   })
 }
 
-function runactivecapital ( ) {
+function runactivecapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] } );
@@ -256,22 +278,52 @@ function runactivecapital ( ) {
       let urls = [ ];
       //specific to website
       {
+        check_if_canceled ( browser , monitor , socket );
         await page.goto ( "http://www.activecapitalcompany.com/over-ons/team" , { timeout: 0 } );
         {
+          check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
-            let items = document .querySelectorAll ( 'a.sbr' );
-            Array.from ( items ).forEach ( ( item  , index ) => {
+            let items = document.querySelectorAll ( 'a.sbr' );
+            Array.from ( items ).forEach ( async ( item  , index ) => {
               results.push ( {
                   name    : item .querySelector ( 'span.field-title' )  .innerText ,
                   job     : item .querySelector ( 'span.field-extra_function' )  .innerText ,
-                  //market  : "" ,
                   image   : item .querySelector ( 'span.background' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
-                  from    : "http://www.activecapitalcompany.com/over-ons/team"
+                  from    : "http://www.activecapitalcompany.com/over-ons/team" ,
+                  about   : item.href
               } );
             } );
             return results;
           } );
+
+          await page.close ()
+
+          await Promise.all ( [ ...urls.map ( async ( item ) => {
+            return new Promise ( async ( resolve , reject ) => {
+              try{
+                check_if_canceled ( browser , monitor , socket );
+                const page = await browser.newPage ( );
+                await page.goto ( item.about , { timeout: 0 } );
+                check_if_canceled ( browser , monitor , socket );
+                item.about = await page.evaluate( (  )=>{
+                  function  paragraphs  ( array ) {
+                    let paragraph = '';
+                    array.forEach ( ( para ) =>{
+                      paragraph += para.innerText += '\n';
+                    } );
+                    return paragraph;
+                  };
+                  return paragraphs ( document.querySelectorAll ( 'div.block1 > p' ) );
+                } )
+                check_if_canceled ( browser , monitor , socket );
+                socket .emit ( "outgoing data" , [ item ] )
+                return resolve ( item );
+              }catch ( e ){
+                return reject ( e );
+              }
+            } );
+          } ) ] )
         }
       }
       //
@@ -286,26 +338,16 @@ function runactivecapital ( ) {
 function runadventinternational ( ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless:true } );
       const page = await browser.newPage ( );
-      await page.setRequestInterception ( true );
-      page.on ( 'request' , ( request ) => {
-        if ( request .resourceType ( ) === 'document' ) {
-          request .continue ( );
-        } else {
-          request.abort ( );
-        }
-      } );
+      //await page.setRequestInterception ( true );
       let urls = [ ];
+      let resultz = [ ];
       //specific to website
       {
+        let url = "https://www.adventinternational.com/team/";
         await page.goto ( "https://www.adventinternational.com/team/" , { timeout: 0 } );
-        /*if (  await page.$  ( 'a.button.load-more'  ) !== null  ) {
-          await Promise.all ( [
-            page.waitForNavigation ( { timeout: 0 } ) ,
-            page.click ( 'a.button.load-more' ),
-          ] );
-        }*/
+
         {
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
@@ -321,6 +363,42 @@ function runadventinternational ( ) {
             } );
             return results;
           } );
+          /*let itemz = await page.$$ ( 'div.more.item.col-xs-6.col-sm-3.hide.member-item.js-team-member-container' );
+          let load = await page.$ ( 'a.button.load-more' );
+          while ( load ){
+            try{
+              load.focus ( );
+              await page .waitFor ( 3000 );
+              await load.click ( );
+              load = await page.$ ( 'a.button.load-more' );
+            }catch (e){
+              console.log ( "we chat!" )
+              break;
+            }
+          }
+          await page .waitFor ( 2000 );
+          var index = 0;
+          for ( item of Array.from ( itemz ) ) {
+            await item .focus (  );
+            await item .click (  );
+            await page .waitFor ( 'div.inner > div.row' );
+            await page .waitFor ( 2000 );
+            resultz.push ( await page.evaluate ( ( url , index ) => {
+              let it = document.querySelectorAll ( 'div.row.show-item > div.js-extra-info.extra-info > div.inner' );
+              let item_ = it[it.length-1];
+              console.log ( item_ )
+              let data = {
+                    name    : item_ .querySelector ( 'h1') .innerText ,
+                    //job     : item_ .querySelector ( 'p' ) .innerText ,
+                    image   : document.querySelector ( 'div.row.show-item > div.member-item.selected > div.img-wrapper > img' ) .src ,
+                    from    : url ,
+                    index   : index ,
+                    //about   : item_ .querySelector ( 'div.row' ) .innerText ,
+                };
+                return data;
+              } , url , index ++ )
+            );
+          }*/
         }
       }
       //
@@ -6493,7 +6571,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //runaacc ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( e => { console.log } );
+  //runadventinternational ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
@@ -6510,7 +6588,7 @@ io .on ( "connection" , socket => {
       let prefect = await sync_ ( );
       console.log ( data );
       runaacc ( socket , prefect )
-        .then ( results => socket .emit ( "outgoing data" , results ) )
+        .then ( console.log )
           .catch ( console.error );
     }
   );
@@ -6520,7 +6598,7 @@ io .on ( "connection" , socket => {
       let prefect = await sync_ ( );
       console.log ( data );
       run5sq ( socket , prefect )
-        .then ( results => socket .emit ( "outgoing data" , results ) )
+        .then ( console.log )
           .catch ( console.error );
     }
   );
@@ -6530,16 +6608,18 @@ io .on ( "connection" , socket => {
       let prefect = await sync_ ( );
       console.log ( data );
       runactivecapital ( socket , prefect )
-        .then ( results => socket .emit ( "outgoing data" , results ) )
+        .then ( console.log )
           .catch ( console.error );
     }
   );
 
-  socket .on ( "5" , function ( data ) {
-    console.log ( data );
-    runadventinternational ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "5" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      runadventinternational ( socket , prefect )
+        .then ( results => socket .emit ( "outgoing data" , results ) )
+          .catch ( console.error );
   } );
 
   socket .on ( "6" , function ( data ) {

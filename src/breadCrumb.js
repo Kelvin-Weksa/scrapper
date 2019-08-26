@@ -14,6 +14,8 @@ import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 const useStyles = theme => ({
   root: {
     padding: theme.spacing(1, 2),
+    backgroundColor : `rgba(255,255,255,0.5)` ,
+    elevation: 24,
   },
   link: {
     display: 'flex',
@@ -46,7 +48,7 @@ class IconBreadcrumbs extends Component {
   render (  ){
     const { classes } = this.props;
     return (
-      <Paper elevation={0} className={classes.root}>
+      <Paper elevation={0} className={classes.root} >
         <Breadcrumbs aria-label="breadcrumb" separator={<CompareArrowsIcon color="secondary"/>}>
           <Link color={this.state.pe} href="" onClick={this.handleClick} className={classes.link}>
             <LocalAtm className={classes.icon} />
