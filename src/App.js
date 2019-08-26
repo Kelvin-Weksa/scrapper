@@ -16,7 +16,8 @@ class App extends Component {
   componentDidMount ( ) {
     this.fetcher ( "3i Group" , '1' , 'https://www.3i.com/images/logo.svg' );
     socket.on ( "outgoing data", ( data ) => {
-      this.setState ( { characters: [ ...this.state.characters , ...data ] , loaded: true ,  } )
+      let set  = new Set( [ ...this.state.characters , ...data ] );
+      this.setState ( { characters: [ ...set ] , loaded: true ,  } )
     } );
 
     socket.on ( "logs", ( data ) => {

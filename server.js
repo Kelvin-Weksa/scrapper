@@ -9,7 +9,7 @@ var geoip = require('geoip-lite');
 const port = process.env.PORT || 8080;
 
 const app = express ( );
-const server = http .createServer ( app );
+const server = http .createServer ( app );[   ]
 const io = socketIo ( server );
 
 app.use ( express.static ( __dirname ) );
@@ -257,6 +257,7 @@ function run5sq ( socket , monitor ) {
       monitor .confirm = true;
       return resolve ( datas );
     } catch ( e ) {
+      monitor .confirm = true;
       return reject ( e );
     }
   })
@@ -318,8 +319,11 @@ function runactivecapital ( socket , monitor ) {
                 } )
                 check_if_canceled ( browser , monitor , socket );
                 socket .emit ( "outgoing data" , [ item ] )
+                await browser.close ( );
+                monitor .confirm = true;
                 return resolve ( item );
               }catch ( e ){
+                monitor .confirm = true;
                 return reject ( e );
               }
             } );
@@ -335,7 +339,7 @@ function runactivecapital ( socket , monitor ) {
   })
 }
 
-function runadventinternational ( ) {
+function runadventinternational ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless:true } );
@@ -346,25 +350,14 @@ function runadventinternational ( ) {
       //specific to website
       {
         let url = "https://www.adventinternational.com/team/";
+        check_if_canceled ( browser , monitor , socket );
         await page.goto ( "https://www.adventinternational.com/team/" , { timeout: 0 } );
 
         {
-          urls = await page.evaluate ( ( ) => {
-            let results = [ ];
-            let items = document .querySelectorAll ( 'div.more.item.col-xs-6.col-sm-3.hide.member-item.js-team-member-container' );
-            Array.from ( items ).forEach ( ( item  , index ) => {
-              results.push ( {
-                  name    : item .querySelector ( 'h2 > a' )  .innerText ,
-                  job     : item .querySelector ( 'h2 + p' )  .innerText ,
-                  market  : item .querySelector ( 'p.location' )  .innerText ,
-                  image   : item .querySelector ( 'div.img-wrapper > img' )  .src ,
-                  from    : "https://www.adventinternational.com/team/"
-              } );
-            } );
-            return results;
-          } );
-          /*let itemz = await page.$$ ( 'div.more.item.col-xs-6.col-sm-3.hide.member-item.js-team-member-container' );
+          check_if_canceled ( browser , monitor , socket );
+          let itemz = await page.$$ ( 'div.more.item.col-xs-6.col-sm-3.hide.member-item.js-team-member-container' );
           let load = await page.$ ( 'a.button.load-more' );
+          check_if_canceled ( browser , monitor , socket );
           while ( load ){
             try{
               load.focus ( );
@@ -376,35 +369,57 @@ function runadventinternational ( ) {
               break;
             }
           }
-          await page .waitFor ( 2000 );
           var index = 0;
           for ( item of Array.from ( itemz ) ) {
+            check_if_canceled ( browser , monitor , socket );
             await item .focus (  );
-            await item .click (  );
-            await page .waitFor ( 'div.inner > div.row' );
-            await page .waitFor ( 2000 );
-            resultz.push ( await page.evaluate ( ( url , index ) => {
+            await item .click (  )
+              .catch (  async ( e ) => {
+                console.log ( e + "  ...retrying operation!!!!" )
+                await sleep ( 500 );
+                await item. click ( )
+                .catch (  async ( e ) => {
+                  console.log ( e + "  ...retrying operation!!!!" )
+                  await sleep ( 500 );
+                  await item. click ( );
+                } );
+
+              } );
+            while ( ! await page .$ ( 'div.row.show-item > div.js-extra-info.extra-info > div.inner > h1' ) ){
+              await sleep ( 500 );
+              console.log ( itemz.length + 'polling...!' );
+              check_if_canceled ( browser , monitor , socket );
+            }
+            check_if_canceled ( browser , monitor , socket );
+            let data = await page.evaluate ( ( url , index ) => {
               let it = document.querySelectorAll ( 'div.row.show-item > div.js-extra-info.extra-info > div.inner' );
               let item_ = it[it.length-1];
-              console.log ( item_ )
+              //console.log ( item_ )
               let data = {
                     name    : item_ .querySelector ( 'h1') .innerText ,
-                    //job     : item_ .querySelector ( 'p' ) .innerText ,
+                    job     : item_ .querySelector ( 'p' ) .innerText ,
                     image   : document.querySelector ( 'div.row.show-item > div.member-item.selected > div.img-wrapper > img' ) .src ,
                     from    : url ,
                     index   : index ,
-                    //about   : item_ .querySelector ( 'div.row' ) .innerText ,
+                    about   : item_ .querySelector ( 'div.row' ) .innerText ,
                 };
                 return data;
               } , url , index ++ )
-            );
-          }*/
+            resultz.push ( data )
+            //page.waitFor ( 500 );
+            socket.emit ( "outgoing data" , [data] )
+
+          }
         }
       }
       //
       browser.close ( );
-      return resolve ( urls );
+      check_if_canceled ( browser , monitor , socket );
+      //socket.emit ( "outgoing data" , resultz );
+      monitor .confirm = true;
+      return resolve ( resultz );
     } catch ( e ) {
+      monitor .confirm = true;
       return reject ( e );
     }
   })
@@ -6618,7 +6633,7 @@ io .on ( "connection" , socket => {
       let prefect = await sync_ ( );
       console.log ( data );
       runadventinternational ( socket , prefect )
-        .then ( results => socket .emit ( "outgoing data" , results ) )
+        .then ( console.log )
           .catch ( console.error );
   } );
 
