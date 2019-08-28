@@ -419,7 +419,6 @@ function runadventinternational ( socket , monitor ) {
             //page.waitFor ( 500 );
             await check_if_canceled ( browser , monitor , socket );
             socket.emit ( "outgoing data" , [data] )
-
           }
         }
       }
@@ -1416,35 +1415,44 @@ function cvc ( socket , monitor) {
   })
 }
 
-function dehogedennencapital ( ) {
+function dehogedennencapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
-      await page.setRequestInterception ( true );
-      page.on ( 'request' , ( request ) => {
-        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-            request .abort ( );
-        } else {
-            request .continue  ( );
-        }
-      } );
       let urls = [ ];
       //specific to website
       {
-        await page .goto ( "https://www.dehogedennencapital.nl/team/" , { timeout : 0 , } );
+        let url = "https://www.dehogedennencapital.nl/team/";
+        await check_if_canceled ( browser , monitor , socket );
+        await page .goto ( url , { timeout : 0 , } );
         await autoScroll ( page );
         {
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'a.js-modal__link.c-full-img-link-blocks__block.c-full-img-link-blocks__block--orange' );
+            let itemz = document .querySelectorAll ( 'div.c-modal__content' );
             Array.from ( items ).forEach ( ( item  , index ) => {
+              let phone = itemz [ index ] .querySelectorAll ( 'div.c-modal__links > a' ) [ 0 ];
+              let mail = itemz [ index ] .querySelectorAll ( 'div.c-modal__links > a' ) [ 1 ];
+              function  paragraphs  ( array ) {
+                let paragraph = '';
+                array.forEach ( ( para ) =>{
+                  paragraph += para.innerText += '\n';
+                } );
+                return paragraph;
+              }
               results.push ( {
                   name    : item .querySelector ( 'h3' )  .innerText  ,
                   job     : item .querySelector ( 'small' )  .innerText ,
                   //market  : "" ,
                   image   : item .querySelector ( 'div.c-full-img-link-blocks__block__img.u-bg-cover-center' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                   from    : "https://www.dehogedennencapital.nl/team/" ,
+                  about   : paragraphs ( itemz [ index ] .querySelectorAll ( 'div.c-modal__text > p' ) ) ,
+                  phone   :  phone ? phone .innerText .replace ( '\n' , '' ) .trim ( ) : '' ,
+                  mail    :  mail ? mail .innerText .replace ( '\n' , '' ) .trim ( ) : '' ,
               } );
             } );
             return results;
@@ -1453,14 +1461,18 @@ function dehogedennencapital ( ) {
       }
       //
       browser.close ( );
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , urls );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function delftenterprises ( ) {
+function delftenterprises ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
@@ -7049,7 +7061,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //cvc ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //delftenterprises ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
@@ -7217,18 +7229,22 @@ io .on ( "connection" , socket => {
           .catch ( console.error );
   } );
 
-  socket .on ( "19" , function ( data ) {
-    console.log ( data );
-    dehogedennencapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "19" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      dehogedennencapital ( socket , prefect )
+        .then ( console.error )
+          .catch ( console.error );
   } );
 
-  socket .on ( "20" , function ( data ) {
-    console.log ( data );
-    delftenterprises ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "20" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      delftenterprises ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
   socket .on ( "21" , function ( data ) {

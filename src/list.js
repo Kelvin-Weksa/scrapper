@@ -17,7 +17,7 @@ const Listing = [
   [ "https://committedcapital.nl/team/" , "16" , 'Committed Capital' ,  "https://committedcapital.nl/wp-content/uploads/2018/06/cc_logo.svg" , "PE" , "VC" ] ,
   [ "https://www.cottonwood.vc/" , "17" , "CottonWood" , "https://cottonwood.vc/wp-content/uploads/2018/03/Logo-Website.png" ,"PE" ] ,
   [ "https://www.cvc.com/people/working-at-cvc" , "18" , "CVC" , "https://www.cvc.com/~/media/Images/C/CVC-Capital-V2/logo/cvc-capital-logo.svg?la=en" , "PE" ] ,
-  [ "https://www.dehogedennencapital.nl/team/" , "19" , "dehogedennencapital" , "https://www.dehogedennencapital.nl/wp-content/uploads/sites/3/2019/04/dehogedennen-capital-logo-colors.svg" , "PE" ] ,
+  [ "https://www.dehogedennencapital.nl/team/" , "19" , "Dehogedennen Capital" , "https://www.dehogedennencapital.nl/wp-content/uploads/sites/3/2019/04/dehogedennen-capital-logo-colors.svg" , "PE" ] ,
   [ "http://www.delftenterprises.nl/wat-we-doen/onze-mensen/" , "20" , "delftenterprises" , "http://www.delftenterprises.nl/assets/themes/delft-enterprises/css/../gfx/logo.svg" , "PE" ] ,
   [ "https://www.ecart.nl/en/organisatie-missie/" , "21" , "ecart" , "https://www.ecart.nl/wp-content/uploads/2019/01/logo.svg" , "PE" ] ,
   [ "https://egeria.nl/team-overzicht/" , "22" , "egeria" , "https://egeria.nl/wp-content/themes/egeria/img/logo.svg" , "PE" ] ,
