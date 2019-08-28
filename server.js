@@ -1407,6 +1407,7 @@ function cvc ( socket , monitor) {
       //
       browser.close ( );
       monitor.confirm = true;
+      socket.emit ( 'outgoing data' , urls )
       return resolve ( urls );
     } catch ( e ) {
       monitor.confirm = true;
@@ -7048,7 +7049,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  cvc ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //cvc ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
