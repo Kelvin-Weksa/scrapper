@@ -56,14 +56,14 @@ function run3i ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
-      check_if_canceled ( browser , monitor , socket );
+      await check_if_canceled ( browser , monitor , socket );
       let urls = [ ];
       for ( i = 1; i < 9; i ++  )
         urls .push ( `https://www.3i.com/our-people/?page=${i}` );
       function crawlUrl ( url ) {
         return new Promise ( async ( resolve , reject ) => {
           try{
-            check_if_canceled ( browser , monitor , socket );
+            await check_if_canceled ( browser , monitor , socket );
             const page = await browser.newPage ( );
             await page .setRequestInterception ( true );
             page .on ( 'request' , ( request ) => {
@@ -73,37 +73,42 @@ function run3i ( socket , monitor ) {
                   request .continue  ( );
               }
             } );
-            check_if_canceled ( browser , monitor , socket );
+            await check_if_canceled ( browser , monitor , socket );
             await page.goto ( url , { timeout: 0 } );
             await autoScroll ( page );
-            check_if_canceled ( browser , monitor , socket );
+            await check_if_canceled ( browser , monitor , socket );
             let items = await page.$$ ( 'div.item-container' );
             let rollingUrls = [];
             let index = 0
             for ( item of Array.from ( items ) ) {
-              check_if_canceled ( browser , monitor , socket );
-              await item .click (  );
-              rollingUrls.push ( await page.evaluate ( ( url , index ) => {
-                let item_ = document.querySelector ( 'li.portfolio-item.active' );
-                let fax = item_ .querySelector ( '.fax' );
-                let map = item_ .querySelector ( '.map > a' );
-                let data = {
-                    name    : item_ .querySelector ( 'h5') .innerText .split ( '–' ) [ 0 ] ,
-                    job     : item_ .querySelector ( '.area' ) .innerText ,
-                    image   : item_ .querySelector ( 'img' ) .src ,
-                    from    : url ,
-                    index   : index ,
-                    about   : item_ .querySelectorAll ( 'div.pure-u-1.pure-u-md-12-24' ) [ 0 ] .innerText ,
-                    phone   : item_ .querySelector ( '.phone' ) .innerText ,
-                    fax     : fax ? fax.innerText : "no fax",
-                    map     : map ? map.href  : "no map",
-                  };
-                  return data;
-                } , url )
-              );
+              try {
+                await check_if_canceled ( browser , monitor , socket );
+                await item .click (  );
+                rollingUrls.push ( await page.evaluate ( ( url , index ) => {
+                  let item_ = document.querySelector ( 'li.portfolio-item.active' );
+                  let fax = item_ .querySelector ( '.fax' );
+                  let map = item_ .querySelector ( '.map > a' );
+                  let data = {
+                      name    : item_ .querySelector ( 'h5') .innerText .split ( '–' ) [ 0 ] ,
+                      job     : item_ .querySelector ( '.area' ) .innerText ,
+                      image   : item_ .querySelector ( 'img' ) .src ,
+                      from    : url ,
+                      index   : index ,
+                      about   : item_ .querySelectorAll ( 'div.pure-u-1.pure-u-md-12-24' ) [ 0 ] .innerText ,
+                      phone   : item_ .querySelector ( '.phone' ) .innerText ,
+                      fax     : fax ? fax.innerText : "no fax",
+                      map     : map ? map.href  : "no map",
+                    };
+                    return data;
+                  } , url )
+                );
+              } catch ( e ) {
+                console.log ( e )
+                //return ( e )
+              }
             }
             await page .close ( );
-            check_if_canceled ( browser , monitor , socket );
+            await check_if_canceled ( browser , monitor , socket );
             socket .emit ( "outgoing data" , rollingUrls )
             socket .emit ( "logs" , url )
             return resolve ( rollingUrls );
@@ -112,8 +117,8 @@ function run3i ( socket , monitor ) {
           }
         } )
       }
-      check_if_canceled ( browser , monitor , socket );
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      await check_if_canceled ( browser , monitor , socket );
+      let datas = await Promise.all ( [  ...urls . map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       browser.close ( );
       monitor .confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
@@ -129,6 +134,7 @@ function runaacc ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -141,10 +147,10 @@ function runaacc ( socket , monitor ) {
       let urls = [ ];
       //specific to website
       {
-        check_if_canceled ( browser , monitor , socket );
+        await check_if_canceled ( browser , monitor , socket );
         await page.goto ( "http://aaccapital.com/nl/team/" , { timeout: 0 } );
         {
-          check_if_canceled ( browser , monitor , socket );
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( (  ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'div.col-md-4.js-collapse.cardblock.team.multiple' );
@@ -174,6 +180,7 @@ function runaacc ( socket , monitor ) {
       }
       //
       browser.close ( );
+      await check_if_canceled ( browser , monitor , socket );
       socket .emit ( "outgoing data" , urls )
       monitor .confirm = true;
       return resolve ( urls );
@@ -190,6 +197,7 @@ function run5sq ( socket , monitor ) {
       const browser = await puppeteer.launch ( {
         args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] ,
       } );
+      await check_if_canceled ( browser , monitor , socket );
       let urls = [ ];
       const page = await browser .newPage ( );
       await page.setRequestInterception ( true );
@@ -201,7 +209,7 @@ function run5sq ( socket , monitor ) {
         }
       } );
       await page.goto ( "http://www.5square.nl/#page_458" , { timeout: 0 } );
-      check_if_canceled ( browser , monitor , socket );
+      await check_if_canceled ( browser , monitor , socket );
       urls = await page.evaluate ( ( ) => {
         let links = [ ];
         let items = document .querySelectorAll ( 'div#page_458 > ul.da-thumbs > li > a' );
@@ -213,7 +221,7 @@ function run5sq ( socket , monitor ) {
       function crawlUrl ( url ) {
         return new Promise ( async ( resolve , reject ) => {
           try{
-            check_if_canceled ( browser , monitor , socket );
+            await check_if_canceled ( browser , monitor , socket );
             const page = await browser .newPage ( );
             await page.setRequestInterception ( true );
             page.on ( 'request' , ( request ) => {
@@ -223,9 +231,9 @@ function run5sq ( socket , monitor ) {
                   request .continue  ( );
               }
             } );
-            check_if_canceled ( browser , monitor , socket );
+            await check_if_canceled ( browser , monitor , socket );
             await page .goto ( url , { timeout: 0 } );
-            check_if_canceled ( browser , monitor , socket );
+            await check_if_canceled ( browser , monitor , socket );
             const result = await page.evaluate  ( ( ) => {
               function  paragraphs  ( array ) {
                 let paragraph = '';
@@ -243,7 +251,7 @@ function run5sq ( socket , monitor ) {
               };
             } )
             await page.close ( );
-            check_if_canceled ( browser , monitor , socket );
+            await check_if_canceled ( browser , monitor , socket );
             socket .emit ( "outgoing data" , [ result ] )
             return resolve ( result )
           }catch ( e ){
@@ -251,7 +259,7 @@ function run5sq ( socket , monitor ) {
           }
         } )
       };
-      check_if_canceled ( browser , monitor , socket );
+      await check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [ ...urls.map ( crawlUrl ) ] ).catch ( e => { console.log ( e ) } );
       browser.close ( );
       monitor .confirm = true;
@@ -267,6 +275,7 @@ function runactivecapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -279,10 +288,10 @@ function runactivecapital ( socket , monitor ) {
       let urls = [ ];
       //specific to website
       {
-        check_if_canceled ( browser , monitor , socket );
+        await check_if_canceled ( browser , monitor , socket );
         await page.goto ( "http://www.activecapitalcompany.com/over-ons/team" , { timeout: 0 } );
         {
-          check_if_canceled ( browser , monitor , socket );
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
             let items = document.querySelectorAll ( 'a.sbr' );
@@ -303,10 +312,10 @@ function runactivecapital ( socket , monitor ) {
           await Promise.all ( [ ...urls.map ( async ( item ) => {
             return new Promise ( async ( resolve , reject ) => {
               try{
-                check_if_canceled ( browser , monitor , socket );
+                await check_if_canceled ( browser , monitor , socket );
                 const page = await browser.newPage ( );
                 await page.goto ( item.about , { timeout: 0 } );
-                check_if_canceled ( browser , monitor , socket );
+                await check_if_canceled ( browser , monitor , socket );
                 item.about = await page.evaluate( (  )=>{
                   function  paragraphs  ( array ) {
                     let paragraph = '';
@@ -317,13 +326,11 @@ function runactivecapital ( socket , monitor ) {
                   };
                   return paragraphs ( document.querySelectorAll ( 'div.block1 > p' ) );
                 } )
-                check_if_canceled ( browser , monitor , socket );
+                await check_if_canceled ( browser , monitor , socket );
                 socket .emit ( "outgoing data" , [ item ] )
-                await browser.close ( );
-                monitor .confirm = true;
+                //await browser.close ( );
                 return resolve ( item );
               }catch ( e ){
-                monitor .confirm = true;
                 return reject ( e );
               }
             } );
@@ -331,9 +338,11 @@ function runactivecapital ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
+      monitor .confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor .confirm = true;
       return reject ( e );
     }
   })
@@ -343,6 +352,7 @@ function runadventinternational ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless:true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       //await page.setRequestInterception ( true );
       let urls = [ ];
@@ -350,14 +360,14 @@ function runadventinternational ( socket , monitor ) {
       //specific to website
       {
         let url = "https://www.adventinternational.com/team/";
-        check_if_canceled ( browser , monitor , socket );
+        await check_if_canceled ( browser , monitor , socket );
         await page.goto ( "https://www.adventinternational.com/team/" , { timeout: 0 } );
 
         {
-          check_if_canceled ( browser , monitor , socket );
+          await check_if_canceled ( browser , monitor , socket );
           let itemz = await page.$$ ( 'div.more.item.col-xs-6.col-sm-3.hide.member-item.js-team-member-container' );
           let load = await page.$ ( 'a.button.load-more' );
-          check_if_canceled ( browser , monitor , socket );
+          await check_if_canceled ( browser , monitor , socket );
           while ( load ){
             try{
               load.focus ( );
@@ -371,7 +381,7 @@ function runadventinternational ( socket , monitor ) {
           }
           var index = 0;
           for ( item of Array.from ( itemz ) ) {
-            check_if_canceled ( browser , monitor , socket );
+            await check_if_canceled ( browser , monitor , socket );
             await item .focus (  );
             await item .click (  )
               .catch (  async ( e ) => {
@@ -390,7 +400,7 @@ function runadventinternational ( socket , monitor ) {
               console.log ( itemz.length + 'polling...!' );
               check_if_canceled ( browser , monitor , socket );
             }
-            check_if_canceled ( browser , monitor , socket );
+            await check_if_canceled ( browser , monitor , socket );
             let data = await page.evaluate ( ( url , index ) => {
               let it = document.querySelectorAll ( 'div.row.show-item > div.js-extra-info.extra-info > div.inner' );
               let item_ = it[it.length-1];
@@ -407,6 +417,7 @@ function runadventinternational ( socket , monitor ) {
               } , url , index ++ )
             resultz.push ( data )
             //page.waitFor ( 500 );
+            await check_if_canceled ( browser , monitor , socket );
             socket.emit ( "outgoing data" , [data] )
 
           }
@@ -414,7 +425,7 @@ function runadventinternational ( socket , monitor ) {
       }
       //
       browser.close ( );
-      check_if_canceled ( browser , monitor , socket );
+      await check_if_canceled ( browser , monitor , socket );
       //socket.emit ( "outgoing data" , resultz );
       monitor .confirm = true;
       return resolve ( resultz );
@@ -425,10 +436,11 @@ function runadventinternational ( socket , monitor ) {
   })
 }
 
-function runalpinvest ( ) {
+function runalpinvest ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -441,38 +453,82 @@ function runalpinvest ( ) {
       let urls = [ ];
       //specific to website
       {
+        await check_if_canceled ( browser , monitor , socket );
         await page.goto ( "http://www.alpinvest.com/leadership" , { timeout: 0 } );
-        {
-          urls = await page.evaluate ( ( ) => {
-            let results = [ ];
-            let items = document .querySelectorAll ( 'div.contentArea_smallBioColumn.vCard' );
-            //.reduce ( ( a , b) => a += ( b .nodeType === 3 ? b .textContent : '' ) , '' ) ,
-            Array.from ( items ).forEach ( ( item  , index ) => {
-              results.push ( {
-                  name    : item .querySelector ( 'a.contentLink_bioName.fn' )  .innerText ,
-                  job     : item.childNodes [ 3 ] .textContent .trim ( ) .split ( '\n' ) [ 1 ] .trim ( ),
-                  market  : item .querySelector ( 'i' )  .innerText .slice ( 1 , -2 ) ,
-                  image   : item .querySelector ( 'img.photo' )  .src ,
-                  from    : "http://www.alpinvest.com/leadership"
-              } );
+        await check_if_canceled ( browser , monitor , socket );
+        urls = await page.evaluate ( ( ) => {
+          let results = [ ];
+          let items = document .querySelectorAll ( 'div.contentArea_smallBioColumn.vCard' );
+          //.reduce ( ( a , b) => a += ( b .nodeType === 3 ? b .textContent : '' ) , '' ) ,
+          Array.from ( items ).forEach ( ( item  , index ) => {
+            results.push ( {
+                name    : item .querySelector ( 'a.contentLink_bioName.fn' )  .innerText ,
+                job     : item.childNodes [ 3 ] .textContent .trim ( ) .split ( '\n' ) [ 1 ] .trim ( ),
+                market  : item .querySelector ( 'i' )  .innerText .slice ( 1 , -2 ) ,
+                image   : item .querySelector ( 'img.photo' )  .src ,
+                from    : "http://www.alpinvest.com/leadership" ,
+                about   : item .querySelector ( 'a.contentLink_bioName.fn' )  .href ,
+                phone   : item .querySelector ( 'p.telephone' )  .innerText ,
+                mail    : item .querySelector ( 'a.contentLink.email' )  .href ,
             } );
-            return results;
           } );
-        }
+          return results;
+        } );
+
+        await page.close ( );
+        await check_if_canceled ( browser , monitor , socket );
+        await Promise.all ( [ ...urls .map ( async ( item ) => {
+          return new Promise ( async ( resolve , reject )=> {
+            try {
+              check_if_canceled ( browser , monitor , socket );
+              const page = await browser.newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if ( request .resourceType ( ) === 'document' ) {
+                  request .continue ( );
+                } else {
+                  request.abort ( );
+                }
+              } );
+              await page.goto ( item.about , { timeout: 0 } );
+              check_if_canceled ( browser , monitor , socket );
+              item.about = await page.evaluate( (  )=>{
+                function  paragraphs  ( array ) {
+                  let paragraph = '';
+                  array.forEach ( ( para ) =>{
+                    paragraph += para.innerText += '\n';
+                  } );
+                  return paragraph;
+                };
+                return paragraphs ( document.querySelectorAll ( 'div.contentBox_largeBioText > p' ) );
+              } )
+              await page.close ( );
+              check_if_canceled ( browser , monitor , socket );
+              socket .emit ( "outgoing data" , [ item ] )
+              return resolve ( item );
+            }catch ( e ) {
+              return reject ( e );
+            }
+           } )
+         } )
+        ] )
       }
       //
-      browser.close ( );
+      await browser.close ( );
+      monitor.confirm = true
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function runantea ( ) {
+function runantea ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -485,6 +541,7 @@ function runantea ( ) {
       let urls = [ ];
       //specific to website
       {
+        await check_if_canceled ( browser , monitor , socket );
         await page .goto ( "https://www.antea.nl/de-mensen/de-directie/" , { timeout : 0 , } );
         await autoScroll ( page );
         {
@@ -498,6 +555,7 @@ function runantea ( ) {
                   //market  : "" ,
                   image   : item .querySelector ( 'div.one_half_bg.animate.visible:not(.textright)' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                   from    : "https://www.antea.nl/de-mensen/de-directie/" ,
+                  about   : item .querySelector ( 'div.nicepadding' ) .innerText ,
               } );
             } );
             return results;
@@ -506,17 +564,21 @@ function runantea ( ) {
       }
       //
       browser.close ( );
+      socket .emit ( 'outgoing data' , urls )
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-/*function runatlanticcapital ( ) {
+function runbaincapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -529,49 +591,12 @@ function runantea ( ) {
       let urls = [ ];
       //specific to website
       {
-        await page .goto ( "http://www.atlanticcapital.nl/nl/wie-zijn-wij" , { timeout : 0 , } );
-        await autoScroll ( page );
-        {
-          urls = await page.evaluate ( ( ) => {
-            let results = [ ];
-            results .push ( {
-              name  : document .querySelector ( 'u' ) ,
-              job   : document .querySelector ( 'p > strong' )
-            } )
-
-            return results;
-          } );
-        }
-      }
-      //
-      browser.close ( );
-      return resolve ( urls );
-    } catch ( e ) {
-      return reject ( e );
-    }
-  })
-}*/
-
-function runbaincapital ( ) {
-  return new Promise ( async ( resolve , reject ) => {
-    try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
-      const page = await browser.newPage ( );
-      await page.setRequestInterception ( true );
-      page.on ( 'request' , ( request ) => {
-        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-            request .abort ( );
-        } else {
-            request .continue  ( );
-        }
-      } );
-      let urls = [ ];
-      //specific to website
-      {
+        await check_if_canceled ( browser , monitor , socket );
         await page .goto ( "https://www.baincapital.com/people" , { timeout : 0 , } );
         console.log ( "begin scrolling ..." );
         let i = 0;
-        while ( i ++ < 5 ){
+        while ( i ++ < 4 ){
+          await check_if_canceled ( browser , monitor , socket );
           try {
             await page .hover  ( ".text-center"  );
           } catch ( e ){}
@@ -582,9 +607,10 @@ function runbaincapital ( ) {
         }
             console.log ( "done..." );
         {
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
-            let items = document .querySelectorAll ( 'div.__team_bg' );
+            let items = document .querySelectorAll ( 'div.col-xs-6.col-sm-4.col-md-6.col-lg-3.grid.staff > a' );
             Array.from ( items ).forEach ( ( item  , index ) => {
               results.push ( {
                   name    : item .querySelector ( 'h4 > span' )  .innerText ,
@@ -592,25 +618,52 @@ function runbaincapital ( ) {
                   market  : item .querySelector ( '.__location > span' )  .innerText + ' ' + item .querySelector ( 'span.locationList' )  .innerText ,
                   image   : item .querySelector ( '.team_img > img' ) .src ,
                   from    : "https://www.baincapital.com/people" ,
+                  about   : item .href ,
               } );
             } );
             return results;
           } );
+
+          await check_if_canceled ( browser , monitor , socket );
+          urls = await Promise.all ([ ...urls .map ( ( item ) => {
+            return new Promise ( async ( resolve , reject)=> {
+              try {
+                await page.goto( item.about , {timeout:0} )
+                item.about = await page.evaluate ( ( ) => {
+                  return document.querySelector ( 'div.col-xs-12.col-sm-8.col-md-8.pos-r' ) .innerText ;
+                } )
+                await autoScroll ( page );
+                item.sector = await page.evaluate ( ( ) => {
+                  let sector = document.querySelector ( 'ul.focus_link' );
+                  return sector ? sector.innerText : '' ;
+                } )
+                await check_if_canceled ( browser , monitor , socket );
+                socket.emit ( "outgoing data" , [item] );
+                return resolve ( item );
+              } catch ( e ) {
+                reject ( e )
+              }
+            });
+          } )
+          ])
         }
       }
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function runbbcapital ( ) {
+function runbbcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -623,19 +676,26 @@ function runbbcapital ( ) {
       let urls = [ ];
       //specific to website
       {
+        await check_if_canceled ( browser , monitor , socket );
         await page .goto ( "http://bbcapital.nl/team/" , { timeout : 0 , } );
         await autoScroll ( page );
         {
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'div.tmm_member' );
             Array.from ( items ).forEach ( ( item  , index ) => {
+              let about = item .querySelector ( 'div.tmm_desc' );
+              let icons = item .querySelectorAll ( 'a.tmm_sociallink' ) [ 1 ];
               results.push ( {
                   name    : item .querySelector ( 'div.tmm_names' )  .innerText ,
                   job     : item .querySelector ( 'div.tmm_job' )  .innerText ,
                   //market  : "" ,
                   image   : getComputedStyle ( item .querySelector ( 'div.tmm_photo' ) ) .getPropertyValue ( 'background-image' ) .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                   from    : "http://bbcapital.nl/team/" ,
+                  about   : about ? about.innerText : '' ,
+                  mail    : item .querySelector ( 'a.tmm_sociallink' ) . href .replace ( "mailto:" ,'' ) ,
+                  linkedIn:  icons ? icons.href : '' ,
               } );
             } );
             return results;
@@ -643,51 +703,89 @@ function runbbcapital ( ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , urls );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function runavedoncapital ( ) {
+function runavedoncapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
-      await page.setRequestInterception ( true );
-      page.on ( 'request' , ( request ) => {
-        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-            request .abort ( );
-        } else {
-            request .continue  ( );
-        }
-      } );
       let urls = [ ];
       //specific to website
       {
-        await page .goto ( "https://avedoncapital.com/team/#main-content" , { timeout : 0 , } );
+        let url = "https://avedoncapital.com/team/#main-content";
+        await check_if_canceled ( browser , monitor , socket );
+        await page .goto ( url , { timeout : 0 , } );
         await autoScroll ( page );
-        {
-          urls = await page.evaluate ( ( ) => {
-            let results = [ ];
-            let items = document .querySelectorAll ( 'article.team-preview.tile.mix.de' );
-            Array.from ( items ).forEach ( ( item  , index ) => {
-              results.push ( {
-                  name    : item .querySelector ( 'h3.name' )  .innerText ,
-                  job     : item .querySelector ( 'div.position' )  .innerText ,
-                  //market  : "" ,
-                  image   : item .querySelector ( 'div.profile-image' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
-                  from    : "https://avedoncapital.com/team/#main-content" ,
+        await check_if_canceled ( browser , monitor , socket );
+        let itemz = await page .$$ ( 'article.team-preview.tile.mix' );
+        let index = 0
+        for ( item of Array.from ( itemz ) ){
+          await check_if_canceled ( browser , monitor , socket );
+          await check_if_canceled ( browser , monitor , socket );
+          await item .focus (  );
+          await item .click (  )
+            .catch (  async ( e ) => {
+              console.log ( e + "  ...retrying operation!!!!" )
+              await sleep ( 500 );
+              await item. click ( )
+              .catch (  async ( e ) => {
+                console.log ( e + "  ...retrying operation!!!!" )
+                await sleep ( 500 );
+                await item. click ( );
               } );
+
             } );
-            return results;
-          } );
+          while ( ! await page .$ ( 'article#modal-ready' ) ){
+            await sleep ( 500 );
+            //console.log ( 'polling...!' );
+            check_if_canceled ( browser , monitor , socket );
+          }
+          await check_if_canceled ( browser , monitor , socket );
+          let data = await page.evaluate ( async ( url , index ) => {
+            return {
+              name : document .querySelector ( 'h1.name' ) .innerText ,
+              job : document .querySelector ( 'h2.position' ) .innerText ,
+              map : document .querySelector ( 'div.infos > div.office' ) ? document .querySelector ( 'div.infos > div.office' ).innerText : '' ,
+              linkedIn : document .querySelector ( 'div.infos > a.linkedin' ) ? document .querySelector ( 'div.infos > a.linkedin' ).innerText : '' ,
+              mail : document .querySelector ( 'div.infos > a.mail' ) ? document .querySelector ( 'div.infos > a.mail' ).innerText : '' ,
+              about : document .querySelector ( 'section.description' ) .innerText ,
+              sector : document .querySelector ( 'section.sectors' ) ? document .querySelector ( 'section.sectors' ).innerText : '',
+              from : url ,
+              index : index ,
+              image : document .querySelector ( 'header.header > div.profile-image-wrapper > img.profile-image' ) .src ,
+            };
+          } , url , index++ );
+          urls .push ( data );
+          await check_if_canceled ( browser , monitor , socket );
+          socket.emit ( 'outgoing data' , [data] );
+          let close = await page .$ ( 'div.close-modal' );
+          await close .click ( )
+            .catch (  async ( e ) => {
+              console.log ( e + "  ...retrying operation!!!!" )
+              await sleep ( 500 );
+              await close. click ( )
+                .catch (  async ( e ) => {
+                  console.log ( e + "  ...retrying operation!!!!" )
+                  await sleep ( 500 );
+                  await close. click ( );
+                } );
+            } );
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       return resolve ( urls );
     } catch ( e ) {
       return reject ( e );
@@ -695,10 +793,11 @@ function runavedoncapital ( ) {
   })
 }
 
-function runbolsterinvestments ( ) {
+function runbolsterinvestments ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -711,43 +810,95 @@ function runbolsterinvestments ( ) {
       let urls = [ ];
       //specific to website
       {
+        await check_if_canceled ( browser , monitor , socket );
         await page .goto ( "https://bolsterinvestments.nl/team/" , { timeout : 0 , } );
         await autoScroll ( page );
         {
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
-            let items = document .querySelectorAll ( 'div.member.in-view.is-in-view' );
+            let items = document .querySelectorAll ( 'div.member.in-view.is-in-view > a' );
             Array.from ( items ).forEach ( ( item  , index ) => {
               results.push ( {
                   name    : item .querySelector ( 'h3.h2.title' )  .innerText ,
                   job     : item .querySelector ( 'span.jobtitle' )  .innerText ,
-                  //market  : "" ,
                   image   : item .querySelector ( 'div.member--image' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                   from    : "https://bolsterinvestments.nl/team/" ,
+                  about   : item.href ,
               } );
             } );
             return results;
           } );
+
+          await check_if_canceled ( browser , monitor , socket );
+          await Promise.all ( [ ...urls .map ( ( item ) => {
+            return new Promise ( async ( resolve , reject )=> {
+              try {
+                await check_if_canceled ( browser , monitor , socket );
+                const page = await browser.newPage ( );
+                await page .goto ( item.about , {timeout:0} );
+                await page .addScriptTag ( { path: 'jquery.js'  } );
+                item.about = await page.evaluate ( ( ) => {
+                  function  paragraphs  ( array ) {
+                    let paragraph = '';
+                    array.forEach ( ( para ) =>{
+                      paragraph += para.innerText += '\n';
+                    } );
+                    return paragraph;
+                  };
+                  return paragraphs ( document .querySelectorAll ( 'p' ) ) ;
+                } );
+                item.sector = await page.evaluate ( ( ) => {
+                  function  paragraphs  ( array ) {
+                    let paragraph = '';
+                    array.forEach ( ( para ) =>{
+                      paragraph += para.innerText += '\n';
+                    } );
+                    return paragraph;
+                  };
+                  return paragraphs ( document .querySelectorAll ( 'a.participation' ) ) ;
+                } )
+                item.phone = await page.evaluate ( ( ) => {
+                  return $ ( 'div.footer__inner' ) . find ( 'a' ) .eq ( 0 ) . text (  ).replace ( '\t' , '' );
+                } )
+                item.mail = await page.evaluate ( ( ) => {
+                  return $ ( 'div.footer__inner' ) . find ( 'a' ) .eq ( 1 ) . text (  ).replace ( '\t' , '' );
+                } )
+                item.linkedIn = await page.evaluate ( ( ) => {
+                  return $ ( 'div.footer__inner' ) . find ( 'a' ) .eq ( 2 ) . prop ( 'href' ) ;
+                } )
+                await page.close (  );
+                socket.emit  ( 'outgoing data' , [item] )
+                return resolve ( item )
+              } catch ( e ) {
+                return reject ( e )
+              }
+            } ) ;
+          } ) ] )
         }
       }
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function runbridgepoint ( ) {
+function runbridgepoint ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
             try{
+              await check_if_canceled ( browser , monitor , socket );
               let results = [ ];
               const page = await browser .newPage ( );
               await page.setRequestInterception ( true );
@@ -758,7 +909,9 @@ function runbridgepoint ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = document .querySelectorAll ( 'div.column_one_third.result_item_3col.first' );
@@ -768,14 +921,53 @@ function runbridgepoint ( ) {
                     job     : item .querySelector ( 'div > ul > li' )  .innerText ,
                     market  : item .querySelector ( 'div > ul > li + li' )  .innerText ,
                     image   : item .querySelector ( 'img' ) .src ,
-                    from    : `http://www.bridgepoint.eu/en/our-team/?&page=` ,
+                    from    : url ,
+                    about   : item .querySelector ( 'a.arrow_link' ) .href
                   } );
                 } );
                 return results;
-              } );
+              }  , url );
+              await check_if_canceled ( browser , monitor , socket );
+              await Promise.all ([ ...results.map ( ( item) => {
+                return new Promise ( async ( resolve , reject ) => {
+                  try {
+                    await check_if_canceled ( browser , monitor , socket );
+                    const page = await browser.newPage ( );
+                    await check_if_canceled ( browser , monitor , socket );
+                    await page .goto ( item.about , {timeout:0} );
+                    await page .addScriptTag ( {path : "jquery.js"}  );
+                    await check_if_canceled ( browser , monitor , socket );
+                    item .about = await page.evaluate ( () => {
+                      function  paragraphs  ( array ) {
+                        let paragraph = '';
+                        array.forEach ( ( para ) =>{
+                          paragraph += para.innerText += '\n';
+                        } );
+                        return paragraph;
+                      }
+                      return paragraphs ( document.querySelectorAll ( 'div.richTextFormat > p' ) );
+                    } )
+                    await check_if_canceled ( browser , monitor , socket );
+                    item .phone = await page.evaluate ( () => {
+                      return $ ( 'table.bottom_padded' ) .find ( 'td.info' ) .eq ( 1 ) .text ( );
+                    } )
+                    item .mail = await page.evaluate ( () => {
+                      return $ ( 'table.bottom_padded' ) .find ( 'td.info > a' ) .eq ( 0 ) .prop ( 'href' ) .replace ( 'mailto:' , '' );
+                    } )
+                    await check_if_canceled ( browser , monitor , socket );
+                    socket.emit ( 'outgoing data' , [item] )
+                    return resolve ( item );
+                  } catch ( e ) {
+                    return reject ( e );
+                  }
+                });
+              }  ) ])
+
               await page.close ( );
+              monitor.confirm = true ;
               return resolve ( results )
             }catch ( e ){
+              monitor.confirm = true;
               return reject ( e )
             }
         } )
@@ -786,7 +978,7 @@ function runbridgepoint ( ) {
         urls .push ( `http://www.bridgepoint.eu/en/our-team/?&page=${i}`  )
       }
       let datas = //await crawlUrl ( `http://www.bridgepoint.eu/en/our-team/?&page=0` );
-                  await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+                  await Promise.all ( [  ...urls .slice ( 0 , 10 ). map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
       return resolve ( [ ] .concat ( ...datas ) );
@@ -796,10 +988,11 @@ function runbridgepoint ( ) {
   })
 }
 
-function runbrightlandsventurepartners ( ) {
+function runbrightlandsventurepartners ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -812,9 +1005,11 @@ function runbrightlandsventurepartners ( ) {
       let urls = [ ];
       //specific to website
       {
+        await check_if_canceled ( browser , monitor , socket );
         await page .goto ( "https://brightlandsventurepartners.com/team/" , { timeout : 0 , } );
         await autoScroll ( page );
         {
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'div.column.cell.team-item' );
@@ -825,25 +1020,70 @@ function runbrightlandsventurepartners ( ) {
                   //market  : "" ,
                   image   : item .querySelector ( 'div.inner' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                   from    : "https://brightlandsventurepartners.com/team/" ,
+                  about   : item .querySelector ( 'a' ) .href
               } );
             } );
             return results;
           } );
+
+          await check_if_canceled ( browser , monitor , socket );
+          await Promise.all ( [ ...urls.map ( ( item ) => {
+            return new Promise ( async ( resolve , reject ) => {
+              try {
+                await check_if_canceled ( browser , monitor , socket );
+                const page = await browser.newPage ( );
+                await check_if_canceled ( browser , monitor , socket );
+                await page .goto ( item.about , {timeout:0} );
+                await page .addScriptTag ( {path : "jquery.js"}  );
+                await check_if_canceled ( browser , monitor , socket );
+                item.about = await page.evaluate ( () => {
+                  function  paragraphs  ( array ) {
+                    let paragraph = '';
+                    array.forEach ( ( para ) =>{
+                      paragraph += para.innerText += '\n';
+                    } );
+                    return paragraph;
+                  };
+                  return paragraphs ( document.querySelectorAll ( 'div.inner.defaulttext > p' ) );
+                } );
+                await check_if_canceled ( browser , monitor , socket );
+                item.phone = await page.evaluate ( () => {
+                  return document.querySelectorAll ( 'div.contactinfo > a' ) [ 0 ] .innerText;
+                } );
+                await check_if_canceled ( browser , monitor , socket );
+                item.mail = await page.evaluate ( () => {
+                  return document.querySelectorAll ( 'div.contactinfo > a' ) [ 1 ] .innerText;
+                } );
+                await check_if_canceled ( browser , monitor , socket );
+                item.linkedIn = await page.evaluate ( () => {
+                  return document.querySelectorAll ( 'div.contactinfo > a' ) [ 2 ] .href;
+                } );
+                await check_if_canceled ( browser , monitor , socket );
+                socket .emit ( 'outgoing data' , [item] )
+                return resolve ( item )
+              } catch ( e ) {
+                return reject ( e );
+              }
+            });
+          } ) ])
         }
       }
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function runcapitalapartners ( ) {
+function runcapitalapartners ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -856,9 +1096,11 @@ function runcapitalapartners ( ) {
       let urls = [ ];
       //specific to website
       {
+        await check_if_canceled ( browser , monitor , socket );
         await page .goto ( "https://www.capitalapartners.nl/team" , { timeout : 0 , } );
         await autoScroll ( page );
         {
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'article.card.card--large' );
@@ -869,25 +1111,71 @@ function runcapitalapartners ( ) {
                   //market  : "" ,
                   image   : item .querySelector ( 'div.card__background.lazyloaded' ) .style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                   from    : "https://www.capitalapartners.nl/team" ,
+                  about   : item .querySelector ( 'a' ).href
               } );
             } );
             return results;
           } );
+
+          await check_if_canceled ( browser , monitor , socket );
+          await Promise.all ([ ...urls .map ( ( item ) => {
+            return new Promise ( async ( resolve , reject )=> {
+              try {
+                await check_if_canceled ( browser , monitor , socket );
+                const page = await browser.newPage ( );
+                await check_if_canceled ( browser , monitor , socket );
+                await page .goto ( item.about , {timeout:0} );
+                await page .addScriptTag ( {path : "jquery.js"}  );
+                await check_if_canceled ( browser , monitor , socket );
+                item.about = await page.evaluate ( () => {
+                  function  paragraphs  ( array ) {
+                    let paragraph = '';
+                    array.forEach ( ( para ) =>{
+                      paragraph += para.innerText += '\n';
+                    } );
+                    return paragraph;
+                  };
+                  return paragraphs ( document.querySelectorAll ( 'div.content-text__text > p' ) );
+                } );
+                await check_if_canceled ( browser , monitor , socket );
+                item.phone = await page.evaluate ( () => {
+                  return document.querySelectorAll ( 'ul.contact__list > li' ) [ 0 ].innerText;
+                } );
+                await check_if_canceled ( browser , monitor , socket );
+                item.mail = await page.evaluate ( () => {
+                  return document.querySelectorAll ( 'ul.contact__list > li' ) [ 1 ].innerText;
+                } );
+                await check_if_canceled ( browser , monitor , socket );
+                item.linkedIn = await page.evaluate ( () => {
+                  let linkedIn = document.querySelectorAll ( 'ul.contact__list > li > a' ) [ 2 ];
+                  return linkedIn ? linkedIn.href : '';
+                } );
+                await check_if_canceled ( browser , monitor , socket );
+                socket.emit( 'outgoing data' , [item] )
+                return resolve ( item );
+              } catch ( e ) {
+                return reject ( e );
+              }
+            });
+          } ) ])
         }
       }
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function runcinven ( ) {
+function runcinven ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -900,9 +1188,11 @@ function runcinven ( ) {
       let urls = [ ];
       //specific to website
       {
+        await check_if_canceled ( browser , monitor , socket );
         await page .goto ( "https://www.cinven.com/who-we-are/the-team/" , { timeout : 0 , } );
         await autoScroll ( page );
         {
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'a.item.col-md-4' );
@@ -913,25 +1203,58 @@ function runcinven ( ) {
                   //market  : "" ,
                   image   : item .querySelector ( 'img' ) .src , //style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                   from    : "https://www.cinven.com/who-we-are/the-team/" ,
+                  about   : item.href ,
               } );
             } );
             return results;
           } );
+
+          await check_if_canceled ( browser , monitor , socket );
+          await Promise.all ( [ ...urls .map ( ( item ) => {
+            return new Promise ( async ( resolve , reject ) => {
+              try {
+                await check_if_canceled ( browser , monitor , socket );
+                const page = await browser.newPage ( );
+                await check_if_canceled ( browser , monitor , socket );
+                await page .goto ( item.about , {timeout:0} );
+                await page .addScriptTag ( {path : "jquery.js"}  );
+                await check_if_canceled ( browser , monitor , socket );
+                item.about = await page.evaluate ( () => {
+                  function  paragraphs  ( array ) {
+                    let paragraph = '';
+                    array.forEach ( ( para ) =>{
+                      paragraph += para.innerText += '\n';
+                    } );
+                    return paragraph;
+                  };
+                  return paragraphs ( document.querySelectorAll ( 'div.bio > p' ) );
+                } );
+                await check_if_canceled ( browser , monitor , socket );
+                socket.emit ( 'outgoing data' , [item] )
+                return resolve ( item );
+              } catch ( e ) {
+                return reject ( e );
+              }
+            });
+          } ) ] )
         }
       }
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function committedcapital ( ) {
+function committedcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -944,9 +1267,11 @@ function committedcapital ( ) {
       let urls = [ ];
       //specific to website
       {
+        await check_if_canceled ( browser , monitor , socket );
         await page .goto ( "https://committedcapital.nl/team/" , { timeout : 0 , } );
         await autoScroll ( page );
         {
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'div.item.cbp-item.boxed-item.col-xs-4.no-excerpt' );
@@ -955,8 +1280,10 @@ function committedcapital ( ) {
                   name    : item .querySelector ( 'h4.member-name' )  .innerText ,
                   job     : item .querySelector ( 'p.team-member-description.normal' )  .innerText ,
                   //market  : "" ,
-                  image   : item .querySelector ( 'img' ) .src , //style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  image   : item .querySelector ( 'img' ) .src ,
                   from    : "https://committedcapital.nl/team/" ,
+                  linkedIn : item .querySelector ( 'a.member-social.linkedin' ) .href ,
+                  mail : item .querySelector ( 'a.member-social.email' ) .href .replace ( 'mailto:' , '' ) ,
               } );
             } );
             return results;
@@ -965,17 +1292,22 @@ function committedcapital ( ) {
       }
       //
       browser.close ( );
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , urls )
+      monitor.emit = true ;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.emit = true;
       return reject ( e );
     }
   })
 }
 
-function cottonwood ( ) {
+function cottonwood ( socket , monitor) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -988,19 +1320,33 @@ function cottonwood ( ) {
       let urls = [ ];
       //specific to website
       {
+        await check_if_canceled ( browser , monitor , socket );
         await page .goto ( "https://www.cottonwood.vc/" , { timeout : 0 , } );
         await autoScroll ( page );
         {
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
+            function  paragraphs  ( array ) {
+              let paragraph = '';
+              array.forEach ( ( para ) =>{
+                paragraph += para.innerText += '\n';
+              } );
+              return paragraph;
+            };
             let results = [ ];
             let items = document .querySelectorAll ( 'div.progression-masonry-item.progression-masonry-col-4.opacity-progression' );
             Array.from ( items ).forEach ( ( item  , index ) => {
+              let linkedIn = item . querySelector ( 'a.linkedin-pro' );
+              let mail = item . querySelector ( 'a.mail-pro' );
               results.push ( {
                   name    : item .querySelector ( 'h2.invested-team-title' )  .innerText ,
                   job     : item .querySelector ( 'div.invested-excerpt-team' )  .innerText ,
                   //market  : "" ,
                   image   : item .querySelector ( 'img' ) .src , //style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                   from    : "https://www.cottonwood.vc/" ,
+                  about   : paragraphs ( item . querySelectorAll ( 'div.invested-content-team > p' ) ) ,
+                  linkedIn : linkedIn ? linkedIn.href : '',
+                  mail :  mail ? mail.href .replace ( 'mailto:' , '' ) : '' ,
               } );
             } );
             return results;
@@ -1009,17 +1355,21 @@ function cottonwood ( ) {
       }
       //
       browser.close ( );
+      monitor.confirm = true;
+      socket.emit ( 'outgoing data' , urls )
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function cvc ( ) {
+function cvc ( socket , monitor) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -1032,9 +1382,11 @@ function cvc ( ) {
       let urls = [ ];
       //specific to website
       {
+        await check_if_canceled ( browser , monitor , socket );
         await page .goto ( "https://www.cvc.com/people/working-at-cvc" , { timeout : 0 , } );
         await autoScroll ( page );
         {
+          await check_if_canceled ( browser , monitor , socket );
           urls = await page.evaluate ( ( ) => {
             let results = [ ];
             let items = document .querySelectorAll ( 'div.person-wrapper' );
@@ -1043,8 +1395,9 @@ function cvc ( ) {
                   name    : item .querySelector ( 'p.person-name' )  .innerText .replace ( '\n' ,'' ) .trim ( ) ,
                   job     : item .querySelector ( 'p.person-designation' )  .innerText .replace ( '\n' ,'' ) .trim ( ) ,
                   //market  : "" ,
-                  image   : item .querySelector ( 'img' ) .src , //style [ 'background-image' ] .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
+                  image   : item .querySelector ( 'img' ) .src ,
                   from    : "https://www.cvc.com/people/working-at-cvc" ,
+                  about   : item .querySelector ( 'p.person-desc' ) .innerText ,
               } );
             } );
             return results;
@@ -1053,8 +1406,10 @@ function cvc ( ) {
       }
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
@@ -6561,6 +6916,113 @@ function cleverclover ( ) {
   })
 }
 
+function runatlanticcapital ( socket , monitor ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await check_if_canceled ( browser , monitor , socket );
+        await page .goto ( "http://www.atlanticcapital.nl/nl/wie-zijn-wij" , { timeout : 0 , } );
+        await check_if_canceled ( browser , monitor , socket );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let datum =  document .querySelector ( 'div.field-item.even' ) ;
+            results .push ( {
+              about  : datum .querySelectorAll ( 'p' ) [ 4 ] .innerText ,
+              mail  : datum .querySelectorAll ( 'p' ) [ 5 ] .querySelector ( 'a' ) .innerText ,
+              phone : datum .querySelectorAll ( 'p' ) [ 5 ] .innerText
+                        .replace ( datum .querySelectorAll ( 'p' ) [ 5 ] .querySelector ( 'a' ) .innerText  ,'' ) .trim (  ) ,
+              image : datum .querySelectorAll ( 'p' ) [ 4 ] .querySelector ( 'img' ) .src ,
+              name :  datum .querySelectorAll ( 'p' ) [ 4 ] .querySelector ( 'u' ) .innerText ,
+            } )
+
+            results .push ( {
+              about  : datum .querySelectorAll ( 'p' ) [ 7 ] .innerText ,
+              mail  : datum .querySelectorAll ( 'p' ) [ 8 ] .querySelector ( 'a' ) .innerText ,
+              phone : datum .querySelectorAll ( 'p' ) [ 8 ] .innerText
+                        .replace ( datum .querySelectorAll ( 'p' ) [ 8 ] .querySelector ( 'a' ) .innerText  ,'' ) .trim (  ) ,
+              image : datum .querySelectorAll ( 'p' ) [ 7 ] .querySelector ( 'img' ) .src ,
+              name :  datum .querySelectorAll ( 'p' ) [ 7 ] .querySelector ( 'u' ) .innerText ,
+            } )
+
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      await socket .emit ( 'outgoing data' , urls )
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
+function beekcapital ( socket , monitor ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
+      const page = await browser.newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      let urls = [ ];
+      //specific to website
+      {
+        await check_if_canceled ( browser , monitor , socket );
+        await page .goto ( "https://www.beekcapital.nl/#profiel" , { timeout : 0 , } );
+        await page .addScriptTag ( { path: 'jquery.js'  } );
+        await check_if_canceled ( browser , monitor , socket );
+        await autoScroll ( page );
+        {
+          urls = await page.evaluate ( ( ) => {
+            let results = [ ];
+            let datum = $ ( 'div.vc_column-inner:has(a.center:has(img))' ) ;
+            Array.from ( datum ) .slice ( 1 , 3 ) .forEach ( ( item ) => {
+              results.push ( {
+                image : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                name  : $ ( item ) .find ( 'div.wpb_wrapper  p' ) .eq ( 0 ) .text ( ) ,
+                mail  : $ ( item ) .find ( 'div.wpb_wrapper  p' ) .eq ( 1 ) .text ( ) ,
+                linkedIn :  $ ( item ) .find ( 'div.inner > a.center' ) .eq ( 0 ) .prop ( 'href' ) ,
+                about : $ ( item ) .find ( 'div.wpb_wrapper > p' ) . text ( )
+
+              } )
+            } )
+            return results;
+          } );
+        }
+      }
+      //
+      browser.close ( );
+      await socket .emit ( 'outgoing data' , urls )
+      return resolve ( urls );
+    } catch ( e ) {
+      return reject ( e );
+    }
+  })
+}
+
 //biogenerationventures ( ) .then ( console.log ) .catch ( console.error );
 
 app.get ( '/*' , function ( req , res ) {
@@ -6586,7 +7048,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //runadventinternational ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  cvc ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
@@ -6637,95 +7099,121 @@ io .on ( "connection" , socket => {
           .catch ( console.error );
   } );
 
-  socket .on ( "6" , function ( data ) {
+  socket .on ( "6" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      runalpinvest ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
+  } );
+
+  socket .on ( "7" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      runantea ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
+  } );
+
+  socket .on ( "8" ,
+    async function ( data ) {
+      let prefect = sync_ (  );
+      console.log ( data );
+      runbaincapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
+  } );
+
+  socket .on ( "9" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      runbbcapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
+  } );
+
+  socket .on ( "10" ,
+   async function ( data ) {
+    let prefect = await sync_ ( );
     console.log ( data );
-    runalpinvest ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
+    runavedoncapital ( socket , prefect )
+      .then ( console.log )
         .catch ( console.error );
   } );
 
-  socket .on ( "7" , function ( data ) {
-    console.log ( data );
-    runantea ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "11" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      runbolsterinvestments ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "8" , function ( data ) {
-    console.log ( data );
-    runbaincapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "12" ,
+    async function ( data ) {
+      let prefect = await sync_ ( )
+      console.log ( data );
+      runbridgepoint ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "9" , function ( data ) {
-    console.log ( data );
-    runbbcapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "13" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      runbrightlandsventurepartners ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "10" , function ( data ) {
-    console.log ( data );
-    runavedoncapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "14" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      runcapitalapartners ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "11" , function ( data ) {
-    console.log ( data );
-    runbolsterinvestments ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "15" ,
+    async function ( data ) {
+      let prefect = await sync_ ( )
+      console.log ( data );
+      runcinven ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "12" , function ( data ) {
-    console.log ( data );
-    runbridgepoint ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "16" ,
+    async function ( data ) {
+      let  prefect = await sync_ ( );
+      console.log ( data );
+      committedcapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "13" , function ( data ) {
-    console.log ( data );
-    runbrightlandsventurepartners ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "17" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      cottonwood ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "14" , function ( data ) {
-    console.log ( data );
-    runcapitalapartners ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
-  } );
-
-  socket .on ( "15" , function ( data ) {
-    console.log ( data );
-    runcinven ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
-  } );
-
-  socket .on ( "16" , function ( data ) {
-    console.log ( data );
-    committedcapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
-  } );
-
-  socket .on ( "17" , function ( data ) {
-    console.log ( data );
-    cottonwood ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
-  } );
-
-  socket .on ( "18" , function ( data ) {
-    console.log ( data );
-    cvc ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "18" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      cvc ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
   socket .on ( "19" , function ( data ) {
@@ -7440,6 +7928,24 @@ io .on ( "connection" , socket => {
     cleverclover ( )
       .then ( results => socket .emit ( "outgoing data" , results ) )
         .catch ( console.error );
+  } );
+
+  socket .on ( "121" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      runatlanticcapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
+  } );
+
+  socket .on ( "122" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      beekcapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
   socket .on ( "disconnect" , () => {
