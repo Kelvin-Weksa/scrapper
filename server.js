@@ -2807,7 +2807,7 @@ function karmijnkapitaal ( socket , monitor ) {
       return reject ( e );
     }
   })
-}
+} /*modals injected to dom*/
 
 function kkr ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2895,7 +2895,7 @@ function kkr ( socket , monitor ) {
                       return  node ? node .src  : '';
                     } );
                     await check_if_canceled ( browser , monitor , socket );
-                    socket.emit ( 'outgoing data' , [item] )
+                    socket.emit ( 'outgoing data' , [item] );
                     return resolve ( item );
                   } catch ( e ) {
                     return reject ( e )
@@ -3039,7 +3039,7 @@ function llcp ( socket , monitor ) {
 function liof ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -3048,7 +3048,14 @@ function liof ( socket , monitor ) {
               await check_if_canceled ( browser , monitor , socket );
               let results = [ ];
               const page = await browser .newPage ( );
-
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
@@ -3070,27 +3077,20 @@ function liof ( socket , monitor ) {
               await check_if_canceled ( browser , monitor , socket );
               let itemz = await page .$$ ( 'div.medewerker > div.medewerker__naw > div.medewerker__tab > a.button.groen.medewerker_meerinfo' );
               let index = 0;
-              /*for ( item of Array.from ( itemz ) ){
+              for ( item of Array.from ( itemz ) ){
                 await check_if_canceled ( browser , monitor , socket );
-                await item .focus (  );
-                await item .click (  )
-                  .catch (  async ( e ) => {
-                    console.log ( e + "  ...retrying operation!!!!" )
+                await item .focus (  )
+
+                let maxOpen = 7;
+                for ( var i = 0; i < maxOpen ; i++ ) {
+                  await item.click (  ) .then ( () => {
+                    i = 8;
+                  } ) .catch ( async ( e ) => {
+                    console.log ( e + "  ...retrying open operation!!!! " + index )
                     await sleep ( 500 );
-                    await item. click ( )
-                      .catch (  async ( e ) => {
-                        console.log ( e + "  ...retrying operation!!!!" )
-                        await sleep ( 500 );
-                        await item. click ( );
-                    } );
-
-                  } );
-
-                while ( ! await page .$ ( 'div.medewerker-meerinfo__tekst > h4' ) ){
-                  await sleep ( 500 );
-                  check_if_canceled ( browser , monitor , socket );
-                  console.log ( "Jammed !" )
+                  } )
                 }
+
                 await check_if_canceled ( browser , monitor , socket );
 
                 results [ index ] .about = await page.evaluate ( async () => {
@@ -3101,38 +3101,39 @@ function liof ( socket , monitor ) {
                     } );
                     return paragraph;
                   };
-                  return paragraphs ( document.querySelectorAll ( 'div.medewerker-meerinfo__tekst > h4' ) );
+                  return paragraphs ( document.querySelectorAll ( 'div#medewerkers__uitklapper > div.medewerker-meerinfo > div.medewerker-meerinfo__tekst > h4' ) );
                 } ).catch ( console.log );
 
                 results [ index ] .mail = await page.evaluate ( async () => {
-                  return document.querySelector ( 'div.medewerker-meerinfo__tekst > a' ) .innerText;
+                  return document.querySelector ( 'div#medewerkers__uitklapper > div.medewerker-meerinfo > div.medewerker-meerinfo__tekst > a' ) .innerText;
                 } ).catch ( console.log );
 
                 results [ index ] .phone = await page.evaluate ( async () => {
-                  return document.querySelector ( 'div.medewerker-meerinfo__tekst > h4' ) .innerText
-                      .replace ( document.querySelector ( 'div.medewerker-meerinfo__tekst > h4' ) .innerText , '' );
+                  return document.querySelector ( 'div#medewerkers__uitklapper > div.medewerker-meerinfo > div.medewerker-meerinfo__tekst > h4' ) .innerText
+                      .replace ( document.querySelector ( 'div#medewerkers__uitklapper > div.medewerker-meerinfo > div.medewerker-meerinfo__tekst > h4' ) .innerText , '' );
                 } ).catch ( console.log );
 
                 await check_if_canceled ( browser , monitor , socket );
 
-                let close = await page .$ ( 'div#medewerker__skuitkruis > img' );
+                while ( ! await page .$ ( 'div#medewerkers__uitklapper > div#medewerker__skuitkruis > img' ) ){
+                  console.log ( 'wait for close button' );
+                }
 
-                await close .click ( )
-                  .catch (  async ( e ) => {
-                    console.log ( e + "  ...retrying close operation!!!!" )
-                    await sleep ( 500 );
-                    await close. click ( )
-                      .catch (  async ( e ) => {
-                        console.log ( e + "  ...retrying close operation!!!!" )
-                        await sleep ( 500 );
-                        await close. click ( );
-                      } );
-                  } );
+                let close = await page .$ ( 'div#medewerkers__uitklapper > div#medewerker__skuitkruis > img' );
+
+                  let maxClose = 7;
+                  for ( var i = 0; i < maxClose ; i++ ) {
+                    await close.click (  ) .then ( () => {
+                      i = 8;
+                    } ) .catch ( async ( e ) => {
+                      console.log ( e + "  ...retrying close operation!!!! " + index )
+                      await sleep ( 500 );
+                    } )
+                  }
 
                 socket.emit ( 'outgoing data' , [ results [ index ] ] )
-                while ( await page .$ ( 'div.medewerker-meerinfo__tekst > h4' ) );
                 index++;
-              }*/
+              }
 
               await page.close ( );
               monitor.confirm = true
@@ -3153,12 +3154,13 @@ function liof ( socket , monitor ) {
       return reject ( e );
     }
   })
-}
+}/*hiden modals*/
 
-function lspvc ( ) {
+function lspvc ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -3173,23 +3175,94 @@ function lspvc ( ) {
                     request .continue  ( );
                 }
               } );
+              page.on('dialog', async dialog => {
+                console.log(dialog.message());
+                await dialog.dismiss();
+              });
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.container.site > div.content.team > div.item-info.overview > div.items' ) .children ( ) .filter( ":has(a)" );
                 Array.from ( items ) .forEach ( ( item  , index ) => {
                   results.push ( {
                       name    : $ ( item ) .find ( 'a' ) .html ( ) .replace ( '<br>' , ' ' ) .trim ( ) ,
-                      //index     : index  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) || "None",
                       from    : "https://www.lspvc.com/team.html" ,
+                      about   : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
+                      url   : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
               } );
+
+              await Promise.all ([ ...results .map ( (item) => {
+                return new Promise ( async ( resolve , reject )=> {
+                  try {
+                    await check_if_canceled ( browser , monitor , socket );
+                    const page = await browser.newPage ( );
+                    await page.setRequestInterception ( true );
+                    page.on ( 'request' , ( request ) => {
+                      if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                          request .abort ( );
+                      } else {
+                          request .continue  ( );
+                      }
+                    } );
+                    page.on('dialog', async dialog => {
+                      console.log(dialog.message());
+                      await dialog.dismiss();
+                    });
+                    await check_if_canceled ( browser , monitor , socket );
+                    await page .goto ( item.about , {timeout:0} );
+                    await autoScroll ( page );
+                    await check_if_canceled ( browser , monitor , socket );
+
+                    item.about = await page.evaluate ( () => {
+                      let about = document.querySelectorAll ( 'div.item-info > div.text > div' ) [ 0 ] ;
+                      return  about ? about.innerText : '';
+                    } );
+
+                    item.mail = await page.evaluate ( () => {
+                      let mail = document.querySelector ( 'div.item-info > div.text > div > a' ) ;
+                      return  mail ? mail .href .replace ( 'mailto:' , '' ) : '';
+                    } );
+
+                    item.phone = await page.evaluate ( () => {
+                      let node = document.querySelectorAll ( 'div.item-info > div.text > div' ) [ 1 ] ;
+                      return  node ? node.innerText.split ( 'call' ) [ 1 ] ? node.innerText .split ( 'call' ) [ 1 ] .trim ( ) : ""  : '';
+                    } );
+
+                    if ( ! item.about ) {
+                      item.about = await page.evaluate ( () => {
+                        let about = document.querySelectorAll ( 'div.item-info > div.text > p' ) [ 0 ] ;
+                        return  about ? about.innerText : '';
+                      } );
+
+                      item.mail = await page.evaluate ( () => {
+                        let mail = document.querySelector ( 'div.item-info > div.text > p > a' ) ;
+                        return  mail ? mail .href .replace ( 'mailto:' , '' ) : '';
+                      } );
+
+                      item.phone = await page.evaluate ( () => {
+                        let node = document.querySelectorAll ( 'div.item-info > div.text > p' ) [ 1 ] ;
+                        return  node ? node.innerText.split ( 'call' ) [ 1 ] ? node.innerText .split ( 'call' ) [ 1 ] .trim ( ) : ""  : '';
+                      } );
+
+                    }
+                    await page.close (  );
+                    await check_if_canceled ( browser , monitor , socket );
+                    socket.emit ( 'outgoing data' , [item] );
+                    return resolve ( item )
+                  } catch ( e ) {
+                    return reject( e )
+                  }
+                });
+              }) ])
+
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -3201,17 +3274,20 @@ function lspvc ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function main ( ) {
+function main ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -3226,9 +3302,17 @@ function main ( ) {
                     request .continue  ( );
                 }
               } );
+              page.on ( 'error' , err => {
+                console.log ( 'error happen at the page: ' , err );
+              });
+              page.on ( 'pageerror' , pageerr => {
+                console.log ( 'pageerror occurred: ' , pageerr );
+              })
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.team-person' );
@@ -3243,6 +3327,57 @@ function main ( ) {
                 } );
                 return results;
               } );
+
+              await check_if_canceled ( browser , monitor , socket );
+              let itemz = await page .$$ ( 'div.team-person' );
+              let index = 0;
+              for ( item of Array.from ( itemz ) ){
+                await check_if_canceled ( browser , monitor , socket );
+                let parent$ = 'div.remodal.team-remodal.remodal-is-initialized.remodal-is-opened > ';
+
+                while ( ! await page .$ ( parent$ + 'div.team-content > p' ) ){
+                  await item.focus (  );
+                  await item.click ( ) .catch ( console.log );
+                }
+
+                results [ index ] .about = await page.evaluate ( async ( parent$ ) => {
+                  function  paragraphs  ( array ) {
+                    let paragraph = '';
+                    array.forEach ( ( para ) =>{
+                      paragraph += para.innerText += '\n';
+                    } );
+                    return paragraph;
+                  };
+                  let about = document.querySelectorAll ( parent$ + 'div.team-content > p' );
+                  return paragraphs ( about );
+                } , parent$);
+
+                results [ index ] .mail = await page.evaluate ( async ( parent$ ) => {
+                  return document.querySelector ( parent$ + 'div.team-details > div.team-intro > div.team-social > a.email' ) .href .replace ( "mailto:" , '' );
+                } ,parent$ );
+
+                results [ index ] .linkedIn = await page.evaluate ( async ( parent$ ) => {
+                  let linkedIn = document.querySelector ( parent$ + 'div.team-details > div.team-intro > div.team-social > a.linkedin' );
+                  return  linkedIn ? linkedIn.href : '';
+                } , parent$);
+
+                await check_if_canceled ( browser , monitor , socket );
+
+                let close = await page .$ ( parent$ + 'button.remodal-close' );
+
+                let maxClose = 7;
+                for ( var i = 0; i < maxClose ; i++ ) {
+                  await close.click (  ) .then ( () => {
+                    i = 8;
+                  } ) .catch ( async ( e ) => {
+                    console.log ( e + "  ...retrying close operation!!!! " + index )
+                    await sleep ( 1500 );
+                  } )
+                }
+                socket.emit ( 'outgoing data' , [ results [ index ] ] )
+                index++;
+              }
+
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -3251,20 +3386,23 @@ function main ( ) {
         } )
       }
       let urls = [ `https://main.nl/team/` ];
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function mgf ( ) {
+function mgf ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -3279,9 +3417,11 @@ function mgf ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.et_pb_row:has(img)' );
@@ -3289,13 +3429,15 @@ function mgf ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'h2') .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( item ) .find ( 'p > em' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( "src" ) ,
                       from    : "https://www.mgf.nl/ons-team/" ,
+                      about   : $ ( item ) .find ( 'div.et_pb_toggle_content.clearfix') .text ( ) ,
                   } );
                 } );
                 return results;
               } );
+              await check_if_canceled ( browser , monitor , socket );
+              socket.emit ( 'outgoing data' , results );
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -3307,19 +3449,22 @@ function mgf ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function menthacapital ( ) {
+function menthacapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
-      function crawlUrl ( url ) {
+      async function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
             try{
               let results = [ ];
@@ -3332,16 +3477,24 @@ function menthacapital ( ) {
                     request .continue  ( );
                 }
               } );
-              await page .goto ( url , { timeout : 0 , waitUntil: 'networkidle2' } );
-              //await page .addScriptTag ( { path: 'jquery.js'  } );
-              //await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
+              await page .goto ( url , { timeout : 0 } );
               let items = await page .$$ ( 'div.ratio_1-1 > div.w-portfolio-list > div.portfoliorow > div.w-portfolio-item > a.w-portfolio-item-anchor' );
               var index = 0;
+              await check_if_canceled ( browser , monitor , socket );
               for ( item of Array.from ( items ) ) {
                 await item .focus (  );
                 await item .click (  );
                 await page .waitFor ( 1000 );
+                await check_if_canceled ( browser , monitor , socket );
                 results.push ( await page.evaluate ( ( url , index ) => {
+                  function  paragraphs  ( array ) {
+                    let paragraph = '';
+                    array.forEach ( ( para ) =>{
+                      paragraph += para.innerText += '\n';
+                    } );
+                    return paragraph;
+                  }
                   let item_ = document.querySelector ( 'div.w-portfolio-item.active' );
                   let data = {
                         name    : item_ .querySelector ( 'div.one-half51 > p') .innerText .split ( '–' ) [ 0 ] ,
@@ -3349,33 +3502,41 @@ function menthacapital ( ) {
                         image   : item_ .querySelector ( 'img' ) .src ,
                         from    : url ,
                         index   : index ,
+                        about   : paragraphs ( item_ .querySelectorAll ( 'div.one-half51 > p' ) ) ,
                     };
                     return data;
                   } , url , index ++ )
                 );
               }
               await page.close ( );
+              monitor.confirm = true;
+              socket.emit ( "outgoing data" , results )
               return resolve ( results )
             }catch ( e ){
+              monitor.confirm = true;
               return reject ( e )
             }
         } )
       }
       let urls = [ `https://www.menthacapital.com/` ];
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      await check_if_canceled ( browser , monitor , socket );
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function nom ( ) {
+function nom ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -3390,9 +3551,11 @@ function nom ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.card.card--employee' );
@@ -3400,15 +3563,75 @@ function nom ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'h3' ) .text ( )  ,
                       job     : $ ( item ) .find ( 'span.is-label.is-label--green' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'div.image' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                       from    : url ,
                       index   : index ,
+                      url     : $ ( item ) .find ( "a" ) .prop ( 'href' ) ,
+                      about   : $ ( item ) .find ( "a" ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
               } , url );
+
+              await Promise.all ( [ ...results .map ( ( item ) => {
+                return new Promise ( async ( resolve , reject )=> {
+                  try {
+                    await check_if_canceled ( browser , monitor , socket );
+                    const page = await browser.newPage ( );
+                    await page.setRequestInterception ( true );
+                    page.on ( 'request' , ( request ) => {
+                      if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                          request .abort ( );
+                      } else {
+                          request .continue  ( );
+                      }
+                    } );
+                    page.on ( 'error' , err => {
+                      console.log ( 'error happen at the page: ' , err );
+                    });
+                    page.on ( 'pageerror' , pageerr => {
+                      console.log ( 'pageerror occurred: ' , pageerr );
+                    })
+                    page.on('dialog', async dialog => {
+                      console.log(dialog.message());
+                      await dialog.dismiss();
+                    });
+                    await check_if_canceled ( browser , monitor , socket );
+                    await page .goto ( item.about , {timeout:0} );
+                    await check_if_canceled ( browser , monitor , socket );
+                    item.about = await page.$$eval ( 'div.mb-40.mb-xxl-50 > p' , ( query ) => {
+                      function  paragraphs  ( array ) {
+                        let paragraph = '';
+                        array.forEach ( ( para ) =>{
+                          paragraph += para.innerText += '\n';
+                        } );
+                        return paragraph;
+                      }
+                      return paragraphs ( query );
+                    } )
+                    let more = await page.$$eval ( 'ul.list.list--default > li > a' , ( query ) => {
+                      let mail =  query [ 0 ] ? query [ 0 ] .innerText : "";
+                      let phone = query [ 1 ] ? query [ 1 ] .innerText : "";
+                      let fax = query [ 2 ] ? query [ 2 ] .innerText : "";
+                      let linkedIn = query [ 3 ] ? query [ 3 ] .innerText : "";
+                      return {
+                        mail : mail ,
+                        phone : phone ,
+                        fax : fax,
+                        linkedIn : linkedIn ,
+                      };
+                    } )
+                    await page.close (  );
+                    //Object .assign ( item , more );
+                    socket.emit ( 'outgoing data' , [ { ...item , ...more } ] );
+                    return resolve ( { ...item , ...more } );
+                  } catch ( e ) {
+                    return reject ( e );
+                  }
+                });
+              } ) ] )
               await page.close ( );
+              //socket.emit ( 'outgoing data' , results );
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -3419,17 +3642,20 @@ function nom ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function navitascapital ( ) {
+function navitascapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -3444,9 +3670,11 @@ function navitascapital ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'section.row.normal:has(img)' );
@@ -3454,15 +3682,16 @@ function navitascapital ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'span.mediumtitel' ) .text ( )  ,
                       job     : $ ( item ) .find ( 'p > strong' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      about   : $ ( item ) .find ( 'article.part.right.twothird.text' ) .text ( ) ,
                   } );
                 } );
                 return results;
               } , url );
               await page.close ( );
+              socket .emit ( 'outgoing data' , results )
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -3474,16 +3703,19 @@ function navitascapital ( ) {
       //
       browser.close ( );
       return resolve ( [ ] .concat ( ...datas ) );
+      monitor.confirm = true;
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function shiftinvest ( ) {
+function shiftinvest ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -3498,9 +3730,11 @@ function shiftinvest ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.memberbox-inner:has(div.membertitle)' );
@@ -3508,10 +3742,11 @@ function shiftinvest ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'div.membername' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( item ) .find ( 'div.membertitle' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      about    : $ ( item ) .find ( 'div.membertekst' ) .text ( ) ,
+                      linkedIn    : $ ( item ) .find ( 'a.linkedinclass' ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
@@ -3524,20 +3759,24 @@ function shiftinvest ( ) {
         } )
       }
       let urls = [ `https://shiftinvest.com/nbi-investors/#contentbox` ];
+      await check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function zlto ( ) {
+function zlto ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -3552,9 +3791,11 @@ function zlto ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.personContent' );
@@ -3562,14 +3803,67 @@ function zlto ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'h4' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( item ) .find ( 'div.slideHidden' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      about    : $ ( item ) .find ( 'div.overlay > a' ) .prop ( 'href' ) ,
+                      url    : $ ( item ) .find ( 'div.overlay > a' ) .prop ( 'href' )
+
                   } );
                 } );
                 return results;
               } , url );
+
+              await Promise.all ( [ ...results .map ( ( item ) => {
+                return new Promise ( async ( resolve , reject ) => {
+                  try {
+                    await check_if_canceled ( browser , monitor , socket );
+                    const page = await browser.newPage ( );
+                    await page.setRequestInterception ( true );
+                    page.on ( 'request' , ( request ) => {
+                      if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                          request .abort ( );
+                      } else {
+                          request .continue  ( );
+                      }
+                    } );
+                    page.on ( 'error' , err => {
+                      console.log ( 'error happen at the page: ' , err );
+                    });
+                    page.on ( 'pageerror' , pageerr => {
+                      console.log ( 'pageerror occurred: ' , pageerr );
+                    })
+                    page.on('dialog', async dialog => {
+                      console.log(dialog.message());
+                      await dialog.dismiss();
+                    });
+                    await check_if_canceled ( browser , monitor , socket );
+                    await page .goto ( item.about , {timeout:0} );
+                    await check_if_canceled ( browser , monitor , socket );
+                    item.about = await page.$$eval ( 'div.text > p' , ( query ) => {
+                      function  paragraphs  ( array ) {
+                        let paragraph = '';
+                        array.forEach ( ( para ) =>{
+                          paragraph += para.innerText += '\n';
+                        } );
+                        return paragraph;
+                      }
+                      return paragraphs ( query );
+                    } )
+                    item.phone = await page.$eval ( 'div.telephone' , ( query ) => {
+                      return query.innerText;
+                    } )
+                    item.mail = await page.$eval ( 'div.emailtext' , ( query ) => {
+                      return query.innerText ? query.innerText .replace ( 'E-mail:' , '' ) : '';
+                    } )
+                    await page.close (  );
+                    socket.emit ( "outgoing data" , [ item ] );
+                    return resolve ( item );
+                  } catch ( e ) {
+                    return reject ( e )
+                  }
+                });
+              } ) ] )
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -3581,8 +3875,10 @@ function zlto ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
@@ -6506,7 +6802,7 @@ function slingshot ( ) {
   })
 }
 
-function shiftinvest ( ) {
+/*function shiftinvest ( ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
@@ -6558,7 +6854,7 @@ function shiftinvest ( ) {
       return reject ( e );
     }
   })
-}
+}*/
 
 function peak ( ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7708,9 +8004,11 @@ function runatlanticcapital ( socket , monitor ) {
       }
       //
       browser.close ( );
-      await socket .emit ( 'outgoing data' , urls )
+      await socket .emit ( 'outgoing data' , urls );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
@@ -7791,7 +8089,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //liof ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  zlto ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
@@ -8148,60 +8446,76 @@ io .on ( "connection" , socket => {
           .catch ( console.error );
   } );
 
-  socket .on ( "40" , function ( data ) {
-    console.log ( data );
-    lspvc ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "40" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      lspvc ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "41" , function ( data ) {
-    console.log ( data );
-    main ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "41" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      main ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "42" , function ( data ) {
-    console.log ( data );
-    mgf ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "42" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      mgf ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "43" , function ( data ) {
-    console.log ( data );
-    menthacapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "43" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      menthacapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "44" , function ( data ) {
-    console.log ( data );
-    nom ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "44" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      nom ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "45" , function ( data ) {
-    console.log ( data );
-    navitascapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "45" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      navitascapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "46" , function ( data ) {
-    console.log ( data );
-    shiftinvest ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "46" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      shiftinvest ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "47" , function ( data ) {
-    console.log ( data );
-    zlto ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "47" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      zlto ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
   socket .on ( "48" , function ( data ) {
