@@ -3556,6 +3556,7 @@ function nom ( socket , monitor ) {
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
               await check_if_canceled ( browser , monitor , socket );
+
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.card.card--employee' );
@@ -3573,63 +3574,68 @@ function nom ( socket , monitor ) {
                 return results;
               } , url );
 
-              await Promise.all ( [ ...results .map ( ( item ) => {
-                return new Promise ( async ( resolve , reject )=> {
-                  try {
-                    await check_if_canceled ( browser , monitor , socket );
-                    const page = await browser.newPage ( );
-                    await page.setRequestInterception ( true );
-                    page.on ( 'request' , ( request ) => {
-                      if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-                          request .abort ( );
-                      } else {
-                          request .continue  ( );
-                      }
-                    } );
-                    page.on ( 'error' , err => {
-                      console.log ( 'error happen at the page: ' , err );
-                    });
-                    page.on ( 'pageerror' , pageerr => {
-                      console.log ( 'pageerror occurred: ' , pageerr );
-                    })
-                    page.on('dialog', async dialog => {
-                      console.log(dialog.message());
-                      await dialog.dismiss();
-                    });
-                    await check_if_canceled ( browser , monitor , socket );
-                    await page .goto ( item.about , {timeout:0} );
-                    await check_if_canceled ( browser , monitor , socket );
-                    item.about = await page.$$eval ( 'div.mb-40.mb-xxl-50 > p' , ( query ) => {
-                      function  paragraphs  ( array ) {
-                        let paragraph = '';
-                        array.forEach ( ( para ) =>{
-                          paragraph += para.innerText += '\n';
-                        } );
-                        return paragraph;
-                      }
-                      return paragraphs ( query );
-                    } )
-                    let more = await page.$$eval ( 'ul.list.list--default > li > a' , ( query ) => {
-                      let mail =  query [ 0 ] ? query [ 0 ] .innerText : "";
-                      let phone = query [ 1 ] ? query [ 1 ] .innerText : "";
-                      let fax = query [ 2 ] ? query [ 2 ] .innerText : "";
-                      let linkedIn = query [ 3 ] ? query [ 3 ] .innerText : "";
-                      return {
-                        mail : mail ,
-                        phone : phone ,
-                        fax : fax,
-                        linkedIn : linkedIn ,
-                      };
-                    } )
-                    await page.close (  );
-                    //Object .assign ( item , more );
-                    socket.emit ( 'outgoing data' , [ { ...item , ...more } ] );
-                    return resolve ( { ...item , ...more } );
-                  } catch ( e ) {
-                    return reject ( e );
-                  }
-                });
-              } ) ] )
+              let i , j , chunk = 10;
+              for ( i = 0 , j = results.length; i < j; i += chunk ) {
+                //array.slice(i,i+chunk);
+                console.log ( "chunk --> " + i  )
+                await Promise.all ( [ ...results .slice ( i , i+chunk ) .map ( ( item ) => {
+                  return new Promise ( async ( resolve , reject )=> {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      await page.setRequestInterception ( true );
+                      page.on ( 'request' , ( request ) => {
+                        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                            request .abort ( );
+                        } else {
+                            request .continue  ( );
+                        }
+                      } );
+                      page.on ( 'error' , err => {
+                        console.log ( 'error happen at the page: ' , err );
+                      });
+                      page.on ( 'pageerror' , pageerr => {
+                        console.log ( 'pageerror occurred: ' , pageerr );
+                      })
+                      page.on('dialog', async dialog => {
+                        console.log(dialog.message());
+                        await dialog.dismiss();
+                      });
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await check_if_canceled ( browser , monitor , socket );
+                      item.about = await page.$$eval ( 'div.mb-40.mb-xxl-50 > p' , ( query ) => {
+                        function  paragraphs  ( array ) {
+                          let paragraph = '';
+                          array.forEach ( ( para ) =>{
+                            paragraph += para.innerText += '\n';
+                          } );
+                          return paragraph;
+                        }
+                        return paragraphs ( query );
+                      } )
+                      let more = await page.$$eval ( 'ul.list.list--default > li > a' , ( query ) => {
+                        let mail =  query [ 0 ] ? query [ 0 ] .innerText : "";
+                        let phone = query [ 1 ] ? query [ 1 ] .innerText : "";
+                        let fax = query [ 2 ] ? query [ 2 ] .innerText : "";
+                        let linkedIn = query [ 3 ] ? query [ 3 ] .innerText : "";
+                        return {
+                          mail : mail ,
+                          phone : phone ,
+                          fax : fax,
+                          linkedIn : linkedIn ,
+                        };
+                      } )
+                      await page.close (  );
+                      socket.emit ( 'outgoing data' , [ { ...item , ...more } ] );
+                      return resolve ( { ...item , ...more } );
+                    } catch ( e ) {
+                      return reject ( e );
+                    }
+                  });
+                } ) ] )
+              }
+
               await page.close ( );
               //socket.emit ( 'outgoing data' , results );
               return resolve ( results )
@@ -3886,7 +3892,7 @@ function zlto ( socket , monitor ) {
   })
 }
 
-function newion ( ) {
+function newion ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
@@ -3914,10 +3920,11 @@ function newion ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'strong' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( item ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) .split ( '\n' ) [ 1 ] ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      twitter : $ ( item ) .find ( 'li.twitter > a' ) .prop ( 'href' ),
+                      linkedIn  : $ ( item ) .find ( 'li.linkedin > a' ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
@@ -3930,11 +3937,13 @@ function newion ( ) {
         } )
       }
       let urls = [ `http://www.newion.com/team` ];
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
@@ -8058,9 +8067,11 @@ function beekcapital ( socket , monitor ) {
       }
       //
       browser.close ( );
-      await socket .emit ( 'outgoing data' , urls )
+      await socket .emit ( 'outgoing data' , urls );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
@@ -8091,7 +8102,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //zlto ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //newion ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
@@ -8520,11 +8531,13 @@ io .on ( "connection" , socket => {
           .catch ( console.error );
   } );
 
-  socket .on ( "48" , function ( data ) {
-    console.log ( data );
-    newion ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "48" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      newion ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
   socket .on ( "49" , function ( data ) {
