@@ -1209,33 +1209,37 @@ function runcinven ( socket , monitor ) {
           } );
 
           await check_if_canceled ( browser , monitor , socket );
-          await Promise.all ( [ ...urls .map ( ( item ) => {
-            return new Promise ( async ( resolve , reject ) => {
-              try {
-                await check_if_canceled ( browser , monitor , socket );
-                const page = await browser.newPage ( );
-                await check_if_canceled ( browser , monitor , socket );
-                await page .goto ( item.about , {timeout:0} );
-                await page .addScriptTag ( {path : "jquery.js"}  );
-                await check_if_canceled ( browser , monitor , socket );
-                item.about = await page.evaluate ( () => {
-                  function  paragraphs  ( array ) {
-                    let paragraph = '';
-                    array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
-                    } );
-                    return paragraph;
-                  };
-                  return paragraphs ( document.querySelectorAll ( 'div.bio > p' ) );
-                } );
-                await check_if_canceled ( browser , monitor , socket );
-                socket.emit ( 'outgoing data' , [item] )
-                return resolve ( item );
-              } catch ( e ) {
-                return reject ( e );
-              }
-            });
-          } ) ] )
+          let i , j , chunk = 10;
+          for ( i = 0 , j = urls.length; i < j; i += chunk ) {
+            //.slice ( i , i+chunk )
+            await Promise.all ( [ ...urls .slice ( i , i+chunk ) .map ( ( item ) => {
+              return new Promise ( async ( resolve , reject ) => {
+                try {
+                  await check_if_canceled ( browser , monitor , socket );
+                  const page = await browser.newPage ( );
+                  await check_if_canceled ( browser , monitor , socket );
+                  await page .goto ( item.about , {timeout:0} );
+                  await page .addScriptTag ( {path : "jquery.js"}  );
+                  await check_if_canceled ( browser , monitor , socket );
+                  item.about = await page.evaluate ( () => {
+                    function  paragraphs  ( array ) {
+                      let paragraph = '';
+                      array.forEach ( ( para ) =>{
+                        paragraph += para.innerText += '\n';
+                      } );
+                      return paragraph;
+                    };
+                    return paragraphs ( document.querySelectorAll ( 'div.bio > p' ) );
+                  } );
+                  await check_if_canceled ( browser , monitor , socket );
+                  socket.emit ( 'outgoing data' , [item] )
+                  return resolve ( item );
+                } catch ( e ) {
+                  return reject ( e );
+                }
+              });
+            } ) ] )
+          }
         }
       }
       //
@@ -3576,7 +3580,7 @@ function nom ( socket , monitor ) {
 
               let i , j , chunk = 10;
               for ( i = 0 , j = results.length; i < j; i += chunk ) {
-                //array.slice(i,i+chunk);
+                //.slice ( i , i+chunk )
                 console.log ( "chunk --> " + i  )
                 await Promise.all ( [ ...results .slice ( i , i+chunk ) .map ( ( item ) => {
                   return new Promise ( async ( resolve , reject )=> {
