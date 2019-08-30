@@ -3702,8 +3702,8 @@ function navitascapital ( socket , monitor ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
-      return resolve ( [ ] .concat ( ...datas ) );
       monitor.confirm = true;
+      return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
       monitor.confirm = true;
       return reject ( e );
@@ -3763,6 +3763,8 @@ function shiftinvest ( socket , monitor ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -3775,7 +3777,7 @@ function shiftinvest ( socket , monitor ) {
 function zlto ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -8089,7 +8091,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  zlto ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //zlto ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {

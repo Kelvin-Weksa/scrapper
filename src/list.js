@@ -44,7 +44,7 @@ const Listing = [
   [ "https://www.menthacapital.com/" , "43" , "Mentha Capital" , "https://www.menthacapital.com/content/uploads/2017/03/logo3.gif" , "PE" ] ,
   [ "https://www.nom.nl/over-ons/het-team/" , "44" , "NOM" , "" , "PE" , "VC" ] ,
   [ "https://www.navitascapital.nl/het-team" , "45" , "Navitas Capital" , "https://www.navitascapital.nl/public/image/logo-navitas.png" , "PE" ] ,
-  [ "https://shiftinvest.com/nbi-investors/#contentbox" , "46" , "shiftinvest" , "https://shiftinvest.com/images/logo_nbii-new-menu.png" , "PE" ] ,
+  [ "https://shiftinvest.com/nbi-investors/#contentbox" , "46" , "Shift Invest" , "https://shiftinvest.com/images/logo_nbii-new-menu.png" , "PE" ] ,
   [ "https://www.zlto.nl/wieiswie" , "47" , "ZLTO" , "https://www.zlto.nl/cms/multimedia/000348wo32fdeifb/zlto-logo.jpg" , "PE" ] ,
   [ "http://www.newion.com/team" , "48" , "newion" , "http://www.newion.com/websites/implementatie/website/img/logo.png" , "PE" , "VC"] ,
   [ "http://www.nordian.nl/team" , "49" , "nordian" , "http://www.nordian.nl/site/themes/nordian/img/nordian-logo-small.svg" , "PE" ] ,
