@@ -52,6 +52,22 @@ function  paragraphs  ( array ) {
   return paragraph;
 };
 
+class AsyncArray /*extends Array*/ {
+  constructor ( arr ) {
+    this.data = arr; // In place of Array subclassing
+  }
+
+  filterAsync ( predicate ) {
+     // Take a copy of the array, it might mutate by the time we've finished
+    const data = Array.from ( this.data );
+    // Transform all the elements into an array of promises using the predicate
+    // as the promise
+    return Promise.all ( data.map ( ( element , index) => predicate ( element , index , data ) ) )
+    // Use the result of the promises to call the underlying sync filter function
+      .then ( result => data.filter ( ( element , index ) => result [ index ] )  );
+  }
+}
+
 function run3i ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
@@ -3632,7 +3648,8 @@ function nom ( socket , monitor ) {
                       } )
                       await page.close (  );
                       socket.emit ( 'outgoing data' , [ { ...item , ...more } ] );
-                      return resolve ( { ...item , ...more } );
+                      let res = { ...item , ...more };
+                      return resolve ( res );
                     } catch ( e ) {
                       return reject ( e );
                     }
@@ -3900,6 +3917,7 @@ function newion ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -3914,38 +3932,43 @@ function newion ( socket , monitor ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
-                let items = $ ( 'div.member.clearfix' );
+                let items = $ ( 'div.memberDetail.clearfix' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      name    : $ ( item ) .find ( 'strong' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
-                      job     : $ ( item ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) .split ( '\n' ) [ 1 ] ,
+                      name    : $ ( item ) .find ( 'h1' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
+                      job     : $ ( item ) .find ( 'span' ) .text ( )  ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
                       twitter : $ ( item ) .find ( 'li.twitter > a' ) .prop ( 'href' ),
                       linkedIn  : $ ( item ) .find ( 'li.linkedin > a' ) .prop ( 'href' ) ,
+                      about  : $ ( item ) .find ( 'p' ) .text (  ) ,
+
                   } );
                 } );
                 return results;
               } , url );
               await page.close ( );
+              socket.emit ( 'outgoing data' , results )
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
             }
         } )
       }
-      let urls = [ `http://www.newion.com/team` ];
+      let urls = [ `http://www.newion.com/team/jingyi-wang/4` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
       browser.close ( );
       monitor.confirm = true;
-      return resolve ( [ ] .concat ( ...datas ) );
+      //return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
       monitor.confirm = true;
       return reject ( e );
@@ -3953,10 +3976,11 @@ function newion ( socket , monitor ) {
   })
 }
 
-function nordian ( ) {
+function nordian ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -3971,9 +3995,11 @@ function nordian ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'li.team-overview-list-item' );
@@ -3999,18 +4025,23 @@ function nordian ( ) {
       let urls = [ `http://www.nordian.nl/team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function npm_capital ( ) {
+function npm_capital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4025,9 +4056,11 @@ function npm_capital ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.all-33.large-33.medium-50.small-50.tiny-100.push-left' );
@@ -4035,15 +4068,76 @@ function npm_capital ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'h3' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( item ) .find ( 'p' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      url    : $ ( item ) .find ( 'a.npm-article.npm-article--team.align-center' ) .prop ( 'href' ) ,
+                      about    : $ ( item ) .find ( 'a.npm-article.npm-article--team.align-center' ) .prop ( 'href' )
                   } );
                 } );
                 return results;
               } , url );
               await page.close ( );
+
+              let i , j , chunk = 10;
+              for ( i = 0 , j = 1; i < j; i += chunk ) {
+                //.slice ( i , i+chunk )
+                console.log ( "chunk --> " + i  )
+                await Promise.all ( [ ...results .slice ( i , i + chunk ) .map ( ( item ) => {
+                  return new Promise ( async ( resolve , reject )=> {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      await page.setRequestInterception ( true );
+                      page.on ( 'request' , ( request ) => {
+                        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                            request .abort ( );
+                        } else {
+                            request .continue  ( );
+                        }
+                      } );
+                      page.on ( 'error' , err => {
+                        console.log ( 'error happen at the page: ' , err );
+                      });
+                      page.on ( 'pageerror' , pageerr => {
+                        console.log ( 'pageerror occurred: ' , pageerr );
+                      })
+                      page.on('dialog', async dialog => {
+                        console.log(dialog.message());
+                        await dialog.dismiss();
+                      });
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await check_if_canceled ( browser , monitor , socket );
+                      item.about = await page.$$eval ( 'div.all-100 > p' , ( query ) => {
+                        function  paragraphs  ( array ) {
+                          let paragraph = '';
+                          array.forEach ( ( para ) =>{
+                            paragraph += para.innerText += '\n';
+                          } );
+                          return paragraph;
+                        }
+                        return paragraphs ( query );
+                      } );
+                      let more = await page.$$eval ( 'tr.row.clearfix > td > p > a' , ( query ) => {
+                        console.log ( query )
+                        let mail =  query [ 0 ] ? query [ 0 ] .href : "";
+                        let linkedIn = query [ 1 ] ? query [ 1 ] .href : "";
+                        return {
+                          mail : mail.replace ( "mailto:" , '' ) ,
+                          linkedIn : linkedIn ,
+                        };
+                      } );
+                      await page.close (  );
+                      socket.emit ( 'outgoing data' , [ { ...item , ...more } ] );
+                      return resolve ( { ...item , ...more } );
+                    } catch ( e ) {
+                      return reject ( e );
+                    }
+                  });
+                } ) ] )
+              }
+
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -4054,17 +4148,20 @@ function npm_capital ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function oostnl ( ) {
+function oostnl ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4079,9 +4176,11 @@ function oostnl ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.packery-item' );
@@ -4089,15 +4188,18 @@ function oostnl ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'div.views-field.views-field-nothing' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( item ) .find ( 'div.views-field.views-field-field-function' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      phone   : $ ( item ) .find ( 'div.field-content.contactpersoon-telefoon' ) .text ( ) ,
+                      mail    : $ ( item ) .find ( 'div.field-content.contactpersoon-email' ) .text ( )
                   } );
                 } );
                 return results;
               } , url );
               await page.close ( );
+              await check_if_canceled ( browser , monitor , socket );
+              socket.emit ( 'outgoing data' , results );
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -4108,17 +4210,21 @@ function oostnl ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function o2capital ( ) {
+function o2capital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4133,9 +4239,13 @@ function o2capital ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.slick-guy.left' );
@@ -4143,17 +4253,78 @@ function o2capital ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'h2' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( item ) .find ( 'h3' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      url     : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
+                      about     : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
               } , url );
+
+              await Promise.all ( [ ...results .map ( ( item ) => {
+                return new Promise ( async ( resolve , reject )=> {
+                  try {
+                    await check_if_canceled ( browser , monitor , socket );
+                    const page = await browser.newPage ( );
+                    await page.setRequestInterception ( true );
+                    page.on ( 'request' , ( request ) => {
+                      if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                          request .abort ( );
+                      } else {
+                          request .continue  ( );
+                      }
+                    } );
+                    page.on ( 'error' , err => {
+                      console.log ( 'error happen at the page: ' , err );
+                    });
+                    page.on ( 'pageerror' , pageerr => {
+                      console.log ( 'pageerror occurred: ' , pageerr );
+                    })
+                    page.on('dialog', async dialog => {
+                      console.log(dialog.message());
+                      await dialog.dismiss();
+                    });
+                    await check_if_canceled ( browser , monitor , socket );
+                    await check_if_canceled ( browser , monitor , socket );
+                    await page .goto ( item.about , {timeout:0} );
+                    await check_if_canceled ( browser , monitor , socket );
+                    item.about = await page.$$eval ( 'div.column.half.left > p' , ( query ) => {
+                      function  paragraphs  ( array ) {
+                        let paragraph = '';
+                        array.forEach ( ( para ) =>{
+                          paragraph += para.innerText += '\n';
+                        } );
+                        return paragraph;
+                      }
+                      return paragraphs ( query );
+                    } );
+                    let more = await page.$$eval ( 'div.info.left' , ( query ) => {
+                      console.log ( query )
+                      let mail =  query [ 0 ] ? query [ 0 ] .innerText : "";
+                      let linkedIn = query [ 1 ] ? query [ 1 ] .innerText : "";
+                      return {
+                        mail : mail ,
+                        linkedIn : linkedIn ,
+                      };
+                    } );
+                    await page.close (  );
+                    item.mail = more.mail;
+                    item.linkedIn = more.linkedIn;
+                    socket.emit ( 'outgoing data' , [item] );
+                    return resolve ( item )
+                  } catch ( e ) {
+                    return reject ( e );
+                  }
+                });
+              } ) ] )
+
               await page.close ( );
+              //socket.emit ( "outgoing data" , results )
               return resolve ( results )
             }catch ( e ){
+
               return reject ( e )
             }
         } )
@@ -4162,17 +4333,20 @@ function o2capital ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function parcomcapital ( ) {
+function parcomcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4187,9 +4361,11 @@ function parcomcapital ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.col-md-3.col-sm-3' );
@@ -4197,15 +4373,17 @@ function parcomcapital ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'h5' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( item ) .find ( 'p.title' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      about  : $ ( item ) .find  ( 'div.content' ) .text ( )
                   } );
                 } );
                 return results;
               } , url );
               await page.close ( );
+              await check_if_canceled ( browser , monitor , socket );
+              socket.emit ( 'outgoing data' , results );
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -4213,22 +4391,26 @@ function parcomcapital ( ) {
         } )
       }
       let urls = [ `https://www.parcomcapital.com/about/` ];
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function plainvanilla ( ) {
+function plainvanilla ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       let urls = [  ];
       const page = await browser .newPage ( );
+      await check_if_canceled ( browser , monitor , socket );
       await page .goto ( `https://plainvanilla.nl/team/` , { timeout: 0 } );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -4262,24 +4444,37 @@ function plainvanilla ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
+                function  paragraphs  ( array ) {
+                  let paragraph = '';
+                  array.forEach ( ( para ) =>{
+                    paragraph += para.innerText += '\n';
+                  } );
+                  return paragraph;
+                }
                 let results = [ ];
                 //Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
                       name    : $ ( 'div.wpb_wrapper > h1' ) .first ( ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( 'div.wpb_wrapper > h2' ) .first ( ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( 'div.vc_single_image-wrapper.vc_box_rounded.vc_box_border_grey > img' ) .first ( ) .prop ( 'src' ) ,
                       from    : url ,
+                      about   : paragraphs ( document.querySelectorAll ( 'div.wpb_wrapper > p' ) ) ,
+                      phone   : $ ( 'div.pv-contact-icons > a' ) .eq ( 1 ) .prop ( 'href' ) .replace ( 'tel:' , '' ) ,
+                      mail   : $ ( 'div.pv-contact-icons > a' ) .eq ( 2 ) .prop ( 'href' ) .replace ( 'mailto:' , '' ) ,
+                      linkedIn   : $ ( 'div.pv-contact-icons > a' ) .eq ( 3 ) .prop ( 'href' ) ,
                       //index   : index ,
                   } );
               //  }  );
                 return results;
               } , url );
               await page.close ( );
+              socket.emit ( 'outgoing data' , results )
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -4289,17 +4484,20 @@ function plainvanilla ( ) {
 
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function pridecapital ( ) {
+function pridecapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4314,9 +4512,11 @@ function pridecapital ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'a.team-item' ) .filter ( ':has(p > strong)' );
@@ -4324,7 +4524,6 @@ function pridecapital ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'p > strong' ) .text ( )  ,
                       job     : $ ( item ) .find ( 'p' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .split ( '\n' ) [ 2 ] .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                       from    : url ,
                       index   : index ,
@@ -4332,6 +4531,63 @@ function pridecapital ( ) {
                 } );
                 return results;
               } , url );
+
+              await check_if_canceled ( browser , monitor , socket );
+              let itemz = await page .$$ ( 'a.team-item' );
+
+              let arr = new AsyncArray ( itemz );
+
+              let filtered = await arr .filterAsync ( async ( item ) => {
+                let test = await item .$$ ( "p > strong" );
+                return test.length ;
+              } )
+
+              let index = 0;
+              for ( item of filtered ){
+                await check_if_canceled ( browser , monitor , socket );
+                let parent$ = 'div.remodal.remodal-team.remodal-is-initialized.remodal-is-opened  ';
+
+                while ( ! await page .$ ( parent$ + 'div.remodal-team-content' ) ){
+                  await item.focus (  );
+                  await item.click ( ) .catch ( console.log );
+                  //console.log ( 'open jammed' );
+                }
+
+                results [ index ] .about = await page.$eval ( parent$ + 'div.remodal-team-content-inner'  ,
+                async ( query ) => {
+                  function  paragraphs  ( array ) {
+                    let paragraph = '';
+                    array.forEach ( ( para ) =>{
+                      paragraph += para.innerText += '\n';
+                    } );
+                    return paragraph;
+                  };
+                  return paragraphs ( query .querySelectorAll ( 'p' ) );
+                } );
+
+                results [ index ] .mail = await page.$eval ( parent$ + 'a.email' ,
+                async ( query ) => {
+                  return query .href .replace ( "mailto:" , '' );
+                } );
+
+
+                await check_if_canceled ( browser , monitor , socket );
+
+                let close = await page .$ ( parent$ + 'div.remodal-close' );
+
+                let maxClose = 7;
+                for ( var i = 0; i < maxClose ; i++ ) {
+                  await close.click (  ) .then ( () => {
+                    i = 8;
+                  } ) .catch ( async ( e ) => {
+                    console.log ( e + "  ...retrying close operation!!!! " + index )
+                    await sleep ( 1500 );
+                  } )
+                }
+                socket.emit ( 'outgoing data' , [ results [ index ] ] )
+                index++;
+              }
+
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -4343,24 +4599,28 @@ function pridecapital ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function primeventures ( ) {
+function primeventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
             try{
               let results = [ ];
               const page = await browser .newPage ( );
-              await page.setRequestInterception ( true );
+              await page.setRequestInterception ( true );;
+              await check_if_canceled ( browser , monitor , socket );
               page.on ( 'request' , ( request ) => {
                 if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
                     request .abort ( );
@@ -4371,6 +4631,7 @@ function primeventures ( ) {
               await page .goto ( url , { timeout : 0 , } );
               //await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.row.fullheight' );
@@ -4378,14 +4639,73 @@ function primeventures ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'div.inner > h2' ) .text ( )  ,
                       job     : $ ( item ) .find ( 'div.inner > h3' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'div.bg-image.left.parallax' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                       from    : url ,
                       index   : index ,
+                      url     : $ ( item ) .find ( 'p.readmore > a' ) .prop ( 'href' ) ,
+                      about     : $ ( item ) .find ( 'p.readmore > a' ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
               } , url );
+
+              await Promise.all ( [ ...results .map ( ( item ) => {
+                return new Promise ( async ( resolve , reject )=> {
+                  try {
+                    await check_if_canceled ( browser , monitor , socket );
+                    const page = await browser.newPage ( );
+                    await page.setRequestInterception ( true );
+                    page.on ( 'request' , ( request ) => {
+                      if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                          request .abort ( );
+                      } else {
+                          request .continue  ( );
+                      }
+                    } );
+                    page.on ( 'error' , err => {
+                      console.log ( 'error happen at the page: ' , err );
+                    });
+                    page.on ( 'pageerror' , pageerr => {
+                      console.log ( 'pageerror occurred: ' , pageerr );
+                    })
+                    page.on('dialog', async dialog => {
+                      console.log(dialog.message());
+                      await dialog.dismiss();
+                    });
+                    await check_if_canceled ( browser , monitor , socket );
+                    await check_if_canceled ( browser , monitor , socket );
+                    await page .goto ( item.about , {timeout:0} );
+                    await check_if_canceled ( browser , monitor , socket );
+                    item.about = await page.$$eval ( 'div.inner.member > p' , ( query ) => {
+                      function  paragraphs  ( array ) {
+                        let paragraph = '';
+                        array.forEach ( ( para ) =>{
+                          paragraph += para.innerText += '\n';
+                        } );
+                        return paragraph;
+                      }
+                      return paragraphs ( query );
+                    } );
+                    let more = await page.$eval ( 'div.col.txt-right.width-25.contact-details > div.inner > p' , ( query ) => {
+                      console.log ( query )
+                      let datum = query.innerText .split  ('\n');
+                      let mail =  datum [ 1 ];
+                      let phone = datum [ 2 ];
+                      return{
+                        mail:mail,
+                        phone:phone
+                      } ;
+                    } );
+                    await page.close (  );
+                    item.mail = more.mail;
+                    item.phone = more.phone.replace ( "T " , '' );
+                    socket.emit ( 'outgoing data' , [item] );
+                    return resolve ( item )
+                  } catch ( e ) {
+                    return reject ( e );
+                  }
+                });
+              } ) ] )
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -4397,17 +4717,20 @@ function primeventures ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function raboprivateequity ( ) {
+function raboprivateequity ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4422,9 +4745,12 @@ function raboprivateequity ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               //await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
+
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.team-alt-item.active' );
@@ -4432,7 +4758,6 @@ function raboprivateequity ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'div.title' ) .text ( )  ,
                       job     : $ ( item ) .find ( 'div.subtitle' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img.team-alt-image' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
@@ -4440,7 +4765,64 @@ function raboprivateequity ( ) {
                 } );
                 return results;
               } , url );
-              await page.close ( );
+              //await page.close ( );
+
+              let itemz = await page .$$ ( 'div.team-alt-item.active' );
+              let index = 0;
+              for ( item of Array.from ( itemz ) ){
+                await check_if_canceled ( browser , monitor , socket );
+                let parent$ = 'div.team-alt-popup-in-content  ';
+
+                while ( ! await page .$ ( parent$ + 'div.team-alt-popup-content-right' ) ){
+                  await item.focus (  );
+                  await item.click ( ) .catch ( console.log );
+                  //console.log ( 'open jammed' );
+                }
+
+                results [ index ] .about = await page.$eval ( parent$ + 'div.team-alt-popup-content-right'  ,
+                  async ( query ) => {
+                    function  paragraphs  ( array ) {
+                      let paragraph = '';
+                      array.forEach ( ( para ) =>{
+                        paragraph += para.innerText += '\n';
+                      } );
+                      return paragraph;
+                    };
+                    return paragraphs ( query .querySelectorAll ( 'p' ) );
+                } );
+
+                let more = await page.$eval ( parent$ + 'div.team-alt-popup-content-left' ,
+                  async ( query ) => {
+                    let icons = query.querySelectorAll ( 'a' );
+                    let mail = icons [ 1 ] .href .replace ( 'mailto:' , '' );
+                    let linkedIn = icons [ 0 ] .href;
+                    return {
+                      mail:mail ,
+                      linkedIn:linkedIn
+                    };
+                } );
+
+                results [ index ].mail = more.mail;
+                results [ index ].linkedIn = more.linkedIn;
+
+                await check_if_canceled ( browser , monitor , socket );
+
+                let close = await page .$ ( parent$ + 'i.icon.icon-close' );
+
+                let maxClose = 7;
+                for ( var i = 0; i < maxClose ; i++ ) {
+                  await close.click (  ) .then ( () => {
+                    i = 8;
+                  } ) .catch ( async ( e ) => {
+                    console.log ( e + "  ...retrying close operation!!!! " + index )
+                    await sleep ( 1500 );
+                  } )
+                }
+                socket.emit ( 'outgoing data' , [ results [ index ] ] )
+                index++;
+              }
+
+              await check_if_canceled ( browser , monitor , socket );
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -4448,22 +4830,26 @@ function raboprivateequity ( ) {
         } )
       }
       let urls = [ `http://raboprivateequity.com/` ];
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function riversideeurope ( ) {
+function riversideeurope ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       let urls = [ ];
       const page = await browser .newPage ( );
+      await check_if_canceled ( browser , monitor , socket );
       await page .goto ( 'http://www.riversideeurope.com/Team.aspx' , { timeout: 0 } );
       await page.setRequestInterception ( true );
       page.on ( 'request' , ( request ) => {
@@ -4474,6 +4860,7 @@ function riversideeurope ( ) {
         }
       } );
       //await autoScroll ( page );
+      await check_if_canceled ( browser , monitor , socket );
       urls = await page.evaluate ( ( ) => {
         let links = [ ];
         let items = document .querySelectorAll ( 'ul.alphabet.clearthis > li > a' );
@@ -4497,9 +4884,11 @@ function riversideeurope ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'ul.listMembers' ) .children (  );
@@ -4507,14 +4896,80 @@ function riversideeurope ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'a + a' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( item ) .text ( )  .replace ( /[\t]+/g , ' ' ) .split ( '\n' ) [ 7 ] .trim ( )  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      url     : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
+                      about     : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
                   } );
                 }  );
                 return results;
               } , url );
+
+              let i , j , chunk = 10;
+              for ( i = 0 , j = results.length; i < j; i += chunk ) {
+                //.slice ( i , i+chunk )
+                console.log ( "chunk --> " + i  )
+                await Promise.all ( [ ...results .slice ( i , i + chunk ) .map ( ( item ) => {
+                  return new Promise ( async ( resolve , reject )=> {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      await page.setRequestInterception ( true );
+                      page.on ( 'request' , ( request ) => {
+                        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                            request .abort ( );
+                        } else {
+                            request .continue  ( );
+                        }
+                      } );
+                      page.on ( 'error' , err => {
+                        console.log ( 'error happen at the page: ' , err );
+                      });
+                      page.on ( 'pageerror' , pageerr => {
+                        console.log ( 'pageerror occurred: ' , pageerr );
+                      })
+                      page.on('dialog', async dialog => {
+                        console.log(dialog.message());
+                        await dialog.dismiss();
+                      });
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await check_if_canceled ( browser , monitor , socket );
+                      item.about = await page.$$eval ( 'dd > p' , ( query ) => {
+                        function  paragraphs  ( array ) {
+                          let paragraph = '';
+                          array.forEach ( ( para ) =>{
+                            paragraph += para.innerText += '\n';
+                          } );
+                          return paragraph;
+                        }
+                        return paragraphs ( query );
+                      } )
+                      await check_if_canceled ( browser , monitor , socket );
+                      let more = await page.$eval ( '.officeDetail' , ( query ) => {
+                        let query1 = query.querySelectorAll ( 'dd' ) ? query.querySelectorAll ( 'dd' ) : '';
+                        let phone = query1 [ 1 ] ? query1 [ 1 ] .innerText : "";
+                        let fax = query1 [ 2 ] ? query1 [ 2 ] .innerText : "";
+                        return {
+                          phone : phone ,
+                          fax : fax,
+                        };
+                      } ).then ( ()=>{
+                        item.fax = more.fax;
+                        item.phone = more.phone;
+                      } ).catch (console.log)
+
+                      await page.close (  );
+                      socket.emit ( 'outgoing data' , [ item ] );
+                      return resolve ( item );
+                    } catch ( e ) {
+                      return reject ( e );
+                    }
+                  });
+                } ) ] )
+              }
+
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -4525,17 +4980,20 @@ function riversideeurope ( ) {
 
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function setventures ( ) {
+function setventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4553,6 +5011,7 @@ function setventures ( ) {
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.gw-gopf-post:has(img)' );
@@ -4560,14 +5019,67 @@ function setventures ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'b' ) .text ( )  ,
                       job     : $ ( item ) .find ( 'a:not(b)' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .split ( ' - ' ) [ 1 ] .slice ( 0 , 45 ) .trim ( ) + "... "  ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      //
                       image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
+                      about   : $ ( item ) .find ( 'div.gw-gopf-post-excerpt > a' ) .prop ( "href" )  ,
+                      url     : $ ( item ) .find ( 'div.gw-gopf-post-excerpt > a' ) .prop ( "href" )  ,
                   } );
                 } );
                 return results;
               } , url );
+
+              let i , j , chunk = 10;
+              for ( i = 0 , j = results.length; i < j; i += chunk ) {
+                //.slice ( i , i+chunk )
+                console.log ( "chunk --> " + i  )
+                await Promise.all ( [ ...results .slice ( i , i + chunk ) .map ( ( item ) => {
+                  return new Promise ( async ( resolve , reject )=> {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      await page.setRequestInterception ( true );
+                      page.on ( 'request' , ( request ) => {
+                        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                            request .abort ( );
+                        } else {
+                            request .continue  ( );
+                        }
+                      } );
+                      page.on ( 'error' , err => {
+                        console.log ( 'error happen at the page: ' , err );
+                      });
+                      page.on ( 'pageerror' , pageerr => {
+                        console.log ( 'pageerror occurred: ' , pageerr );
+                      })
+                      page.on('dialog', async dialog => {
+                        console.log(dialog.message());
+                        await dialog.dismiss();
+                      });
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await check_if_canceled ( browser , monitor , socket );
+                      item.about = await page.$$eval ( 'div.et_pb_text_inner > p' , ( query ) => {
+                        function  paragraphs  ( array ) {
+                          let paragraph = '';
+                          array.forEach ( ( para ) =>{
+                            paragraph += para.innerText += '\n';
+                          } );
+                          return paragraph;
+                        }
+                        return paragraphs ( query );
+                      } )
+
+                      await page.close (  );
+                      socket.emit ( 'outgoing data' , [ item ] );
+                      return resolve ( item );
+                    } catch ( e ) {
+                      return reject ( e );
+                    }
+                  });
+                } ) ] )
+              }
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -4579,17 +5091,20 @@ function setventures ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function smile_invest ( ) {
+function smile_invest (socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4604,9 +5119,11 @@ function smile_invest ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.vc_column-inner:has(h3 > a)' );
@@ -4614,14 +5131,74 @@ function smile_invest ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'h3 > a' ) .text ( )  ,
                       job     : $ ( item ) .find ( 'p' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
+                      //
                       image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
+                      about   : $ ( item ) .find ( 'div.wpb_wrapper > a' ) .prop  ( 'href' ) ,
+                      url   : $ ( item ) .find ( 'div.wpb_wrapper > a' ) .prop  ( 'href' ) ,
                   } );
                 } );
                 return results;
               } , url );
+
+              await check_if_canceled ( browser , monitor , socket );
+
+              let i , j , chunk = 10;
+              for ( i = 0 , j = results.length; i < j; i += chunk ) {
+                //.slice ( i , i+chunk )
+                console.log ( "chunk --> " + i  )
+                await Promise.all ( [ ...results .slice ( i , i + chunk ) .map ( ( item ) => {
+                  return new Promise ( async ( resolve , reject )=> {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      await page.setRequestInterception ( true );
+                      page.on ( 'request' , ( request ) => {
+                        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                            request .abort ( );
+                        } else {
+                            request .continue  ( );
+                        }
+                      } );
+                      page.on ( 'error' , err => {
+                        console.log ( 'error happen at the page: ' , err );
+                      });
+                      page.on ( 'pageerror' , pageerr => {
+                        console.log ( 'pageerror occurred: ' , pageerr );
+                      })
+                      page.on('dialog', async dialog => {
+                        console.log(dialog.message());
+                        await dialog.dismiss();
+                      });
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await check_if_canceled ( browser , monitor , socket );
+                      item.about = await page.$$eval ( 'div.wpb_text_column.wpb_content_element > div.wpb_wrapper' , ( query ) => {
+                        function  paragraphs  ( array ) {
+                          let paragraph = '';
+                          array.forEach ( ( para ) =>{
+                            paragraph += para.innerText += '\n';
+                          } );
+                          return paragraph;
+                        }
+                        return paragraphs ( query );
+                      } );
+
+                      await page.$eval ( 'span.qode_icon_shortcode.q_font_awsome_icon.fa-lg > a' , ( query ) => {
+                        return query ? query.href : "";
+                      } ) .then ( (linkedIn) => {item.linkedIn = linkedIn } ).catch ( console.log )
+
+                      await page.close (  );
+                      socket.emit ( 'outgoing data' , [ item ] );
+                      return resolve ( item );
+                    } catch ( e ) {
+                      return reject ( e );
+                    }
+                  });
+                } ) ] )
+              }
+
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -4633,17 +5210,20 @@ function smile_invest ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function startgreen ( ) {
+function startgreen ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4658,20 +5238,23 @@ function startgreen ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'tbody > tr > td:has(img)' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
+                  let mail = $ ( item ) .find ( 'a' ) .prop ( 'href' );
                   results.push ( {
                       name    : $ ( item ) .find ( 'strong' ) .text ( )  ,
                       job     : $ ( item ) .text ( )  .replace ( /[\t]+/g , ' ' ) .split ( '\n' ) [ 3 ] .trim ( ) ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
+                      mail   : mail ? mail.replace( 'mailto:' , '' ) : false  ,
                   } );
                 } );
                 return results;
@@ -4687,17 +5270,22 @@ function startgreen ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function seaminvestments ( ) {
+function seaminvestments ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4712,9 +5300,11 @@ function seaminvestments ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.seam-team-column.vc_column_container.col-md-6.appear-animation.fadeIn.appear-animation-visible' );
@@ -4726,6 +5316,11 @@ function seaminvestments ( ) {
                       image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
+                      about  : $ ( item ) .find ( "div.wpb_wrapper" ) .text (  ) ,
+                      phone  : $ ( item ) .find ( "div.aio-icon-description.ult-responsive" ) .eq ( 0 ) .text ( ) ,
+                      linkedIn:  $ ( item ) .find ( "div.aio-icon-description.ult-responsive" ) .eq ( 1 ) .text ( ) ,
+                      mail:  $ ( item ) .find ( "div.aio-icon-description.ult-responsive" ) .eq ( 2 ) .text ( ) ,
+
                   } );
                 } );
                 return results;
@@ -4740,18 +5335,23 @@ function seaminvestments ( ) {
       let urls = [ `https://seaminvestments.nl/#team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function strongrootcapital ( ) {
+function strongrootcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4759,6 +5359,7 @@ function strongrootcapital ( ) {
               let results = [ ];
               const page = await browser .newPage ( );
               await page.setRequestInterception ( true );
+              await check_if_canceled ( browser , monitor , socket );
               page.on ( 'request' , ( request ) => {
                 if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
                     request .abort ( );
@@ -4769,6 +5370,7 @@ function strongrootcapital ( ) {
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.teamBlocks.content >  div.block.js-revealMe.js-revealed' );
@@ -4776,10 +5378,12 @@ function strongrootcapital ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'h3' ) .text ( )   ,
                       job     : $ ( item ) .find ( 'p' ) .text ( )   ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
+                      phone   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 0 ) .prop ( 'href' ) .replace ( "mailto:" , '' ) ,
+                      mail   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 1 ) .prop ( 'href' ) .replace ( "tel:" , '' ) ,
+                      linkedIn   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 2 ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
@@ -4795,17 +5399,20 @@ function strongrootcapital ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function thujacapital ( ) {
+function thujacapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4820,9 +5427,11 @@ function thujacapital ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.intrinsic' );
@@ -4830,14 +5439,73 @@ function thujacapital ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'p' ) .text ( )   ,
                       job     : $ ('li.active-link') .text ( )   ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
+                      url    : $ ( item ) .find ( 'a' ) .prop ( 'href' )   ,
+                      about    : $ ( item ) .find ( 'a' ) .prop ( 'href' )   ,
                   } );
                 } );
                 return results;
               } , url );
+
+              let i , j , chunk = 10;
+              for ( i = 0 , j = results.length; i < j; i += chunk ) {
+                //.slice ( i , i+chunk )
+                console.log ( "chunk --> " + i  )
+                await Promise.all ( [ ...results .slice ( i , i + chunk ) .map ( ( item ) => {
+                  return new Promise ( async ( resolve , reject )=> {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+
+                      page.on ( 'error' , err => {
+                        console.log ( 'error happen at the page: ' , err );
+                      });
+                      page.on ( 'pageerror' , pageerr => {
+                        console.log ( 'pageerror occurred: ' , pageerr );
+                      })
+                      page.on('dialog', async dialog => {
+                        console.log(dialog.message());
+                        await dialog.dismiss();
+                      });
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await check_if_canceled ( browser , monitor , socket );
+                      item.about = await page.$$eval ( 'div.sqs-block-content > p' , ( query ) => {
+                        function  paragraphs  ( array ) {
+                          let paragraph = '';
+                          array.forEach ( ( para ) =>{
+                            paragraph += para.innerText += '\n';
+                          } );
+                          return paragraph;
+                        }
+                        return paragraphs ( query );
+                      } );
+
+                      await page.$$eval ( 'div.sqs-block-content' , ( selector ) => {
+                        let query = selector [ 1 ] .querySelectorAll ( 'a' );
+                        console.log (query)
+                        return {
+                          phone : query [ 0 ] ? query [ 0 ].href : "" ,
+                          mail  : query [ 1 ] ? query [ 1 ].href : ""
+                        };
+                      } ) .then ( ( obj ) => {
+                        console.log(obj);
+                        item.phone = obj.phone ,
+                        item.mail = obj.mail
+                      } ).catch ( console.log )
+
+                      //await page.close (  );
+                      socket.emit ( 'outgoing data' , [ item ] );
+                      return resolve ( item );
+                    } catch ( e ) {
+                      return reject ( e );
+                    }
+                  });
+                } ) ] )
+              }
+
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -4848,18 +5516,21 @@ function thujacapital ( ) {
       let urls = [ `https://www.thujacapital.com/new-page-3` , `https://www.thujacapital.com/partners` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      //browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function tiincapital ( ) {
+function tiincapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4874,9 +5545,11 @@ function tiincapital ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.wf-cell.shown' );
@@ -4884,10 +5557,10 @@ function tiincapital ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'div.team-author-name' ) .text ( )   ,
                       job     : $ ( item ) .find ( 'p' ) .text ( )   ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
+                      mail  : $ ( item )  .find ( 'div.soc-ico > a' ) .prop ( 'href' ) .replace ( "mailto:" , '' )
                   } );
                 } );
                 return results;
@@ -4901,19 +5574,24 @@ function tiincapital ( ) {
       }
       let urls = [ `https://tiincapital.nl/over-ons/het-team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
-      //
+
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function synergia ( ) {
+function synergia ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -4928,9 +5606,11 @@ function synergia ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.team-lid' );
@@ -4938,10 +5618,12 @@ function synergia ( ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'span.name' ) .text ( )   ,
                       job     : $ ( item ) .find ( 'span.function' ) .text ( )   ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
+                      about   : $ ( item ) .find ( 'div.main > p' ) .text (  ) ,
+                      mail   : $ ( item ) .find ( 'a#mail' ) .prop ( 'href' ) .replace ( 'mailto:' , '' ) ,
+                      linkedin   : $ ( item ) .find ( 'a#linkedin' ) .prop ( 'href' )
                   } );
                 } );
                 return results;
@@ -4956,35 +5638,43 @@ function synergia ( ) {
       let urls = [ `https://www.synergia.nl/nl/over-synergia#richard-verkleij_3` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
+      await check_if_canceled ( browser , monitor , socket );
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function torqxcapital ( ) {
+function torqxcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
             try{
               let results = [ ];
               const page = await browser .newPage ( );
-              await page.setRequestInterception ( true );
-              page.on ( 'request' , ( request ) => {
-                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-                    request .abort ( );
-                } else {
-                    request .continue  ( );
-                }
-              } );
+              page.on ( 'error' , err => {
+                console.log ( 'error happen at the page: ' , err );
+              });
+              page.on ( 'pageerror' , pageerr => {
+                console.log ( 'pageerror occurred: ' , pageerr );
+              })
+              page.on('dialog', async dialog => {
+                console.log(dialog.message());
+                await dialog.dismiss();
+              });
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
-              await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.item' );
@@ -4993,7 +5683,6 @@ function torqxcapital ( ) {
                       //item    : $ ( item ) .html ( ) ,
                       name    : $ ( item ) .find ( 'div.hover-info.hidden-xs > h3' ) .text ( )   ,
                       job     : $ ( item ) .find ( 'div.hover-info.hidden-xs > h4' ) .text ( )   ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
@@ -5001,6 +5690,64 @@ function torqxcapital ( ) {
                 } );
                 return results;
               } , url );
+
+              let itemz = await page .$$ ( 'div.item' );
+              let index = 0;
+              let parent$ = 'div.fuse-modal.activemodal#modal-item  ';
+              for ( item of Array.from ( itemz ) ){
+                await check_if_canceled ( browser , monitor , socket );
+
+                await item.focus ( );
+                await item.click ( ) .catch ( console.log )
+
+                while ( ! await page .$ ( parent$ + 'div.fuse-modal-closebtn.closemodal' ) ){
+                  console.log ( 'open jammed ' + index );
+                  await item.click ( ) .catch ( console.log );
+                }
+                results [ index ] .about = await page.$eval ( parent$ + 'div.item-content.animated.slow.fadeInUpSlow'  ,
+                  async ( query ) => {
+                    function  paragraphs  ( array ) {
+                      let paragraph = '';
+                      array.forEach ( ( para ) =>{
+                        paragraph += para.innerText += '\n';
+                      } );
+                      return paragraph;
+                    };
+                    return paragraphs ( query .querySelectorAll ( 'p' ) );
+                } );
+
+                let more = await page.$eval ( parent$ + 'ul.contact-options' ,
+                  async ( query ) => {
+                    let icons = query.querySelectorAll ( 'li > a' );
+                    let mail = icons [ 0 ] .href .replace ( 'mailto:' , '' );
+                    let linkedIn = icons [ 1 ] .href;
+                    return {
+                      mail:mail ,
+                      linkedIn:linkedIn
+                    };
+                } ).then ( ( obj ) => {
+                  results [ index ] .mail = obj.mail ;
+                  results [ index ] .linkedIn = obj.linkedIn ;
+                })
+
+                await check_if_canceled ( browser , monitor , socket );
+
+                let close = await page .$ ( parent$ + 'div.fuse-modal-closebtn.closemodal' );
+
+                let maxClose = 7;
+                for ( var i = 0; i < maxClose ; i++ ) {
+                  await close.click (  ) .then ( () => {
+                    i = 8;
+                  } ) .catch ( async ( e ) => {
+                    console.log ( e + "  ...retrying close operation!!!! " + index )
+                    await sleep ( 1500 );
+                  } )
+                }
+                while ( await page .$ ( parent$ + 'div.fuse-modal-closebtn.closemodal' ) );
+                socket.emit ( 'outgoing data' , [ results [ index ] ] )
+                index++;
+              }
+
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -5011,18 +5758,22 @@ function torqxcapital ( ) {
       let urls = [ `https://www.torqxcapital.com/about-us/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function vepartners ( ) {
+function vepartners ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -5037,21 +5788,22 @@ function vepartners ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.team_item' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      //item    : $ ( item ) .html ( ) ,
                       name    : $ ( item ) .find ( 'h3.title' ) .text ( )   ,
                       job     : $ ( item ) .find ( 'h2.subtitle' ) .text ( )   ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'div.image.equal_team' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                       from    : url ,
                       index   : index ,
+                      about   : $ ( item ) .find ( 'div.inner_text > p' ) .text ( )   ,
                   } );
                 } );
                 return results;
@@ -5066,35 +5818,44 @@ function vepartners ( ) {
       let urls = [ `https://vepartners.com/team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function vendiscapital ( ) {
+function vendiscapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
             try{
               let results = [ ];
               const page = await browser .newPage ( );
-              await page.setRequestInterception ( true );
-              page.on ( 'request' , ( request ) => {
-                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-                    request .abort ( );
-                } else {
-                    request .continue  ( );
-                }
-              } );
+              page.on ( 'error' , err => {
+                console.log ( 'error happen at the page: ' , err );
+              });
+              page.on ( 'pageerror' , pageerr => {
+                console.log ( 'pageerror occurred: ' , pageerr );
+              })
+              page.on('dialog', async dialog => {
+                console .log ( dialog .message ( ) );
+                await dialog .dismiss ( );
+              });
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.team-member' );
@@ -5111,6 +5872,45 @@ function vendiscapital ( ) {
                 } );
                 return results;
               } , url );
+
+              let itemz = await page .$$ ( 'div.team-member' );
+              let index = 0;
+              let parent$ = 'div.team-member.popup ';
+              for ( item of Array.from ( itemz ) ){
+                await check_if_canceled ( browser , monitor , socket );
+
+                await item.focus ( );
+                await item.click ( ) .catch ( console.log );
+
+                results [ index ] .about = await page.$eval ( parent$ + ' p.description'  ,
+                  async ( query ) => {
+                    return query .innerText;
+                } );
+
+                results [ index ] .phone = await page.$eval ( parent$ + 'span.team-tel'  ,
+                  async ( query ) => {
+                    return query .innerText;
+                } );
+
+                results [ index ] .mail = await page.$eval ( parent$ + 'span.team-email'  ,
+                  async ( query ) => {
+                    return query .innerText;
+                } );
+
+                results [ index ] .linkedIn = await page.$eval ( parent$ + 'ul.social.accent-color'  ,
+                  async ( query ) => {
+                    return query .querySelector ( 'li > a' ) .href;
+                } ).catch ( console.log );
+
+                await check_if_canceled ( browser , monitor , socket );
+
+                let close = await page.$ ( parent$ + 'div.kruis' )
+                await close.click (  ).catch ( console.log );
+
+                socket.emit ( 'outgoing data' , [ results [ index ] ] )
+                index++;
+              }
+
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -5122,17 +5922,20 @@ function vendiscapital ( ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function victusparticipations ( ) {
+function victusparticipations ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -5147,21 +5950,24 @@ function victusparticipations ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.et_pb_column.et_pb_column_1_4.et_pb_css_mix_blend_mode_passthrough:has(img)' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      //item    : $ ( item ) .html ( ) ,
                       name    : $ ( item ) .find ( 'h4' ) .text ( ) ,
                       job     : $ ( item ) .find ( 'p.et_pb_member_position' ) .text ( ) ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      about    : $ ( item ) .find ( 'div.et_pb_team_member_description > div' ) .text ( ) ,
+                      linkedIn    : $ ( item ) .find ( 'ul.et_pb_member_social_links > li > a' ) .prop ( 'href' ) ,
+
                   } );
                 } );
                 return results;
@@ -5176,18 +5982,23 @@ function victusparticipations ( ) {
       let urls = [ `https://victusparticipations.com/team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function vortexcp ( ) {
+function vortexcp ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -5202,21 +6013,22 @@ function vortexcp ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.team__item' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      //item    : $ ( item ) .html ( ) ,
                       name    : $ ( item ) .find ( 'h4.team-member__name' ) .text ( ) ,
                       job     : $ ( item ) .find ( 'p.team-member__function' ) .text ( ) ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      about    : $ ( item ) .find ( 'div.team-member > p' ) .text ( ) ,
                   } );
                 } );
                 return results;
@@ -5231,18 +6043,23 @@ function vortexcp ( ) {
       let urls = [ `https://vortexcp.com/about/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function transequity ( ) {
+function transequity ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -5257,21 +6074,24 @@ function transequity ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.et_pb_column.et_pb_column_1_3.et_pb_css_mix_blend_mode_passthrough:has(img)' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      //item    : $ ( item ) .html ( ) ,
                       name    : $ ( item ) .find ( 'h4.et_pb_module_header' ) .text ( ) ,
                       job     : $ ( item ) .find ( 'p.et_pb_member_position' ) .text ( ) ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      about   : $ ( item ) .find ( 'div.et_pb_team_member_description > p' ) .eq ( 1 ) .text ( ) ,
+                      mail    : $ ( item ) .find ( 'div.et_pb_team_member_description > p' ) .eq ( 2 ) .text ( ) ,
+                      linkedIn    : $ ( 'a.icon.et_pb_with_border' ) .eq ( index ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
@@ -5286,18 +6106,23 @@ function transequity ( ) {
       let urls = [ `https://transequity.nl/team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function wadinko ( ) {
+function wadinko ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -5312,21 +6137,24 @@ function wadinko ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'address.employee.employee--archive.flex.line-margin' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      //item    : $ ( item ) .html ( ) ,
                       name    : $ ( item ) .find ( 'h3' ) .text ( ) ,
                       job     : $ ( item ) .find ( 'span' ) .text ( ) ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      phone    : $ ( item ) .find ( 'div.employee__phone' ) .text ( ) ,
+                      mail    : $ ( item ) .find ( 'div.employee__mail' ) .text ( ) ,
+                      linkedIn    : $ ( item ) .find ( 'div.employee__linkedin > a' ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
@@ -5341,18 +6169,23 @@ function wadinko ( ) {
       let urls = [ `https://www.wadinko.nl/medewerkers/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function waterland ( ) {
+function waterland ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -5367,25 +6200,90 @@ function waterland ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
-                let items = $ ( 'div.fusion-column-wrapper:has(img)' );
+                let items = $ ( 'div.member.fusion-layout-column.fusion_builder_column:has(img)' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      //item    : $ ( item ) .html ( ) ,
                       name    : $ ( item ) .find ( 'h2.title-heading-center' ) .text ( ) ,
                       job     : $ ( item ) .find ( 'p' ) .text ( ) ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      about   : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
+                      url     : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
               } , url );
+
+              let i , j , chunk = 5;
+              for ( i = 0 , j = results.length; i < j; i += chunk ) {
+                //.slice ( i , i+chunk )
+                console.log ( "chunk --> " + i  )
+                await Promise.all ( [ ...results .slice ( i , i + chunk ) .map ( ( item ) => {
+                  return new Promise ( async ( resolve , reject )=> {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      await page.setRequestInterception ( true );
+                      page.on ( 'request' , ( request ) => {
+                        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                            request .abort ( );
+                        } else {
+                            request .continue  ( );
+                        }
+                      } );
+                      page.on ( 'error' , err => {
+                        console.log ( 'error happen at the page: ' , err );
+                      });
+                      page.on ( 'pageerror' , pageerr => {
+                        console.log ( 'pageerror occurred: ' , pageerr );
+                      })
+                      page.on('dialog', async dialog => {
+                        console.log(dialog.message());
+                        await dialog.dismiss();
+                      });
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await check_if_canceled ( browser , monitor , socket );
+
+                      item.about = await page.$$eval ( 'div.post-content > p' , ( query ) => {
+                        function  paragraphs  ( array ) {
+                          let paragraph = '';
+                          array.forEach ( ( para ) =>{
+                            paragraph += para.innerText += '\n';
+                          } );
+                          return paragraph;
+                        }
+                        return paragraphs ( query );
+                      } );
+
+                      item.about += await page.$$eval ( 'div.fusion-text > p' , ( query ) => {
+                        function  paragraphs  ( array ) {
+                            let paragraph = '';
+                            array.forEach ( ( para ) =>{
+                              paragraph += para.innerText += '\n';
+                          } );
+                            return paragraph;
+                          }
+                        return paragraphs ( query );
+                      } );
+                      //await page.close (  );
+                      socket.emit ( 'outgoing data' , [ item ] );
+                      return resolve ( item );
+                    } catch ( e ) {
+                      return reject ( e );
+                    }
+                  });
+                } ) ] )
+              }
+
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -5396,18 +6294,23 @@ function waterland ( ) {
       let urls = [ `https://www.waterland.nu/nl/team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function vpcapital ( ) {
+function vpcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -5422,21 +6325,22 @@ function vpcapital ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.so-widget-intracto-image-text-widget' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      //item    : $ ( item ) .html ( ) ,
                       name    : $ ( item ) .find ( 'h3' ) .text ( ) ,
                       job     : $ ( item ) .find ( 'span' ) .text ( ) ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      about   : $ ( item ) .find ( 'div.col-md-6.offset-lg-1' ) .text ( ) ,
                   } );
                 } );
                 return results;
@@ -5451,18 +6355,23 @@ function vpcapital ( ) {
       let urls = [ `https://vpcapital.eu/over-ons/team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function impulszeeland ( ) {
+function impulszeeland ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -5477,21 +6386,23 @@ function impulszeeland ( ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.col-lg-6' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      //item    : $ ( item ) .html ( ) ,
                       name    : $ ( item ) .find ( 'h3.h4.card-title' ) .text ( ) ,
                       job     : $ ( item ) .find ( 'h4.h6.card-subtitle' ) .text ( ) ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      mail    : $ ( item ) .find ( 'ul.list-unstyled > li' ) .eq ( 0 ) .text (  ) ,
+                      phone   : $ ( item ) .find ( 'ul.list-unstyled > li' ) .eq ( 1 ) .text (  ) ,
                   } );
                 } );
                 return results;
@@ -5506,18 +6417,23 @@ function impulszeeland ( ) {
       let urls = [ `https://www.impulszeeland.nl/nl/over/team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
 }
 
-function wmp ( ) {
+function wmp ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -5543,10 +6459,10 @@ function wmp ( ) {
                   results.push ( {
                       name    : $ ( `#${id}` ) .find ( 'p' ) .eq ( 0 ) .text ( ) ,
                       job     : $ ( `#${id}` ) .find ( 'p' ) .eq ( 3 ) .text ( )  .trim ( ) || $ ( `#${id}` ) .find ( 'p' ) .eq ( 4 ) .text ( ) .slice ( 0 , 45  ) + "..." ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'div.museBGSize.colelem' ) .css ( 'background-image' ) .slice ( 4 , -1 ) .replace ( /"/g , ''  ) ,
                       from    : url ,
                       index   : index ,
+                      about    : $ ( `#${id}` ) .text ( ) ,
                   } );
                 } );
                 return results;
@@ -5561,9 +6477,13 @@ function wmp ( ) {
       let urls = [ `https://www.wmp.nl/team_wmp.html` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
@@ -8106,7 +9026,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //newion ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //wmp ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
@@ -8544,207 +9464,265 @@ io .on ( "connection" , socket => {
           .catch ( console.error );
   } );
 
-  socket .on ( "49" , function ( data ) {
-    console.log ( data );
-    nordian ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "49" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      nordian ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "50" , function ( data ) {
-    console.log ( data );
-    npm_capital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "50" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      npm_capital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "51" , function ( data ) {
-    console.log ( data );
-    oostnl ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "51" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      oostnl ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "52" , function ( data ) {
-    console.log ( data );
-    o2capital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "52" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      o2capital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "53" , function ( data ) {
-    console.log ( data );
-    parcomcapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "53" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      parcomcapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "54" , function ( data ) {
-    console.log ( data );
-    plainvanilla ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "54" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      plainvanilla ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "55" , function ( data ) {
-    console.log ( data );
-    pridecapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "55" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      pridecapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "56" , function ( data ) {
-    console.log ( data );
-    primeventures ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "56" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      primeventures ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "57" , function ( data ) {
-    console.log ( data );
-    raboprivateequity ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "57" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      raboprivateequity ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "58" , function ( data ) {
-    console.log ( data );
-    riversideeurope ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "58" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      riversideeurope ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "59" , function ( data ) {
-    console.log ( data );
-    setventures ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "59" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      setventures ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "60" , function ( data ) {
-    console.log ( data );
-    smile_invest ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "60" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      smile_invest ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "61" , function ( data ) {
-    console.log ( data );
-    startgreen ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "61" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      startgreen ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "62" , function ( data ) {
-    console.log ( data );
-    seaminvestments ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "62" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      seaminvestments ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "63" , function ( data ) {
-    console.log ( data );
-    strongrootcapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "63" ,
+    async function ( data ) {
+      console.log ( data );
+      let prefect = await sync_ (  );
+      strongrootcapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "64" , function ( data ) {
-    console.log ( data );
-    thujacapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "64" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      thujacapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "65" , function ( data ) {
-    console.log ( data );
-    tiincapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "65" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      tiincapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "66" , function ( data ) {
-    console.log ( data );
-    synergia ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "66" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      synergia ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "67" , function ( data ) {
-    console.log ( data );
-    torqxcapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "67" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      torqxcapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "68" , function ( data ) {
-    console.log ( data );
-    vepartners ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "68" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      vepartners ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "69" , function ( data ) {
-    console.log ( data );
-    vendiscapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "69" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      vendiscapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "70" , function ( data ) {
-    console.log ( data );
-    victusparticipations ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "70" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      victusparticipations ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "71" , function ( data ) {
-    console.log ( data );
-    vortexcp ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "71" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      vortexcp ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "72" , function ( data ) {
-    console.log ( data );
-    transequity ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "72" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      transequity ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "73" , function ( data ) {
-    console.log ( data );
-    wadinko ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "73" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      wadinko ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "74" , function ( data ) {
-    console.log ( data );
-    waterland ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "74" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      waterland ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "75" , function ( data ) {
-    console.log ( data );
-    vpcapital ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "75" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      vpcapital ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "76" , function ( data ) {
-    console.log ( data );
-    impulszeeland ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "76" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      impulszeeland ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
-  socket .on ( "77" , function ( data ) {
-    console.log ( data );
-    wmp ( )
-      .then ( results => socket .emit ( "outgoing data" , results ) )
-        .catch ( console.error );
+  socket .on ( "77" ,
+    async function ( data ) {
+      let prefect = await sync_ (  );
+      console.log ( data );
+      wmp ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
   } );
 
   socket .on ( "78" , function ( data ) {

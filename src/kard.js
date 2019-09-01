@@ -213,7 +213,7 @@ export default function MediaCard ( props ) {
       <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar className={classes.appBar}>
           <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+            <IconButton edge="start" color="secondary" onClick={handleClose} aria-label="close">
               <CloseIcon />
             </IconButton>
           </Toolbar>
