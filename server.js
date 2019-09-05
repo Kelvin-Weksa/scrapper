@@ -6224,11 +6224,12 @@ function waterland ( socket , monitor ) {
               await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
-                let items = $ ( 'div.member.fusion-layout-column.fusion_builder_column:has(img)' );
+                let items = $ ( 'div.office.animated.animatedFadeInUp' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      name    : $ ( item ) .find ( 'h2.title-heading-center' ) .text ( ) ,
-                      job     : $ ( item ) .find ( 'p' ) .text ( ) ,
+                      name    : $ ( item ) .find ( 'h3' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'p.function' ) .text ( ) ,
+                      phone     : $ ( item ) .find ( 'p' ) .eq ( 1 ) .text ( ) ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
@@ -6270,7 +6271,7 @@ function waterland ( socket , monitor ) {
                       await page .goto ( item.about , {timeout:0} );
                       await check_if_canceled ( browser , monitor , socket );
 
-                      item.about = await page.$$eval ( 'div.post-content > p' , ( query ) => {
+                      item.about = await page.$$eval ( 'div.textblock > p' , ( query ) => {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
@@ -6281,7 +6282,7 @@ function waterland ( socket , monitor ) {
                         return paragraphs ( query );
                       } );
 
-                      item.about += await page.$$eval ( 'div.fusion-text > p' , ( query ) => {
+                      /*item.about += await page.$$eval ( 'div.fusion-text > p' , ( query ) => {
                         function  paragraphs  ( array ) {
                             let paragraph = '';
                             array.forEach ( ( para ) =>{
@@ -6290,7 +6291,7 @@ function waterland ( socket , monitor ) {
                             return paragraph;
                           }
                         return paragraphs ( query );
-                      } );
+                      } );*/
                       //await page.close (  );
                       socket.emit ( 'outgoing data' , [ item ] );
                       return resolve ( item );
@@ -6308,7 +6309,7 @@ function waterland ( socket , monitor ) {
             }
         } )
       }
-      let urls = [ `https://www.waterland.nu/nl/team/` ];
+      let urls = [ `https://waterland.nu/nl/over-ons/team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       await check_if_canceled ( browser , monitor , socket );
@@ -10105,7 +10106,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //axivate ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  waterland ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
