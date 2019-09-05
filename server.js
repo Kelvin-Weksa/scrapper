@@ -8873,6 +8873,7 @@ function doen ( socket , monitor ) {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       await check_if_canceled ( browser , monitor , socket );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -8887,6 +8888,7 @@ function doen ( socket , monitor ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
@@ -8920,8 +8922,10 @@ function doen ( socket , monitor ) {
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
