@@ -122,9 +122,11 @@ const Listing = [
   [ "https://o2investment.com/our-team/" , "119" , "O2 Investment Partners" , "https://o2investment.com/wp-content/uploads/2015/06/logo-copy.png" , "VC" ] ,
   [ "https://cleverclover.vc/team/" , "120" , "Clever Clover" , "https://cleverclover.vc/assets/uploads/2017/01/logo-clever-clover-small-rood.png" , "VC" ] ,
 
-
   [ "http://www.atlanticcapital.nl/nl/wie-zijn-wij" , "121" , "Atlantic Capital" , "http://www.atlanticcapital.nl/sites/default/files/ac_logo.png" , "PE" ] ,
   [ "https://www.beekcapital.nl/#profiel" , "122" , "Beek Capital" , "https://www.beekcapital.nl/wp-content/uploads/2016/02/logo-full-dark.svg" , "PE" ] ,
+
+  [ "https://www.velocityfintech.com/team/" , "123" , "Velocity Capital" , "https://www.velocityfintech.com/wp-content/themes/velocityweb/dist/images/logo_d5e830c8.png" , "VC" ] ,
+  [ "http://www.pulsarpartners.nl/over-ons/team/" , "124" , "Pulsar Partners" , "http://www.pulsarpartners.nl/wp-content/uploads/2015/02/logo-1.png" , "VC" ] ,
 ]
 
 export default Listing

@@ -9791,7 +9791,7 @@ function velociyfintech ( socket , monitor ) {
                 return results;
               } , url );
 
-              /*let i , j , chunk = 5;
+              let i , j , chunk = 5;
               let resultz = results.filter ( item => item.about  );
               for ( i = 0 , j = resultz.length; i < j; i += chunk ) {
                 //.slice ( i , i+chunk )
@@ -9814,7 +9814,10 @@ function velociyfintech ( socket , monitor ) {
                       await check_if_canceled ( browser , monitor , socket );
                       await page .goto ( item.about , {timeout:0} );
                       await check_if_canceled ( browser , monitor , socket );
-                      item.about = await page.$$eval ( 'div.col-xs-12.col-md-9 > p' , ( query ) => {
+
+                      item.about = await page.$$eval ( 'p.short-description' , query => query .innerText + '\n\n');
+
+                      item.about += await page.$$eval ( 'div.col-12.offset-md-2.col-md-8 > p' , ( query ) => {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
@@ -9825,9 +9828,8 @@ function velociyfintech ( socket , monitor ) {
                         return  paragraphs ( query );
                       } );
 
-                      item.phone = item.about.split ( '\nemail' ) [ 0 ] .replace ( 'phone:' , '' ) ;
+                      item.linkedIn = await page.$eval ( 'a.linkedin-link' ,  query  => query .href );
 
-                      item.mail = item.about.split ( '\nemail' ) [ 1 ] .split ( '\n' ) [ 0 ] ;
                       await page.close (  );
                       socket.emit ( 'outgoing data' , [ item ] );
                       return resolve ( item );
@@ -9836,7 +9838,7 @@ function velociyfintech ( socket , monitor ) {
                     }
                   });
                 } ) ] )
-              }*/
+              }
 
               results.filter ( item => ! item.about  ).forEach ( ( card ) => {
                 socket.emit ( 'outgoing data' , [ card ] )
@@ -9852,6 +9854,76 @@ function velociyfintech ( socket , monitor ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
 
+      browser.close ( );
+      monitor.confirm = true;
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      monitor.confirm = true;
+      return reject ( e );
+    }
+  })
+}
+
+function pulsarpartners ( socket , monitor ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
+      const page = await browser .newPage ( );
+      await page.setRequestInterception ( true );
+      page.on ( 'request' , ( request ) => {
+        if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+            request .abort ( );
+        } else {
+            request .continue  ( );
+        }
+      } );
+      await check_if_canceled ( browser , monitor , socket );
+      await page .goto ( `http://www.pulsarpartners.nl/over-ons/team/` , { timeout : 0 , } );
+      await check_if_canceled ( browser , monitor , socket );
+      let urls = await page.$$eval ( 'div.row-fluid > ul > li > a' , selector => selector.map ( item => item.href ) );
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await check_if_canceled ( browser , monitor , socket );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { path: 'jquery.js'  } );
+              await check_if_canceled ( browser , monitor , socket );
+              await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
+              results = await page.evaluate ( ( url ) => {
+                let image = $ ( 'section#section_0.section.post-content > div.container > div.row-fluid  img' ) .eq ( 0 ) .prop ( 'src' )  ;
+                let about = document.querySelectorAll ( 'section#section_0.section.post-content > div.container > div.row-fluid > p' );
+                let results = [ ];
+                  results.push ( {
+                    name    : $ ( 'div.titlebar-content > h1' ) .eq ( 0 ) .text (  ) ,
+                    image   :  image ,
+                    about     :  Array.from (about)  .reduce ( ( total , str ) => total + str.innerText , '' ) ,
+                  } );
+                return results;
+              } , url );
+              await check_if_canceled ( browser , monitor , socket );
+              socket.emit ( 'outgoing data' , results )
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
       browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
@@ -9883,7 +9955,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  velociyfintech ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  pulsarpartners ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
@@ -10984,6 +11056,25 @@ io .on ( "connection" , socket => {
         .then ( console.log )
           .catch ( console.error );
   } );
+
+  socket .on ( "123" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      velociyfintech ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
+  } );
+
+  socket .on ( "124" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      pulsarpartners ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
+  } );
+
 
   socket .on ( "disconnect" , () => {
       console.log ( "Client disconnected");
