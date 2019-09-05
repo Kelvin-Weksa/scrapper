@@ -110,7 +110,7 @@ const Listing = [
   [ "https://www.ogc-partners.com/about-1" , "107" , "OGC Partners" , "" , "VC" ] ,
   [ "https://investinfuture.nl/en/about-iif/" , "108" , "Invest In Future" , "https://investinfuture.nl/wp-content/uploads/2016/11/Logo-Invest-In-Future.jpg" , "VC" ] ,
   [ "http://www.otterlooventures.nl/over-ov/team/" , "109" , "otterloo Ventures" , "" , "VC" ] ,
-  //[ "https://www.solidventures.nl/" , "110" , "solidventures" , "" , "VC" ] ,
+  [ "https://www.solidventures.nl/" , "110" , "solidventures" , "" , "VC" ] ,
   [ "https://www.doen.nl/about-doen/the-doen-team.htm" , "111" , "DOEN" , "https://www.doen.nl/static/doen/img/logo-DOEN.svg" , "VC" ] ,
   [ "https://endeit.com/#team" , "112" , "Endeit" , "" , "VC" ] ,
   [ "https://www.keenventurepartners.com/#our-people" , "113" , "Keen Venture Partners" , "https://endeit.com/assets/themes/endeit/images/endeit-weblogo-full@2x.png" , "VC" ] ,

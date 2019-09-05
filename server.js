@@ -8812,7 +8812,7 @@ function otterlooventures ( socket , monitor ) {
   })
 }
 
-/*function solidventures ( socket , monitor ) {
+function solidventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
@@ -8866,7 +8866,7 @@ function otterlooventures ( socket , monitor ) {
       return reject ( e );
     }
   })
-}*/
+}
 
 function doen ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9955,7 +9955,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  pulsarpartners ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //solidventures ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
