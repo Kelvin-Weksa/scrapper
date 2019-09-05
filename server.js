@@ -929,13 +929,13 @@ function runbridgepoint ( socket , monitor ) {
               await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
-                let items = document .querySelectorAll ( 'div.column_one_third.result_item_3col.first' );
+                let items = document .querySelectorAll ( 'div.column_one_third.result_item_3col' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
                     name    : item .querySelector ( 'div > p > a' )  .innerText ,
                     job     : item .querySelector ( 'div > ul > li' )  .innerText ,
                     market  : item .querySelector ( 'div > ul > li + li' )  .innerText ,
-                    image   : item .querySelector ( 'img' ) .src ,
+                    image   : item .querySelector ( 'img' ) .src .split ( '&' ) [ 0 ] ,
                     from    : url ,
                     about   : item .querySelector ( 'a.arrow_link' ) .href
                   } );
@@ -943,16 +943,22 @@ function runbridgepoint ( socket , monitor ) {
                 return results;
               }  , url );
               await check_if_canceled ( browser , monitor , socket );
-              await Promise.all ([ ...results.map ( ( item) => {
-                return new Promise ( async ( resolve , reject ) => {
-                  try {
-                    await check_if_canceled ( browser , monitor , socket );
-                    const page = await browser.newPage ( );
-                    await check_if_canceled ( browser , monitor , socket );
-                    await page .goto ( item.about , {timeout:0} );
-                    await page .addScriptTag ( {path : "jquery.js"}  );
-                    await check_if_canceled ( browser , monitor , socket );
-                    item .about = await page.evaluate ( () => {
+
+              let k , j , chunk = 6 ;
+              for ( k = 0 , j = results.length;k < j; k += chunk ) {
+                //.slice ( i , i+chunk )
+                await check_if_canceled ( browser , monitor , socket );
+                console.log ( "inner chunk --> " + k  )
+                await Promise.all ([ ...results .slice ( k , k+chunk ) .map ( ( item) => {
+                  return new Promise ( async ( resolve , reject ) => {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await page .addScriptTag ( {path : "jquery.js"}  );
+                      await check_if_canceled ( browser , monitor , socket );
+                      item .about = await page.evaluate ( () => {
                       function  paragraphs  ( array ) {
                         let paragraph = '';
                         array.forEach ( ( para ) =>{
@@ -962,21 +968,25 @@ function runbridgepoint ( socket , monitor ) {
                       }
                       return paragraphs ( document.querySelectorAll ( 'div.richTextFormat > p' ) );
                     } )
-                    await check_if_canceled ( browser , monitor , socket );
-                    item .phone = await page.evaluate ( () => {
-                      return $ ( 'table.bottom_padded' ) .find ( 'td.info' ) .eq ( 1 ) .text ( );
-                    } )
-                    item .mail = await page.evaluate ( () => {
-                      return $ ( 'table.bottom_padded' ) .find ( 'td.info > a' ) .eq ( 0 ) .prop ( 'href' ) .replace ( 'mailto:' , '' );
-                    } )
-                    await check_if_canceled ( browser , monitor , socket );
-                    socket.emit ( 'outgoing data' , [item] )
-                    return resolve ( item );
-                  } catch ( e ) {
-                    return reject ( e );
-                  }
-                });
-              }  ) ])
+                      await check_if_canceled ( browser , monitor , socket );
+                      item .phone = await page.evaluate ( () => {
+                        return $ ( 'table.bottom_padded' ) .find ( 'td.info' ) .eq ( 1 ) .text ( );
+                      } )
+                      await check_if_canceled ( browser , monitor , socket );
+                      item .mail = await page.evaluate ( () => {
+                        let mail = $ ( 'table.bottom_padded' ) .find ( 'td.info > a' ) .eq ( 0 ) .prop ( 'href' );
+                        return  mail ? mail .replace ( 'mailto:' , '' ) : '';
+                      } )
+                      await page.close ( );
+                      await check_if_canceled ( browser , monitor , socket );
+                      socket.emit ( 'outgoing data' , [item] )
+                      return resolve ( item );
+                    } catch ( e ) {
+                      return reject ( e );
+                    }
+                  });
+                }  ) ])
+              }
 
               await page.close ( );
               monitor.confirm = true ;
@@ -992,8 +1002,15 @@ function runbridgepoint ( socket , monitor ) {
       while ( i ++ < 8 ){
         urls .push ( `http://www.bridgepoint.eu/en/our-team/?&page=${i}`  )
       }
-      let datas = //await crawlUrl ( `http://www.bridgepoint.eu/en/our-team/?&page=0` );
-                  await Promise.all ( [  ...urls .slice ( 0 , 10 ). map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+
+      let k , j , chunk = 2 , datas = [] ;
+      for ( k = 0 , j = urls.length;k < j; k += chunk ) {
+        //.slice ( k , k+chunk )
+        await check_if_canceled ( browser , monitor , socket );
+        console.log ( "chunk --> " + k  )
+       datas =  datas.concat(await Promise.all ( [  ...urls .slice ( k , k + chunk ) .map ( crawlUrl ) ] )) ;
+     }
+
       //
       browser.close ( );
       return resolve ( [ ] .concat ( ...datas ) );
@@ -9173,7 +9190,6 @@ function filsa ( socket , monitor ) {
   })
 }
 
-
 function catenainvestments ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
@@ -9953,6 +9969,121 @@ function pulsarpartners ( socket , monitor ) {
   })
 }
 
+function axivate ( socket , monitor ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
+      //specific to website
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await check_if_canceled ( browser , monitor , socket );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { path: 'jquery.js'  } );
+              await check_if_canceled ( browser , monitor , socket );
+              await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
+              results = await page.evaluate ( ( url ) => {
+                let results = [ ];
+                let items = $ ( 'div.col-6.col-md-4.col-lg-4.team-member ' );
+                Array.from ( items ).forEach ( ( item  , index ) => {
+                  results.push ( {
+                      name    : $ ( item ) .find ( 'h3.name' ) .eq ( 0 ) .text (  ) ,
+                      job     : $ ( item ) .find ( 'h3.position' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
+                      from    : url ,
+                      index   : index ,
+                      url     : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
+                      about     : $ ( item ) .find ( 'a' ) .prop ( 'href' )
+                  } );
+                } );
+                return results;
+              } , url );
+
+              /*let i , j , chunk = 5;
+              let resultz = results.filter ( item => item.about  );
+              for ( i = 0 , j = resultz.length; i < j; i += chunk ) {
+                //.slice ( i , i+chunk )
+                console.log ( "chunk --> " + i  )
+                await Promise.all ( [ ...resultz .slice ( i , i + chunk ) .map ( ( item ) => {
+                  return new Promise ( async ( resolve , reject )=> {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      page.on ( 'error' , err => {
+                        console.log ( 'error happen at the page: ' , err );
+                      });
+                      page.on ( 'pageerror' , pageerr => {
+                        console.log ( 'pageerror occurred: ' , pageerr );
+                      })
+                      page.on('dialog', async dialog => {
+                        console.log(dialog.message());
+                        await dialog.dismiss();
+                      });
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await check_if_canceled ( browser , monitor , socket );
+
+                      item.about = await page.$$eval ( 'p.short-description' , query => query .innerText + '\n\n');
+
+                      item.about += await page.$$eval ( 'div.col-12.offset-md-2.col-md-8 > p' , ( query ) => {
+                        function  paragraphs  ( array ) {
+                          let paragraph = '';
+                          array.forEach ( ( para ) =>{
+                            paragraph += para.innerText += '\n';
+                          } );
+                          return paragraph;
+                        }
+                        return  paragraphs ( query );
+                      } );
+
+                      item.linkedIn = await page.$eval ( 'a.linkedin-link' ,  query  => query .href );
+
+                      await page.close (  );
+                      socket.emit ( 'outgoing data' , [ item ] );
+                      return resolve ( item );
+                    } catch ( e ) {
+                      return reject ( e );
+                    }
+                  });
+                } ) ] )
+              }*/
+
+              results.filter ( item => ! item.about  ).forEach ( ( card ) => {
+                socket.emit ( 'outgoing data' , [ card ] )
+              } )
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+      let urls = [ `https://www.axivate.com/` ];
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+
+      browser.close ( );
+      monitor.confirm = true;
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      monitor.confirm = true;
+      return reject ( e );
+    }
+  })
+}
+
 app.get ( '/*' , function ( req , res ) {
   res.sendFile ( path.join ( __dirname , 'build' , 'index.html' ) );
 });
@@ -9974,7 +10105,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //filsa ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //axivate ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
@@ -11090,6 +11221,15 @@ io .on ( "connection" , socket => {
       let prefect = await sync_ ( );
       console.log ( data );
       pulsarpartners ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
+  } );
+
+  socket .on ( "125" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      axivate ( socket , prefect )
         .then ( console.log )
           .catch ( console.error );
   } );

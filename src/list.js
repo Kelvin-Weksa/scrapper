@@ -127,6 +127,7 @@ const Listing = [
 
   [ "https://www.velocityfintech.com/team/" , "123" , "Velocity Capital" , "https://www.velocityfintech.com/wp-content/themes/velocityweb/dist/images/logo_d5e830c8.png" , "VC" ] ,
   [ "http://www.pulsarpartners.nl/over-ons/team/" , "124" , "Pulsar Partners" , "http://www.pulsarpartners.nl/wp-content/uploads/2015/02/logo-1.png" , "VC" ] ,
+  [ "https://www.axivate.com/" , "125" , "Axivate Capital" , "https://www.axivate.com/wp-content/uploads/2019/06/Nieuw_Logo_Axivate.png" , "VC" ] ,
 ]
 
 export default Listing
