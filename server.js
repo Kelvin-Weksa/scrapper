@@ -11234,8 +11234,8 @@ io .on ( "connection" , socket => {
           .catch ( console.error );
   } );
 
-
-  socket .on ( "disconnect" , () => {
+  socket .on ( "disconnect" , async () => {
+      await sync_ ( );
       console.log ( "Client disconnected");
       sync_ ( );
   } );
