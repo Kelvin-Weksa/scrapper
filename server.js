@@ -906,7 +906,7 @@ function runbolsterinvestments ( socket , monitor ) {
 function runbridgepoint ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
       await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       //specific to website
@@ -944,7 +944,7 @@ function runbridgepoint ( socket , monitor ) {
               }  , url );
               await check_if_canceled ( browser , monitor , socket );
 
-              let k , j , chunk = 6 ;
+              let k , j , chunk = 4 ;
               for ( k = 0 , j = results.length;k < j; k += chunk ) {
                 //.slice ( i , i+chunk )
                 await check_if_canceled ( browser , monitor , socket );
