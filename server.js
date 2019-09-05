@@ -8831,9 +8831,12 @@ function solidventures ( socket , monitor ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
+              await check_if_canceled ( browser , monitor , socket );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
                 let items = $ ( 'div.mc1container:has(h3.font_0 > span.color_15)' );
@@ -8844,6 +8847,9 @@ function solidventures ( socket , monitor ) {
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
+                      about   : $ ( item ) .find ( 'p.font_9 > span.color_15' ) .text (  ) ,
+                      linkedIn   : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
+
                   } );
                 } );
                 return results;
@@ -8858,6 +8864,8 @@ function solidventures ( socket , monitor ) {
       let urls = [ `https://www.solidventures.nl/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
@@ -8872,7 +8880,6 @@ function doen ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
-      await check_if_canceled ( browser , monitor , socket );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -9100,10 +9107,11 @@ function keenventurepartners ( socket , monitor ) {
   })
 }
 
-/*function filsa ( ) {
+function filsa ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
       const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
           return new Promise ( async ( resolve , reject ) => {
@@ -9118,22 +9126,28 @@ function keenventurepartners ( socket , monitor ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
+              await check_if_canceled ( browser , monitor , socket );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
+                let about = document.querySelectorAll ( 'div.col-lg-10.mx-auto > p' );
                 results.push ( {
-                    name    : $ ( 'div#comp-jg6fvxqn > h2.font_2 > span.color_12' ) .eq ( 0 ) .text (  )  ,
+                    name    : $ ( 'strong > em' ) .eq ( 0 ) .text (  )  ,
                     job     : "co-founder and Partner" ,
-                    image   : $ ( 'img#comp-jg6fvxqeimgimage' ) .eq ( 0 ) .prop ( 'src' )  ,
+                    image   : $ ( 'img.wp-image-729.alignleft' ) .eq ( 0 ) .prop ( 'src' )  ,
                     from    : url ,
+                    about   : Array.from ( about ) .slice ( 8 , 17 ) .reduce ( ( total , item ) => total + item.innerText , '' )
                 } );
                 results.push ( {
-                    name    : $ ( 'div#comp-jg6fvxqv > h2.font_2 > span.color_12' ) .eq ( 0 ) .text (  )  ,
+                    name    : $ ( 'em > strong' ) .eq ( 0 ) .text (  )  ,
                     job     : "co-founder and Partner" ,
-                    image   : $ ( 'img#comp-jg6fvxr3imgimage' ) .eq ( 0 ) .prop ( 'src' )  ,
+                    image   : $ ( 'img.wp-image-727.alignleft' ) .eq ( 0 ) .prop ( 'src' )  ,
                     from    : url ,
+                    about   : Array.from ( about ) .slice ( 20 , 27 ) .reduce ( ( total , item ) => total + item.innerText , '' )
                 } );
                 return results;
               } , url );
@@ -9147,13 +9161,18 @@ function keenventurepartners ( socket , monitor ) {
       let urls = [ `https://filsa.nl/over-ons/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       browser.close ( );
+      monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
-}*/
+}
+
 
 function catenainvestments ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9955,7 +9974,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //solidventures ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //filsa ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
