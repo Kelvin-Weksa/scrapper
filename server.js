@@ -9852,7 +9852,7 @@ function velociyfintech ( socket , monitor ) {
                       await page .goto ( item.about , {timeout:0} );
                       await check_if_canceled ( browser , monitor , socket );
 
-                      item.about = await page.$$eval ( 'p.short-description' , query => query .innerText + '\n\n');
+                      item.about = await page.$eval ( 'p.short-description' , query => query .innerText + '\n\n');
 
                       item.about += await page.$$eval ( 'div.col-12.offset-md-2.col-md-8 > p' , ( query ) => {
                         function  paragraphs  ( array ) {
@@ -9998,22 +9998,22 @@ function axivate ( socket , monitor ) {
               await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
-                let items = $ ( 'div.col-6.col-md-4.col-lg-4.team-member ' );
+                let items = $ ( 'div.row.team-members.grid.top-nav  article.item.col-md-4.col-sm-6' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      name    : $ ( item ) .find ( 'h3.name' ) .eq ( 0 ) .text (  ) ,
-                      job     : $ ( item ) .find ( 'h3.position' ) .eq ( 0 ) .text ( ) .trim (  )  ,
+                      name    : $ ( item ) .find ( 'h2.item-title' ) .eq ( 0 ) .text (  ) ,
+                      linkedIn     : $ ( item ) .find ( 'li > a.primary-hover' ) .eq ( 0 ) .prop ( 'href' )  ,
                       image   : $ ( item ) .find ( 'img' ) .prop ( 'src' )  ,
                       from    : url ,
                       index   : index ,
-                      url     : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
-                      about     : $ ( item ) .find ( 'a' ) .prop ( 'href' )
+                      url     : $ ( item ) .find ( 'a.image-wrap.overlay-none.overlay-hover-none' ) .prop ( 'href' ) ,
+                      about   : $ ( item ) .find ( 'a.image-wrap.overlay-none.overlay-hover-none' ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
               } , url );
 
-              /*let i , j , chunk = 5;
+              let i , j , chunk = 5;
               let resultz = results.filter ( item => item.about  );
               for ( i = 0 , j = resultz.length; i < j; i += chunk ) {
                 //.slice ( i , i+chunk )
@@ -10037,20 +10037,7 @@ function axivate ( socket , monitor ) {
                       await page .goto ( item.about , {timeout:0} );
                       await check_if_canceled ( browser , monitor , socket );
 
-                      item.about = await page.$$eval ( 'p.short-description' , query => query .innerText + '\n\n');
-
-                      item.about += await page.$$eval ( 'div.col-12.offset-md-2.col-md-8 > p' , ( query ) => {
-                        function  paragraphs  ( array ) {
-                          let paragraph = '';
-                          array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
-                          } );
-                          return paragraph;
-                        }
-                        return  paragraphs ( query );
-                      } );
-
-                      item.linkedIn = await page.$eval ( 'a.linkedin-link' ,  query  => query .href );
+                      item.about = await page.$$eval ( 'div.siteorigin-widget-tinymce.textwidget' , query => query [ 2 ] .innerText + '\n\n');
 
                       await page.close (  );
                       socket.emit ( 'outgoing data' , [ item ] );
@@ -10060,7 +10047,7 @@ function axivate ( socket , monitor ) {
                     }
                   });
                 } ) ] )
-              }*/
+              }
 
               results.filter ( item => ! item.about  ).forEach ( ( card ) => {
                 socket.emit ( 'outgoing data' , [ card ] )
@@ -10076,6 +10063,70 @@ function axivate ( socket , monitor ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
 
+      browser.close ( );
+      monitor.confirm = true;
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      monitor.confirm = true;
+      return reject ( e );
+    }
+  })
+}
+
+function zeeuwsinvesteringsfonds ( socket , monitor ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+
+      await check_if_canceled ( browser , monitor , socket );
+      let urls = [ `http://www.zeeuwsinvesteringsfonds.com/fund-manager.html` ]
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              let results = [ ];
+              const page = await browser .newPage ( );
+              await page.setRequestInterception ( true );
+              page.on ( 'request' , ( request ) => {
+                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                    request .abort ( );
+                } else {
+                    request .continue  ( );
+                }
+              } );
+              await check_if_canceled ( browser , monitor , socket );
+              await page .goto ( url , { timeout : 0 , } );
+              await page .addScriptTag ( { path: 'jquery.js'  } );
+              await check_if_canceled ( browser , monitor , socket );
+              await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
+              results = await page.evaluate ( ( url ) => {
+                let image = $ ( 'img' ) .eq ( 1 ) .prop ( 'src' )  ;
+                let about = $ ( 'div.paragraph' ) .eq ( 1 );
+                let icons = $ ( 'span.wsite-social.wsite-social-default > a' );
+                let results = [ ];
+                  results.push ( {
+                    name    : $ ( 'div.paragraph' ) .eq ( 0 ) .text (  ) ,
+                    image   :  image ,
+                    about     :  about .text ( ) ,
+                    job  : 'Fund Manager' ,
+                    twitter : icons .eq ( 0 ) .prop ( 'href' ) ,
+                    linkedIn : icons .eq ( 1 ) .prop ( 'href' ) ,
+                    mail : icons .eq ( 2 ) .prop ( 'href' ) .replace ( 'mailto:' , '' ) ,
+                  } );
+                return results;
+              } , url );
+              await check_if_canceled ( browser , monitor , socket );
+              socket.emit ( 'outgoing data' , results )
+              await page.close ( );
+              return resolve ( results )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
       browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
@@ -10107,7 +10158,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //waterland ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //zeeuwsinvesteringsfonds ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
@@ -11232,6 +11283,15 @@ io .on ( "connection" , socket => {
       let prefect = await sync_ ( );
       console.log ( data );
       axivate ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
+  } );
+
+  socket .on ( "126" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      zeeuwsinvesteringsfonds ( socket , prefect )
         .then ( console.log )
           .catch ( console.error );
   } );
