@@ -6293,6 +6293,7 @@ function waterland ( socket , monitor ) {
                         return paragraphs ( query );
                       } );*/
                       //await page.close (  );
+                      await check_if_canceled ( browser , monitor , socket );
                       socket.emit ( 'outgoing data' , [ item ] );
                       return resolve ( item );
                     } catch ( e ) {
