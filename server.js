@@ -10169,13 +10169,14 @@ function sbicparticipations ( socket , monitor ) {
                 next = await page.$ ( 'div#next > ins > a' );
                 await next .click(  );
                 do {
+                  await sleep ( 200 );
                   data2 = {
                     name  : await page.$eval ( 'div.meet-content > h1' , node => node.innerText ),
                     image : await page.$eval ( 'div.meet-slide > img' , node => node.src ),
                     about : await page.$$eval ( 'div.meet-content > p' , node =>
                       Array.from ( node ) .reduce ( (total , item) => total + item.innerText , '' )  ),
                   }
-                }while ( data.name === data2.name );
+                }while ( data.name  ==  data2.name );
                 set.add ( JSON.stringify ( data2 ) )
                 data = data2;
                 console.log ( set.size );
