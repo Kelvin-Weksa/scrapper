@@ -10137,6 +10137,103 @@ function zeeuwsinvesteringsfonds ( socket , monitor ) {
   })
 }
 
+function sbicparticipations ( socket , monitor ) {
+  return new Promise ( async ( resolve , reject ) => {
+    try {
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+
+      await check_if_canceled ( browser , monitor , socket );
+      let urls = [ `https://www.sbicparticipations.com/team/` ]
+      function crawlUrl ( url ) {
+          return new Promise ( async ( resolve , reject ) => {
+            try{
+              const page = await browser .newPage ( );
+              await check_if_canceled ( browser , monitor , socket );
+              await page .goto ( url , { timeout : 0 , } );
+              await check_if_canceled ( browser , monitor , socket );
+
+              let set = new Set ( );
+              let next = await page.$ ( 'div#next > ins > a' );
+              let data , data2 , old_size = set.size;
+              await page.waitFor ( 'div.meet-content > h1' );
+              data = {
+                name  : await page.$eval ( 'div.meet-content > h1' , node => node.innerText ),
+                image : await page.$eval ( 'div.meet-slide > img' , node => node.src ),
+                about : await page.$$eval ( 'div.meet-content > p' , node =>
+                  Array.from ( node ) .reduce ( (total , item) => total + item.innerText , '' )  ),
+              };
+              set.add ( JSON.stringify ( data ) );
+              do {
+                socket.emit ( 'outgoing data' , [data] )
+                old_size = set.size
+                next = await page.$ ( 'div#next > ins > a' );
+                await next .click(  );
+                do {
+                  data2 = {
+                    name  : await page.$eval ( 'div.meet-content > h1' , node => node.innerText ),
+                    image : await page.$eval ( 'div.meet-slide > img' , node => node.src ),
+                    about : await page.$$eval ( 'div.meet-content > p' , node =>
+                      Array.from ( node ) .reduce ( (total , item) => total + item.innerText , '' )  ),
+                  }
+                }while ( data.name === data2.name );
+                set.add ( JSON.stringify ( data2 ) )
+                data = data2;
+                console.log ( set.size );
+              }while ( set.size !== old_size );
+              /*async function puppeteerMutationListener ( oldValue , newValue ) {
+                console.log('fired!');
+                console.log(`${oldValue} -> ${newValue}`);
+                await next .click ( );
+              }
+
+              await page.exposeFunction('puppeteerMutationListener', puppeteerMutationListener);
+              await page.exposeFunction('sleep', sleep);
+
+              await page.evaluate ( async () => {
+                //const target = document.querySelector ( 'div#page.meet-us' );
+                const observer = new MutationObserver ( mutationsList => {
+                  for ( const mutation of mutationsList ) {
+                    window.puppeteerMutationListener (
+                      mutation .removedNodes [ 0 ] .textContent,
+                      mutation .addedNodes [ 0 ] .textContent,
+                    );
+                  }
+                  //window.puppeteerMutationListener ( 'saito' , '--smith' );
+                });
+                observer.observe (
+                  document,
+                  { characterData: true  , subtree : true , characterDataOldValue: true }
+                );
+                //await window.puppeteerMutationListener ( 'saito' , '--smith' );
+              } );
+
+              while ( true ){
+                await sleep ( 3000 );
+                next = await page.$ ( 'div#next > ins > a' )
+                await next .click(  );
+              }*/
+
+              await check_if_canceled ( browser , monitor , socket );
+              //await page.close ( );
+              return resolve ( Array.from ( set ) .map ( item => JSON.parse ( item ) ) )
+            }catch ( e ){
+              return reject ( e )
+            }
+        } )
+      }
+
+      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      //
+      browser.close ( );
+      monitor.confirm = true;
+      return resolve ( [ ] .concat ( ...datas ) );
+    } catch ( e ) {
+      monitor.confirm = true;
+      return reject ( e );
+    }
+  })
+}
+
 app.get ( '/*' , function ( req , res ) {
   res.sendFile ( path.join ( __dirname , 'build' , 'index.html' ) );
 });
@@ -10158,7 +10255,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //zeeuwsinvesteringsfonds ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //sbicparticipations ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
@@ -11292,6 +11389,15 @@ io .on ( "connection" , socket => {
       let prefect = await sync_ ( );
       console.log ( data );
       zeeuwsinvesteringsfonds ( socket , prefect )
+        .then ( console.log )
+          .catch ( console.error );
+  } );
+
+  socket .on ( "127" ,
+    async function ( data ) {
+      let prefect = await sync_ ( );
+      console.log ( data );
+      sbicparticipations ( socket , prefect )
         .then ( console.log )
           .catch ( console.error );
   } );
