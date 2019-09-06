@@ -2743,7 +2743,7 @@ function innovationquarter ( socket , monitor ) {
 function karmijnkapitaal ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -2791,7 +2791,7 @@ function karmijnkapitaal ( socket , monitor ) {
                 while ( ! await page .$ ( 'div.content > div.bio > article > p' ) ){
                   await sleep ( 500 );
                   check_if_canceled ( browser , monitor , socket );
-                  console.log ( "Jammed !" )
+                  console.log ( "request mem !" )
                 }
                 await check_if_canceled ( browser , monitor , socket );
 
@@ -2831,6 +2831,7 @@ function karmijnkapitaal ( socket , monitor ) {
                 socket.emit ( 'outgoing data' , [ results [ index ] ] )
                 while ( await page .$ ( 'div.content > div.bio > article > p' ) );
                 index++;
+                await sleep ( 2000 );
               }
 
               return resolve ( results )
@@ -10269,7 +10270,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //sbicparticipations ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  karmijnkapitaal ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
