@@ -47,7 +47,7 @@ async function check_if_canceled( browser , monitor , socket  ){
 function  paragraphs  ( array ) {
   let paragraph = '';
   array.forEach ( ( para ) =>{
-    paragraph += para.innerText += '\n';
+    paragraph += para.innerText + '\n';
   } );
   return paragraph;
 };
@@ -174,7 +174,7 @@ function runaacc ( socket , monitor ) {
             function  paragraphs  ( array ) {
               let paragraph = '';
               array.forEach ( ( para ) =>{
-                paragraph += para.innerText += '\n';
+                paragraph += para.innerText + '\n';
               } );
               return paragraph;
             }
@@ -254,7 +254,7 @@ function run5sq ( socket , monitor ) {
               function  paragraphs  ( array ) {
                 let paragraph = '';
                 array.forEach ( ( para ) =>{
-                  paragraph += para.innerText += '\n';
+                  paragraph += para.innerText + '\n';
                 } );
                 return paragraph;
               }
@@ -336,7 +336,7 @@ function runactivecapital ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -511,7 +511,7 @@ function runalpinvest ( socket , monitor ) {
                 function  paragraphs  ( array ) {
                   let paragraph = '';
                   array.forEach ( ( para ) =>{
-                    paragraph += para.innerText += '\n';
+                    paragraph += para.innerText + '\n';
                   } );
                   return paragraph;
                 };
@@ -859,7 +859,7 @@ function runbolsterinvestments ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -869,7 +869,7 @@ function runbolsterinvestments ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -964,7 +964,7 @@ function runbridgepoint ( socket , monitor ) {
                       function  paragraphs  ( array ) {
                         let paragraph = '';
                         array.forEach ( ( para ) =>{
-                          paragraph += para.innerText += '\n';
+                          paragraph += para.innerText + '\n';
                         } );
                         return paragraph;
                       }
@@ -1074,7 +1074,7 @@ function runbrightlandsventurepartners ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -1165,7 +1165,7 @@ function runcapitalapartners ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -1260,7 +1260,7 @@ function runcinven ( socket , monitor ) {
                     function  paragraphs  ( array ) {
                       let paragraph = '';
                       array.forEach ( ( para ) =>{
-                        paragraph += para.innerText += '\n';
+                        paragraph += para.innerText + '\n';
                       } );
                       return paragraph;
                     };
@@ -1367,7 +1367,7 @@ function cottonwood ( socket , monitor) {
             function  paragraphs  ( array ) {
               let paragraph = '';
               array.forEach ( ( para ) =>{
-                paragraph += para.innerText += '\n';
+                paragraph += para.innerText + '\n';
               } );
               return paragraph;
             };
@@ -1480,7 +1480,7 @@ function dehogedennencapital ( socket , monitor ) {
               function  paragraphs  ( array ) {
                 let paragraph = '';
                 array.forEach ( ( para ) =>{
-                  paragraph += para.innerText += '\n';
+                  paragraph += para.innerText + '\n';
                 } );
                 return paragraph;
               }
@@ -1616,7 +1616,7 @@ function ecart ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -1767,7 +1767,7 @@ function eqtpartners ( socket, monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -1848,7 +1848,7 @@ function forbion ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -1946,7 +1946,7 @@ function gembenelux ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -2048,7 +2048,7 @@ function gilde ( socket , monitor ) {
               function  paragraphs  ( array ) {
                 let paragraph = '';
                 array.forEach ( ( para ) =>{
-                  paragraph += para.innerText += '\n';
+                  paragraph += para.innerText + '\n';
                 } );
                 return paragraph;
               };
@@ -2157,7 +2157,7 @@ function gildehealthcare ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -2247,7 +2247,7 @@ function gimv ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -2527,7 +2527,7 @@ function hpegrowth ( socket , monitor ) {
             function  paragraphs  ( array ) {
               let paragraph = '';
               array.forEach ( ( para ) =>{
-                paragraph += para.innerText += '\n';
+                paragraph += para.innerText + '\n';
               } );
               return paragraph;
             }
@@ -2680,7 +2680,7 @@ function innovationquarter ( socket , monitor ) {
                         let paragraph = '';
                         if ( array ) {
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                         }
                         return paragraph;
@@ -2799,7 +2799,7 @@ function karmijnkapitaal ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -2911,7 +2911,7 @@ function kkr ( socket , monitor ) {
                         let paragraph = '';
                         if ( array ) {
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                         }
                         return paragraph;
@@ -3028,7 +3028,7 @@ function llcp ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -3143,7 +3143,7 @@ function liof ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -3390,7 +3390,7 @@ function main ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -3537,7 +3537,7 @@ function menthacapital ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   }
@@ -3654,7 +3654,7 @@ function nom ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -3899,7 +3899,7 @@ function zlto ( socket , monitor ) {
                       function  paragraphs  ( array ) {
                         let paragraph = '';
                         array.forEach ( ( para ) =>{
-                          paragraph += para.innerText += '\n';
+                          paragraph += para.innerText + '\n';
                         } );
                         return paragraph;
                       }
@@ -4139,7 +4139,7 @@ function npm_capital ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -4320,7 +4320,7 @@ function o2capital ( socket , monitor ) {
                       function  paragraphs  ( array ) {
                         let paragraph = '';
                         array.forEach ( ( para ) =>{
-                          paragraph += para.innerText += '\n';
+                          paragraph += para.innerText + '\n';
                         } );
                         return paragraph;
                       }
@@ -4479,7 +4479,7 @@ function plainvanilla ( socket , monitor ) {
                 function  paragraphs  ( array ) {
                   let paragraph = '';
                   array.forEach ( ( para ) =>{
-                    paragraph += para.innerText += '\n';
+                    paragraph += para.innerText + '\n';
                   } );
                   return paragraph;
                 }
@@ -4585,7 +4585,7 @@ function pridecapital ( socket , monitor ) {
                   function  paragraphs  ( array ) {
                     let paragraph = '';
                     array.forEach ( ( para ) =>{
-                      paragraph += para.innerText += '\n';
+                      paragraph += para.innerText + '\n';
                     } );
                     return paragraph;
                   };
@@ -4707,7 +4707,7 @@ function primeventures ( socket , monitor ) {
                       function  paragraphs  ( array ) {
                         let paragraph = '';
                         array.forEach ( ( para ) =>{
-                          paragraph += para.innerText += '\n';
+                          paragraph += para.innerText + '\n';
                         } );
                         return paragraph;
                       }
@@ -4811,7 +4811,7 @@ function raboprivateequity ( socket , monitor ) {
                     function  paragraphs  ( array ) {
                       let paragraph = '';
                       array.forEach ( ( para ) =>{
-                        paragraph += para.innerText += '\n';
+                        paragraph += para.innerText + '\n';
                       } );
                       return paragraph;
                     };
@@ -4967,7 +4967,7 @@ function riversideeurope ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -5092,7 +5092,7 @@ function setventures ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -5206,7 +5206,7 @@ function smile_invest (socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -5412,7 +5412,7 @@ function strongrootcapital ( socket , monitor ) {
                       phone   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 0 ) .prop ( 'href' ) .replace ( "tel:" , '' ) ,
                       mail   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 1 ) .prop ( 'href' ) .replace ( "mailto:" , '' ) ,
                       linkedIn   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 2 ) .prop ( 'href' ) ,
-                      vcard   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 3 ) .prop ( 'href' ) ,
+                      vCard   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 3 ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
@@ -5507,7 +5507,7 @@ function thujacapital ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -5654,7 +5654,7 @@ function synergia ( socket , monitor ) {
                       index   : index ,
                       about   : $ ( item ) .find ( 'div.main > p' ) .text (  ) ,
                       mail   : $ ( item ) .find ( 'a#mail' ) .prop ( 'href' ) .replace ( 'mailto:' , '' ) ,
-                      linkedin   : $ ( item ) .find ( 'a#linkedin' ) .prop ( 'href' )
+                      linkedIn   : $ ( item ) .find ( 'a#linkedin' ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
@@ -5740,7 +5740,7 @@ function torqxcapital ( socket , monitor ) {
                     function  paragraphs  ( array ) {
                       let paragraph = '';
                       array.forEach ( ( para ) =>{
-                        paragraph += para.innerText += '\n';
+                        paragraph += para.innerText + '\n';
                       } );
                       return paragraph;
                     };
@@ -5752,14 +5752,17 @@ function torqxcapital ( socket , monitor ) {
                     let icons = query.querySelectorAll ( 'li > a' );
                     let mail = icons [ 0 ] .href .replace ( 'mailto:' , '' );
                     let linkedIn = icons [ 1 ] .href;
+                    let vCard = icons [ 2 ] .href
                     return {
                       mail:mail ,
-                      linkedIn:linkedIn
+                      linkedIn:linkedIn ,
+                      vCard: vCard
                     };
                 } ).then ( ( obj ) => {
                   results [ index ] .mail = obj.mail ;
                   results [ index ] .linkedIn = obj.linkedIn ;
-                })
+                  results [ index ] .vCard = obj.vCard ;
+                }).catch ( console.log )
 
                 await check_if_canceled ( browser , monitor , socket );
 
@@ -6289,7 +6292,7 @@ function waterland ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -6300,7 +6303,7 @@ function waterland ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                             let paragraph = '';
                             array.forEach ( ( para ) =>{
-                              paragraph += para.innerText += '\n';
+                              paragraph += para.innerText + '\n';
                           } );
                             return paragraph;
                           }
@@ -6650,19 +6653,20 @@ function uniiq ( socket , monitor ) {
               await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
-                let items = $ ( 'div.member' );
+                let items = $ ( 'section.avia-team-member ' );
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
-                      name    : $ ( item ) .find ( 'li.bold' ) .text ( ) ,
-                      job     : $ ( item ) .find ( 'li.bold + li' ) .text ( ) .replace ( '\n' , '' ) .trim (  ) ,
+                      name    : $ ( item ) .find ( 'h3.team-member-name' ) .text ( ) ,
+                      job     : $ ( item ) .find ( 'div.team-member-job-title ' ) .text ( ) ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
-                      phone   : $ ( item ) .find ( 'li.number > a' ) .prop ( 'href' ) .replace ( 'tel:' , '' )
+                      phone   : $ ( item ) .find ( 'a.avia-team-icon' ) .eq ( 1 ) .prop ( 'href' ) .replace ( 'tel:' , '' ) ,
+                      url   : $ ( item ) .find ( 'a.avia-team-icon' ) .eq ( 0 ) .prop ( 'href' )
                   } );
                 } );
                 return results;
-              } , url );
+              } , url ).catch ( console.log );
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -6714,7 +6718,7 @@ function nascentventures ( socket , monitor ) {
                   results.push ( {
                       //item    : $ ( item ) .html ( ) ,
                       name    : $ ( item ) .find ( 'h4' ) .text ( ) ,
-                      job     : $ ( item ) .find ( 'p' ) .text ( ) .trim (  ) .trim (  )  .slice ( 0 , 55 ) + "...",
+                      //job     : $ ( item ) .find ( 'p' ) .text ( ) .trim (  ) .trim (  )  .slice ( 0 , 55 ) + "...",
                       //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
@@ -6955,7 +6959,7 @@ function aglaia_oncology ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -6997,54 +7001,6 @@ function aglaia_oncology ( socket , monitor ) {
     }
   })
 }
-
-/*function sbicparticipations ( socket , monitor ) {
-  return new Promise ( async ( resolve , reject ) => {
-    try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
-      //specific to website
-      function crawlUrl ( url ) {
-          return new Promise ( async ( resolve , reject ) => {
-            try{
-              let results = [ ];
-              const page = await browser .newPage ( );
-              await page.setRequestInterception ( true );
-              page.on ( 'request' , ( request ) => {
-                if (  [ 'font' , 'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-                    request .abort ( );
-                } else {
-                    request .continue  ( );
-                }
-              } );
-              await check_if_canceled ( browser , monitor , socket );
-              await page .goto ( url , { timeout : 0 , } );
-              await page .addScriptTag ( { path: 'jquery.js'  } );
-              await check_if_canceled ( browser , monitor , socket );
-              await autoScroll ( page );
-              while ( true ){
-                let next = page .$ ( 'div#next' );
-                await next.click (  ).catch ( console.log );
-
-              }
-              await page.close ( );
-              return resolve ( results )
-            }catch ( e ){
-              return reject ( e )
-            }
-        } )
-      }
-      let urls = [ `https://www.sbicparticipations.com/team/` ];
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
-      //
-      browser.close ( );
-      monitor.confirm = true;
-      return resolve ( [ ] .concat ( ...datas ) );
-    } catch ( e ) {
-      monitor.confirm = true;
-      return reject ( e );
-    }
-  })
-}*/
 
 function hollandstartup ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7145,7 +7101,7 @@ function thenextwomen ( socket , monitor ) {
                       image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
                       from    : url ,
                       index   : index ,
-                      mail    : $ ( item ) .find ( 'div.links > a' ) .eq ( 0 ) .prop ( 'href' )  ,
+                      mail    : $ ( item ) .find ( 'div.links > a' ) .eq ( 0 ) .prop ( 'href' ) .replace ( 'mailto:' , '' )  ,
                       twitter    : $ ( item ) .find ( 'div.links > a' ) .eq ( 1 ) .prop ( 'href' )  ,
                       linkedIn    : $ ( item ) .find ( 'div.links > a' ) .eq ( 2 ) .prop ( 'href' )  ,
                   } );
@@ -7547,8 +7503,6 @@ function bom ( socket , monitor ) {
   })
 }
 
-//http://www.zeeuwsinvesteringsfonds.com/about-us.html    ---->>  116
-
 function dsif ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
@@ -7705,7 +7659,7 @@ function brooklyn_ventures ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -8038,7 +7992,7 @@ function volta ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -8046,7 +8000,8 @@ function volta ( socket , monitor ) {
                       } );
 
                       item.linkedIn = await page.$eval ( 'div.s-component-content.s-font-body > p > a' , ( selector ) => {
-                        return selector.href;
+                        //Array.from ( selector ) . reduce ( ( total , item ) =>  )  [ selector.length - 4 ]
+                        return selector .href;
                       } ).catch ( console.log )
                       //await page.close (  );
                       socket.emit ( 'outgoing data' , [ item ] );
@@ -8097,13 +8052,17 @@ function slingshot ( socket , monitor ) {
                     request .continue  ( );
                 }
               } );
+              await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
+              await check_if_canceled ( browser , monitor , socket );
               await autoScroll ( page );
+              await check_if_canceled ( browser , monitor , socket );
               results = await page.evaluate ( ( url ) => {
                 let results = [ ];
 
                 let items = $ ( 'div.vc_grid-item.vc_clearfix.vc_col-sm-3.vc_grid-item-zone-c-bottom.vc_visible-item' );
+                console.log ( items.length )
                 Array.from ( items ).forEach ( ( item  , index ) => {
                   results.push ( {
                       name    : $ ( item ) .find ( 'h5' ) .eq ( 0 ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  )  ,
@@ -8149,7 +8108,7 @@ function slingshot ( socket , monitor ) {
                       } ).catch ( console.log )
 
                       item.mail = await page.$eval ( 'div.wpb_wrapper > p > a' , ( selector ) => {
-                        return selector.href;
+                        return selector.href .replace ( 'mailto:' , '' );
                       } ).catch ( console.log )
                       //await page.close (  );
                       socket.emit ( 'outgoing data' , [ item ] );
@@ -8180,60 +8139,6 @@ function slingshot ( socket , monitor ) {
     }
   })
 }
-
-/*function shiftinvest ( ) {
-  return new Promise ( async ( resolve , reject ) => {
-    try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
-      //specific to website
-      function crawlUrl ( url ) {
-          return new Promise ( async ( resolve , reject ) => {
-            try{
-              let results = [ ];
-              const page = await browser .newPage ( );
-              await page.setRequestInterception ( true );
-              page.on ( 'request' , ( request ) => {
-                if (  [ 'font' ,'image' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-                    request .abort ( );
-                } else {
-                    request .continue  ( );
-                }
-              } );
-              await page .goto ( url , { timeout : 0 , } );
-              await page .addScriptTag ( { path: 'jquery.js'  } );
-              await autoScroll ( page );
-              results = await page.evaluate ( ( url ) => {
-                let results = [ ];
-
-                let items = $ ( 'div.fourcol.memberbox:has(p.membertitle)' );
-                Array.from ( items ).forEach ( ( item  , index ) => {
-                  results.push ( {
-                      name    : $ ( item ) .find ( 'p.membername' ) .eq ( 0 ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  )  ,
-                      job     : $ ( item ) .find ( 'p.membertitle' ) .eq ( 0 ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  )  ,
-                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
-                      from    : url ,
-                      index   : index ,
-                  } );
-                } );
-                return results;
-              } , url );
-              await page.close ( );
-              return resolve ( results )
-            }catch ( e ){
-              return reject ( e )
-            }
-        } )
-      }
-      let urls = [ `https://shiftinvest.com/about-us` ];
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
-      //
-      browser.close ( );
-      return resolve ( [ ] .concat ( ...datas ) );
-    } catch ( e ) {
-      return reject ( e );
-    }
-  })
-}*/
 
 function peak ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9009,6 +8914,7 @@ function endeit ( socket , monitor ) {
                       index   : index ,
                       about   : $ ( modal [ index ] ) .find ( 'div.bio-entry' ) .text (  ) ,
                       linkedIn   : $ ( modal [ index ] ) .find ( 'a.bio-linkedin.no-ajax' ) .prop ( 'href' ) ,
+                      mail   : $ ( modal [ index ] ) .find ( 'a.bio-cta.no-ajax' ) .prop ( 'href' ) .replace ( 'mailto:' , '' ) ,
                   } );
                 } );
                 return results;
@@ -9337,7 +9243,7 @@ function anterracapital ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -9581,12 +9487,16 @@ function o2investment ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
                         return  paragraphs ( query );
                       } );
+
+                      item.vCard = await page.$$eval ( 'div.col-xs-12.col-md-3 > a' , ( query ) => {
+                        return   query [ 1 ] .href;
+                      } ).catch ( console.log );
 
                       item.phone = item.about.split ( '\nemail' ) [ 0 ] .replace ( 'phone:' , '' ) ;
 
@@ -9872,7 +9782,7 @@ function velociyfintech ( socket , monitor ) {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
                           array.forEach ( ( para ) =>{
-                            paragraph += para.innerText += '\n';
+                            paragraph += para.innerText + '\n';
                           } );
                           return paragraph;
                         }
@@ -10270,7 +10180,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  karmijnkapitaal ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //karmijnkapitaal ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
