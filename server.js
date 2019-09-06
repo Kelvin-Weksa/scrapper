@@ -4445,7 +4445,7 @@ function plainvanilla ( socket , monitor ) {
             request .continue  ( );
         }
       } );
-      //await autoScroll ( page );
+      await autoScroll ( page );
       urls = await page.evaluate ( ( ) => {
         let links = [ ];
         let items = document .querySelectorAll ( 'div.vc_gitem-zone-b > a.vc_gitem-link.vc-zone-link' );
