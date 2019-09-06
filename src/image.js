@@ -49,7 +49,7 @@ export default function ImageCard ( props ) {
   let layer3 = React.createRef ( );
   let paper = React.createRef ( );
 
-  const { phone , mail , fax , map } = props
+  const { phone , mail , fax , linkedIn } = props
   const [ shown , setShown ] = React.useState ( "" );
 
   function show ( node ) {
@@ -108,7 +108,7 @@ export default function ImageCard ( props ) {
         <Button size="small" color="primary" onClick={()=>show(
           <div>
             <Linkedin/>
-            LinkedIn...
+            {linkedIn? linkedIn : "LinkedIn..."}
           </div>)}>
           <Linkedin/>
         </Button>

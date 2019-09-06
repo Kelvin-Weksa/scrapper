@@ -801,8 +801,10 @@ function runavedoncapital ( socket , monitor ) {
       }
       //
       await browser.close ( );
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
+      monitor.confirm = true;
       return reject ( e );
     }
   })
@@ -1314,7 +1316,7 @@ function committedcapital ( socket , monitor ) {
             Array.from ( items ).forEach ( ( item  , index ) => {
               results.push ( {
                   name    : item .querySelector ( 'h4.member-name' )  .innerText ,
-                  job     : item .querySelector ( 'p.team-member-description.normal' )  .innerText ,
+                  about     : item .querySelector ( 'p.team-member-description.normal' )  .innerText ,
                   //market  : "" ,
                   image   : item .querySelector ( 'img' ) .src ,
                   from    : "https://committedcapital.nl/team/" ,
@@ -1330,10 +1332,10 @@ function committedcapital ( socket , monitor ) {
       browser.close ( );
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , urls )
-      monitor.emit = true ;
+      monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
-      monitor.emit = true;
+      monitor.confirm = true;
       return reject ( e );
     }
   })
@@ -1434,6 +1436,7 @@ function cvc ( socket , monitor) {
                   image   : item .querySelector ( 'img' ) .src ,
                   from    : "https://www.cvc.com/people/working-at-cvc" ,
                   about   : item .querySelector ( 'p.person-desc' ) .innerText ,
+                  sector  : item .querySelector ( 'p.person-location' ) .innerText ,
               } );
             } );
             return results;
@@ -1863,6 +1866,10 @@ function forbion ( socket , monitor ) {
                   let node = document.querySelectorAll ( 'ul.action > li.slide-in.left > a' ) [ 3 ];
                   return  node ? node.href : '';
                 } );
+                item.vCard = await page.evaluate ( () => {
+                  let node = document.querySelectorAll ( 'ul.action > li.slide-in.left > a' ) [ 2 ];
+                  return  node ? node.href : '';
+                } );
                 await check_if_canceled ( browser , monitor , socket );
                 socket.emit ( 'outgoing data' , [item] )
                 return resolve ( item );
@@ -1917,7 +1924,8 @@ function gembenelux ( socket , monitor ) {
                   //market  : "" ,
                   image   : $ ( item ) .find ( 'div.image > span' ) .css('background-image') .slice ( 4 , -1 ) .replace ( /"/g , "" ) ,
                   from    : "https://gembenelux.com/over-ons/235/mensen.html" ,
-                  about   : $ ( item ) .find ( 'a' )  .prop ( 'href' )
+                  about   : $ ( item ) .find ( 'a' )  .prop ( 'href' ),
+                  url   : $ ( item ) .find ( 'a' )  .prop ( 'href' )
               } );
             } );
             return results;
@@ -2311,7 +2319,7 @@ function healthinnovations ( socket , monitor ) {
             Array.from ( items ).forEach ( ( item  , index ) => {
               results.push ( {
                   name    : $ ( item ) .find ( 'h3 > a ' ) .text ( ) .replace ( '\n' , '' ). replace ( '\t', '' ) . trim ( )  ,
-                  job     : $ ( "div.sqs-block-content > h1" )  .text ( ) ,
+                  //job     : $ ( "div.sqs-block-content > h1" )  .text ( ) ,
                   image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                   from    : "https://www.healthinnovations.nl/nl/het-team" ,
                   about   : $ ( item ) .find ( 'div.sqs-block-content > p ' ) .eq ( 0 ) .text ( ) ,
@@ -2473,7 +2481,7 @@ function horizonflevoland ( socket , monitor ) {
                   job     : $ ( item ) .find ( 'p.small:first' ) .text ( ) || 'Advisor' ,
                   image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
                   from    : "https://www.horizonflevoland.nl/wij" ,
-                  mail    : $ ( item ) .find ( 'p.small' ) .text (  ) ,
+                  mail    : $ ( item ) .find ( 'p.small > a' ) .text (  ) ,
               } );
             } );
             return results;
@@ -2482,7 +2490,7 @@ function horizonflevoland ( socket , monitor ) {
       }
       //
       browser.close ( );
-      monitor.resolve = true;
+      monitor.confirm = true;
       socket.emit ( 'outgoing data' , urls );
       return resolve ( urls );
     } catch ( e ) {
@@ -2589,13 +2597,13 @@ function ibsca ( socket , monitor ) {
                       linkedIn   : $ ( item ) .find ( 'a.person-linkedin' ) .prop ( 'href' ) ,
                       mail    : $ ( item ) .find ( 'div.email' ) .text ( )  ,
                       phone    : $ ( item ) .find ( 'div.telephone' ) .text ( )  ,
-                      about    : $ ( item ) .find ( 'div.person-date' ) .text ( )  ,
+                      about    : $ ( item ) .find ( 'div.column' ) .eq ( 1 ) .text ( )  ,
                   } );
                 } );
                 return results;
               } );
               await page.close ( );
-              socket.emit ( 'outgoing data' , [results]  )
+              socket.emit ( 'outgoing data' , results  )
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -3146,8 +3154,8 @@ function liof ( socket , monitor ) {
                 } ).catch ( console.log );
 
                 results [ index ] .phone = await page.evaluate ( async () => {
-                  return document.querySelector ( 'div#medewerkers__uitklapper > div.medewerker-meerinfo > div.medewerker-meerinfo__tekst > h4' ) .innerText
-                      .replace ( document.querySelector ( 'div#medewerkers__uitklapper > div.medewerker-meerinfo > div.medewerker-meerinfo__tekst > h4' ) .innerText , '' );
+                  return document.querySelector ( 'div#medewerkers__uitklapper > div.medewerker-meerinfo > div.medewerker-meerinfo__tekst' ) .innerText
+                    .split ( '\n' ) .slice ( -3 ) [ 0 ]
                 } ).catch ( console.log );
 
                 await check_if_canceled ( browser , monitor , socket );
@@ -3196,7 +3204,7 @@ function liof ( socket , monitor ) {
 function lspvc ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -3611,7 +3619,7 @@ function nom ( socket , monitor ) {
                 return results;
               } , url );
 
-              let i , j , chunk = 10;
+              let i , j , chunk = 5;
               for ( i = 0 , j = results.length; i < j; i += chunk ) {
                 //.slice ( i , i+chunk )
                 console.log ( "chunk --> " + i  )
@@ -3655,7 +3663,7 @@ function nom ( socket , monitor ) {
                         let mail =  query [ 0 ] ? query [ 0 ] .innerText : "";
                         let phone = query [ 1 ] ? query [ 1 ] .innerText : "";
                         let fax = query [ 2 ] ? query [ 2 ] .innerText : "";
-                        let linkedIn = query [ 3 ] ? query [ 3 ] .innerText : "";
+                        let linkedIn = query [ 3 ] ? query [ 3 ] .href : "";
                         return {
                           mail : mail ,
                           phone : phone ,
@@ -4482,9 +4490,10 @@ function plainvanilla ( socket , monitor ) {
                       image   : $ ( 'div.vc_single_image-wrapper.vc_box_rounded.vc_box_border_grey > img' ) .first ( ) .prop ( 'src' ) ,
                       from    : url ,
                       about   : paragraphs ( document.querySelectorAll ( 'div.wpb_wrapper > p' ) ) ,
-                      phone   : $ ( 'div.pv-contact-icons > a' ) .eq ( 1 ) .prop ( 'href' ) .replace ( 'tel:' , '' ) ,
+                      phone   : $ ( 'div.pv-contact-icons > a' ) .eq ( 1 ) .prop ( 'href' ) .replace ( 'tel://' , '' ) ,
                       mail   : $ ( 'div.pv-contact-icons > a' ) .eq ( 2 ) .prop ( 'href' ) .replace ( 'mailto:' , '' ) ,
-                      linkedIn   : $ ( 'div.pv-contact-icons > a' ) .eq ( 3 ) .prop ( 'href' ) ,
+                      vCard   : $ ( 'div.pv-contact-icons > a' ) .eq ( 3 ) .prop ( 'href' ) ,
+                      linkedIn   : $ ( 'div.pv-contact-icons > a' ) .eq ( 4 ) .prop ( 'href' ) ,
                       //index   : index ,
                   } );
               //  }  );
@@ -4746,7 +4755,7 @@ function primeventures ( socket , monitor ) {
 function raboprivateequity ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -4913,7 +4922,7 @@ function riversideeurope ( socket , monitor ) {
                   results.push ( {
                       name    : $ ( item ) .find ( 'a + a' ) .text ( )  .replace ( /[\t\n]+/g , ' ' ) .trim ( ) ,
                       job     : $ ( item ) .text ( )  .replace ( /[\t]+/g , ' ' ) .split ( '\n' ) [ 7 ] .trim ( )  ,
-                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) ,
+                      image   : $ ( item ) .find ( 'img' ) .prop ( 'src' ) .split ( '?' ) [ 0 ],
                       from    : url ,
                       index   : index ,
                       url     : $ ( item ) .find ( 'a' ) .prop ( 'href' ) ,
@@ -4923,7 +4932,7 @@ function riversideeurope ( socket , monitor ) {
                 return results;
               } , url );
 
-              let i , j , chunk = 10;
+              let i , j , chunk = 2;
               for ( i = 0 , j = results.length; i < j; i += chunk ) {
                 //.slice ( i , i+chunk )
                 console.log ( "chunk --> " + i  )
@@ -4940,7 +4949,7 @@ function riversideeurope ( socket , monitor ) {
                             request .continue  ( );
                         }
                       } );
-                      page.on ( 'error' , err => {
+                      /*page.on ( 'error' , err => {
                         console.log ( 'error happen at the page: ' , err );
                       });
                       page.on ( 'pageerror' , pageerr => {
@@ -4949,7 +4958,7 @@ function riversideeurope ( socket , monitor ) {
                       page.on('dialog', async dialog => {
                         console.log(dialog.message());
                         await dialog.dismiss();
-                      });
+                      });*/
                       await check_if_canceled ( browser , monitor , socket );
                       await page .goto ( item.about , {timeout:0} );
                       await check_if_canceled ( browser , monitor , socket );
@@ -4972,11 +4981,12 @@ function riversideeurope ( socket , monitor ) {
                           phone : phone ,
                           fax : fax,
                         };
-                      } ).then ( ()=>{
+                      } ).then ( (more)=>{
                         item.fax = more.fax;
                         item.phone = more.phone;
                       } ).catch (console.log)
 
+                      console.log ( item )
                       await page.close (  );
                       socket.emit ( 'outgoing data' , [ item ] );
                       return resolve ( item );
@@ -5398,9 +5408,10 @@ function strongrootcapital ( socket , monitor ) {
                       image   : $ ( item )  .find ( 'img' ) .prop ('src' ) ,
                       from    : url ,
                       index   : index ,
-                      phone   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 0 ) .prop ( 'href' ) .replace ( "mailto:" , '' ) ,
-                      mail   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 1 ) .prop ( 'href' ) .replace ( "tel:" , '' ) ,
+                      phone   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 0 ) .prop ( 'href' ) .replace ( "tel:" , '' ) ,
+                      mail   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 1 ) .prop ( 'href' ) .replace ( "mailto:" , '' ) ,
                       linkedIn   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 2 ) .prop ( 'href' ) ,
+                      vcard   : $ ( item ) .find ( 'ul.actions.fixHeight > li > a' ) .eq ( 3 ) .prop ( 'href' ) ,
                   } );
                 } );
                 return results;
@@ -5415,6 +5426,8 @@ function strongrootcapital ( socket , monitor ) {
       let urls = [ `https://www.strongrootcapital.nl/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
+      await check_if_canceled ( browser , monitor , socket );
+      socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );

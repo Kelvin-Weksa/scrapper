@@ -225,7 +225,7 @@ export default function MediaCard ( props ) {
               phone={characterPhone}
               mail={characterMail}
               fax={characterFax}
-
+              linkedIn={characterLinkedIn}
             />
           </Grid>
           <Grid item xs={8}>
