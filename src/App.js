@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import AppBar from './appBar'
 import NestedGrid from './demo'
-import Drawer from './persistentDrawer'
+//import Drawer from './persistentDrawer'
+import Drawer from './responsiveDrawer'
 
 const io = require ( 'socket.io-client' );
 const socket = io ( );
@@ -44,7 +44,6 @@ class App extends Component {
   render ( ) {
     return (
       <div style={{backgroundColor:"#D3D3D3"}}>
-        <AppBar fetcher={this.fetcher}/>
         <Drawer
           sitePage={this.state.sitePage}
           logo={this.state.logo}

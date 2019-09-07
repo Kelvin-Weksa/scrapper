@@ -306,7 +306,7 @@ class PrimarySearchAppBar extends React.Component {
               />
             </div>
             <div className={classes.grow} />
-            { sitePage }
+
             <div className={classes.sectionDesktop}>
               <IconButton
                 aria-owns={isMenuOpen ? 'material-appbar' : undefined}
@@ -324,8 +324,6 @@ class PrimarySearchAppBar extends React.Component {
             </div>
           </Toolbar>
         </AppBar>
-        {renderMenu}
-        {renderMobileMenu}
       </div>
     );
   }

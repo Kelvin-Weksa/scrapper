@@ -13,14 +13,9 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
-//import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-//import InboxIcon from '@material-ui/icons/MoveToInbox';
-//import MailIcon from '@material-ui/icons/Mail';
 import IconBreadcrumbs from './breadCrumb'
 import Listing from './list'
-//import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-//import Avatar from '@material-ui/core/Avatar';
 import CardMedia from '@material-ui/core/CardMedia';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
@@ -103,8 +98,8 @@ const useStyles = makeStyles(theme => ({
     position : 'sticky' ,
     top : 0 ,
     zIndex: theme.zIndex.appBar ,
-    
-  }
+
+  },
 }));
 
 export default function PersistentDrawerLeft ( props ) {
