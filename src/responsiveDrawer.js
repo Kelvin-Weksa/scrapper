@@ -21,7 +21,7 @@ import IconBreadcrumbs from './breadCrumb'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
-const drawerWidth = 240;
+const drawerWidth = 265;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -63,14 +63,16 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    marginRight: -40,
+    //marginRight: -40,
   },
   contentShift: {
+    flexGrow: 1,
+    paddingLeft: theme.spacing(3),
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    //marginRight: -80,
+    marginRight: -40,
   },
   media: {
     height: 30,
@@ -110,6 +112,7 @@ function ResponsiveDrawer(props) {
 
   function loadData ( page , get , logo ) {// eslint-disable-next-line
     props .fetcher ( page , get , logo );
+    handleDrawerClose ( );
   }
 
   function toggleFilter ( ) {
