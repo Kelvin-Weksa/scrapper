@@ -21,7 +21,7 @@ import IconBreadcrumbs from './breadCrumb'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
-const drawerWidth = 265;
+const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
   root: {
