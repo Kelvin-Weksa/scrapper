@@ -56,16 +56,11 @@ const useStyles = makeStyles(theme => ({
     width: drawerWidth,
     backgroundImage:`url(static/pexels.jpeg)`,
   },
-  /*content: {
+  content: {
     flexGrow: 1,
     padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginRight: 0,
   },
-  contentShift: {
+  /*contentShift: {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
