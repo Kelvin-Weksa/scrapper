@@ -56,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     width: drawerWidth,
     backgroundImage:`url(static/pexels.jpeg)`,
   },
-  content: {
+  /*content: {
     flexGrow: 1,
     padding: theme.spacing(3),
     transition: theme.transitions.create('margin', {
@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.enteringScreen,
     }),
     marginRight: -drawerWidth,
-  },
+  },*/
   media: {
     height: 30,
     width: 40,

@@ -51,7 +51,7 @@ const NestedGrid =  props => {
   return (
     <div className={classes.root} >
         <Toolbar/>
-        <Grid container xs={12} spacing={4} justify="space-evenly" style={{margin: '0 0 1em 0'}}>
+        <Grid container xs={12} spacing={4} justify="space-evenly">
           <FormRow />
         </Grid>
     </div>
