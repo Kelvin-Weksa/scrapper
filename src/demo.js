@@ -20,10 +20,10 @@ const NestedGrid =  props => {
   function FormRow (  ) {
     const items = [ ];
     let data = [ ];// eslint-disable-next-line
-    ! props.loaded ? data = new Array ( 6 ) .fill ( { } ) .entries ( ) : data = props.elements .entries ( );
+    ! props.loaded ? data = new Array ( 9 ) .fill ( { } ) .entries ( ) : data = props.elements .entries ( );
     for ( const [ index , value ] of data ) {
       items.push (
-        <Grid item xs={3} key={index}>
+        <Grid item xl={2} md={3} sm={6} xs={12} key={index} justify="flex-end">
           <Card
             characterName={value.name}
             characterPost={value.job}
@@ -49,11 +49,9 @@ const NestedGrid =  props => {
   //console.log ( JSON.stringify ( props ) );
   return (
     <div className={classes.root}>
-      <Grid container spacing={1}>
-        <Grid container item xs={12} spacing={6}>
+        <Grid container xs={12} spacing={4} >
           <FormRow />
         </Grid>
-      </Grid>
     </div>
   );
 }
