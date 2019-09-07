@@ -63,16 +63,14 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    //marginRight: -40,
+    marginRight: 0,
   },
   contentShift: {
-    flexGrow: 1,
-    paddingLeft: theme.spacing(3),
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    marginRight: -40,
+    marginRight: -drawerWidth,
   },
   media: {
     height: 30,
@@ -194,7 +192,7 @@ function ResponsiveDrawer(props) {
               paper: classes.drawerPaper,
             }}
             ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
+              //keepMounted: true, // Better open performance on mobile.
             }}
           >
             {drawer}
