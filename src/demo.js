@@ -24,7 +24,7 @@ const NestedGrid =  props => {
     ! props.loaded ? data = new Array ( 9 ) .fill ( { } ) .entries ( ) : data = props.elements .entries ( );
     for ( const [ index , value ] of data ) {
       items.push (
-        <Grid item xl={2} md={3} sm={6} xs={12} key={index}>
+        <Grid item xl={2} md={3} sm={12} xs={12} key={index}>
           <Card
             characterName={value.name}
             characterPost={value.job}
