@@ -140,9 +140,15 @@ export default function MediaCard ( props ) {
   }
 
   function handleTooltipOpen() {
-    if ( ! toCopy.current.innerText.includes ( '...' )  ){
+    //!
+    if ( !toCopy.current.innerText.includes ( '...' ) ){
         setTip ( 'copied' );
-        navigator.clipboard.writeText( toCopy.current.innerText );
+        if ( navigator.clipboard ){
+          navigator.clipboard.writeText( toCopy.current.innerText );
+        }
+        else {
+          alert ( 'not secure!' )
+        }
         toolSetOpen ( true );
         setTimeout ( handleTooltipClose , 1500 );
     }
@@ -322,7 +328,6 @@ export default function MediaCard ( props ) {
                       open={tooltipOpen}
                       disableFocusListener
                       disableHoverListener
-                      disableTouchListener
                       title={tooltip}
                       TransitionComponent={Zoom}
                     >
@@ -340,8 +345,8 @@ export default function MediaCard ( props ) {
                 </div>
                 <Divider variant="middle" />
               </Grid>
-              <AppBar position="fixed" color="secondary" style={{top: 'auto', bottom: 0, textAlign: 'center'}} >
-                <Toolbar style={{display:"flex",flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+              <AppBar position="fixed" color="secondary" style={{top: 'auto', bottom: 0, opacity: .8,flexShrink: 0}} >
+                <Toolbar style={{display:"flex",flexDirection:'row',justifyContent:'center',alignItems:'center',maxHeight:'20vh'}}>
                   <Button size="small" color="primary" onClick={()=>show(
                     <div>
                       <Linkedin/>
