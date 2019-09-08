@@ -110,7 +110,7 @@ const useStyles = makeStyles ( theme =>  ({
     color: theme.palette.primary.light,
   },
   contain:{
-    height: '60vh',
+    maxHeight: '50vh',
     display: 'flex',
     flexDirection : "column",
   },
@@ -142,9 +142,9 @@ export default function MediaCard ( props ) {
   function handleTooltipOpen() {
     //!
     if ( !toCopy.current.innerText.includes ( '...' ) ){
-        setTip ( 'copied' );
         if ( navigator.clipboard ){
           navigator.clipboard.writeText( toCopy.current.innerText );
+          setTip ( 'copied' );
         }
         else {
           alert ( 'not secure!' )
