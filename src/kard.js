@@ -140,9 +140,8 @@ export default function MediaCard ( props ) {
   }
 
   function handleTooltipOpen() {
-    //!
     if ( !toCopy.current.innerText.includes ( '...' ) ){
-        if ( navigator.clipboard ){
+        if ( navigator.clipboard  && toCopy.current.innerText.trim() ){
           navigator.clipboard.writeText( toCopy.current.innerText );
           toolSetOpen ( true );
           setTip ( 'copied' );
