@@ -27,7 +27,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
-    maxHeight: "100%"
+    //maxHeight: "100%"
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: drawerWidth,
     backgroundImage:`url(static/pexels.jpeg)`,
-    maxHeight: "100%"
+    //maxHeight: "100%"
   },
   content: {
     flexGrow: 1,
