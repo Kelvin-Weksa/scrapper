@@ -28,7 +28,7 @@ class App extends Component {
   }
   fetcher = ( site , get , logo ) => {
     this.setState ( {
-      loaded: true ,
+      loaded: false ,
       sitePage: site  ,
       logo: logo ,
       characters: [ /*{ name: "burna boy" , job: "temperature " , image: "static/live-from-space.jpg" , market: "UK/London",

@@ -144,12 +144,12 @@ export default function MediaCard ( props ) {
     if ( !toCopy.current.innerText.includes ( '...' ) ){
         if ( navigator.clipboard ){
           navigator.clipboard.writeText( toCopy.current.innerText );
+          toolSetOpen ( true );
           setTip ( 'copied' );
         }
         else {
           alert ( 'not secure!' )
         }
-        toolSetOpen ( true );
         setTimeout ( handleTooltipClose , 1500 );
     }
   }
