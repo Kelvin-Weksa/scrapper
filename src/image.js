@@ -20,13 +20,13 @@ const useStyles = makeStyles ( theme =>  ( {
   },
   layer1: {
     position: 'absolute',
-    zIndex : theme.zIndex.drawer ,
+    zIndex : theme.zIndex.appBar - 2 ,
     width: "95%",
     //marginRight: "3%",
   },
   layer2: {
     position: 'absolute',
-    zIndex : theme.zIndex.tooltip ,
+    zIndex : theme.zIndex.appBar - 1 ,
     backgroundColor: theme.palette.secondary.light ,
     borderRadius: theme.shape.borderRadius ,
   } ,
