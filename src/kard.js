@@ -147,7 +147,8 @@ export default function MediaCard ( props ) {
           setTip ( 'copied' );
         }
         else {
-          alert ( 'not secure!' )
+          toolSetOpen ( true );
+          setTip ( 'Not allowed' )
         }
         setTimeout ( handleTooltipClose , 1500 );
     }
