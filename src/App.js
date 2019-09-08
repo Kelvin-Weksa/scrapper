@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import NestedGrid from './demo'
-//import Drawer from './persistentDrawer'
+import Listing from './list'
 import Drawer from './responsiveDrawer'
 
 const io = require ( 'socket.io-client' );
 const socket = io ( );
+
+let Land = Listing[ 1 ];
 
 class App extends Component {
   state = {
@@ -14,7 +16,7 @@ class App extends Component {
     logo:""
   };
   componentDidMount ( ) {
-    this.fetcher ( "Atlantic Capital" , '121' , 'http://www.atlanticcapital.nl/sites/default/files/ac_logo.png' );
+    this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
     socket.on ( "outgoing data", ( data ) => {
       let set  = new Set( [ ...this.state.characters , ...data ] );
       this.setState ( { characters: [ ...set ] , loaded: true ,  } )

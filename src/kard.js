@@ -19,11 +19,15 @@ import ViewListIcon from '@material-ui/icons/ViewList';
 import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
 import MapOutlinedIcon from '@material-ui/icons/MapOutlined';
-//import Red from '@material-ui/core/colors/red';
-//import CardActionArea from '@material-ui/core/CardActionArea';
-//import CardActions from '@material-ui/core/CardActions';
-//import Linkedin from 'mdi-material-ui/Linkedin';
-//import UnfoldMoreVertical from 'mdi-material-ui/UnfoldMoreVertical';
+import Hidden from '@material-ui/core/Hidden';
+
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+import Linkedin from 'mdi-material-ui/LinkedinBox';
+import Email from '@material-ui/icons/EmailOutlined';
+import CallIcon from '@material-ui/icons/CallOutlined';
+import Zoom from '@material-ui/core/Zoom';
+//import PermPhoneMsgOutlinedIcon from '@material-ui/icons/PermPhoneMsgOutlined';
+import clsx from 'clsx';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -47,7 +51,8 @@ const useStyles = makeStyles ( theme =>  ({
     height: 150,
   },
   appBar: {
-    position: 'relative',
+    position: 'sticky',
+    top: 0
   },
   title: {
     marginLeft: theme.spacing(2),
@@ -99,9 +104,21 @@ const useStyles = makeStyles ( theme =>  ({
     zIndex:theme.zIndex.mobileStepper ,
   },
   text:{
-    //position: 'absolute',
-    textAlign:"left" ,
+    display: 'flex',
+    alignItems:"center" ,
+    justifyContent:"space-between" ,
     color: theme.palette.primary.light,
+  },
+  contain:{
+    height: '60vh',
+    display: 'flex',
+    flexDirection : "column",
+  },
+  box:{
+    margin: '1px',
+    display: 'flex',
+    overflow: 'scroll',
+    flex: 1,
   }
 }) );
 
@@ -113,6 +130,23 @@ export default function MediaCard ( props ) {
   const characterImage_ = characterImage;//? characterImage.split( '?' )[ 0 ]: null;
   const [ open , setOpen ] = React.useState ( false );
   const [ shown , setShown ] = React.useState ( "" );
+  const [ tooltip , setTip ] = React.useState ( "" );
+  let toCopy = React.createRef ( );
+
+  const [tooltipOpen, toolSetOpen] = React.useState(false);
+
+  function handleTooltipClose() {
+    toolSetOpen(false);
+  }
+
+  function handleTooltipOpen() {
+    if ( ! toCopy.current.innerText.includes ( '...' )  ){
+        setTip ( 'copied' );
+        navigator.clipboard.writeText( toCopy.current.innerText );
+        toolSetOpen ( true );
+        setTimeout ( handleTooltipClose , 1500 );
+    }
+  }
 
   let image = React.createRef ( );
   let outer_card = React.createRef ( );
@@ -157,6 +191,7 @@ export default function MediaCard ( props ) {
     if ( img ){
       let percent = (( img.offsetHeight * 90 ) - ( icon.offsetHeight * 100 )) / cont.offsetHeight;
       icon.style.top = percent.toString (  ) + '%';
+      image.current = img;
     }
   }
 
@@ -209,8 +244,7 @@ export default function MediaCard ( props ) {
         )}
       </Card>
     </div>
-
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition} >
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton edge="start" color="secondary" onClick={handleClose} aria-label="close">
@@ -219,46 +253,120 @@ export default function MediaCard ( props ) {
           </Toolbar>
         </AppBar>
         <div className={classes.root}>
-        <Grid container spacing={3}>
-          <Grid item xs={4}>
-            <ImageContainer src={characterImage_}
-              phone={characterPhone}
-              mail={characterMail}
-              fax={characterFax}
-              linkedIn={characterLinkedIn}
-            />
-          </Grid>
-          <Grid item xs={8}>
-            <Paper className={classes.paper} >
-              <Typography variant="h4" className={classes.title}>
-                {characterName}
-              </Typography>
-              <Typography variant="h5" className={classes.title2}>
-                {characterPost}
-              </Typography>
-              <Typography variant="subtitle2" className={classes.Subtitle}>
-                {characterMarket}
-              </Typography>
-              <Typography variant="body1" color="textSecondary" style={{textAlign:"left"}}>
-                {characterAbout}
-              </Typography>
-              <Divider variant="middle" />
-              <Typography className={classes.text}>
-                {shown}
-              </Typography>
-            </Paper>
-            <div>
-              <Button size="small" color="primary" style={{textAlign:'left'}}onClick={()=>show(
+          <Grid container spacing={3}>
+            <Hidden xsDown>
+              <Grid item xs={4}>
+                <ImageContainer src={characterImage_}
+                  phone={characterPhone}
+                  mail={characterMail}
+                  fax={characterFax}
+                  linkedIn={characterLinkedIn}
+                />
+              </Grid>
+              <Grid item xs={8}>
+                <Paper className={classes.paper} >
+                  <Typography variant="h4" className={classes.title}>
+                    {characterName}
+                  </Typography>
+                  <Typography variant="h5" className={classes.title2}>
+                    {characterPost}
+                  </Typography>
+                  <Typography variant="subtitle2" className={classes.Subtitle}>
+                    {characterMarket}
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary" style={{textAlign:"left"}}>
+                    {characterAbout}
+                  </Typography>
+                  <Divider variant="middle" />
+                  <Typography className={classes.text}>
+                    {shown}
+                  </Typography>
+                </Paper>
                 <div>
-                  <MapOutlinedIcon/>
-                  {characterMap}
-                </div>)}>
-                <MapOutlinedIcon/>
-              </Button>
-            </div>
-            <Divider variant="middle" />
+                  <Button size="small" color="primary" style={{textAlign:'left'}}onClick={()=>show(
+                    <div>
+                      <MapOutlinedIcon/>
+                      {characterMap}
+                    </div>)}>
+                    <MapOutlinedIcon/>
+                  </Button>
+                </div>
+                <Divider variant="middle" />
+              </Grid>
+            </Hidden>
+            <Hidden smUp>
+              <Grid item xs={12}>
+                <Paper className={clsx(classes.paper)} >
+                  <Typography variant="h4" className={classes.title}>
+                    {characterName}
+                  </Typography>
+                  <Typography variant="h5" className={classes.title2}>
+                    {characterPost}
+                  </Typography>
+                  <Typography variant="subtitle2" className={classes.Subtitle}>
+                    {characterMarket}
+                  </Typography>
+                  <div className={classes.contain}>
+                    <Typography variant="body1" color="textSecondary" className={classes.box} style={{textAlign:"left"}}>
+                      {characterAbout}
+                    </Typography>
+                  </div>
+                  <Divider variant="middle" />
+                  <Typography className={classes.text} ref={toCopy}>
+                    {shown}
+                    <Tooltip
+                      PopperProps={{
+                        disablePortal: true,
+                      }}
+                      onClose={handleTooltipClose}
+                      open={tooltipOpen}
+                      disableFocusListener
+                      disableHoverListener
+                      disableTouchListener
+                      title={tooltip}
+                      TransitionComponent={Zoom}
+                    >
+                      <FileCopyIcon onClick={handleTooltipOpen}/>
+                    </Tooltip>
+                  </Typography>
+                </Paper>
+                <div>
+                  <Button size="small" color="primary" style={{textAlign:'left'}}onClick={()=>show(
+                    <div>
+                      <MapOutlinedIcon/>
+                        {characterMap}
+                    </div>)}>
+                  </Button>
+                </div>
+                <Divider variant="middle" />
+              </Grid>
+              <AppBar position="fixed" color="secondary" style={{top: 'auto', bottom: 0, textAlign: 'center'}} >
+                <Toolbar style={{display:"flex",flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                  <Button size="small" color="primary" onClick={()=>show(
+                    <div>
+                      <Linkedin/>
+                      {characterLinkedIn? characterLinkedIn : "LinkedIn..."}
+                    </div>)}>
+                    <Linkedin/>
+                  </Button>
+                  <Button size="small" color="primary" onClick={()=>show(
+                    <div>
+                      <Email/>
+                      {characterMail? characterMail : "mail..."}
+                    </div>)}>
+                    <Email/>
+                  </Button>
+                  <Button size="small" color="primary" onClick={()=>show(
+                    <div>
+                      <CallIcon/>
+                        {characterPhone ? characterPhone : "phone..."}
+                      </div>)}>
+                    <CallIcon/>
+                  </Button>
+                </Toolbar>
+              </AppBar>
+            </Hidden>
           </Grid>
-        </Grid>
         </div>
       </Dialog>
     </div>

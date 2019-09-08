@@ -18,6 +18,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import clsx from 'clsx';
 import Listing from './list'
 import IconBreadcrumbs from './breadCrumb'
+
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
@@ -26,6 +27,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
+    maxHeight: "100%"
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -55,18 +57,19 @@ const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: drawerWidth,
     backgroundImage:`url(static/pexels.jpeg)`,
+    maxHeight: "100%"
   },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
   },
-  /*contentShift: {
+  contentShift: {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
     marginRight: -drawerWidth,
-  },*/
+  },
   media: {
     height: 30,
     width: 40,
@@ -76,7 +79,6 @@ const useStyles = makeStyles(theme => ({
     position : 'sticky' ,
     top : 0 ,
     zIndex: theme.zIndex.appBar ,
-
   },
   logo: {
     height: 40,
@@ -126,7 +128,7 @@ function ResponsiveDrawer(props) {
     <div className={classes.sticky} >
       <div className={classes.drawerHeader}>
         <IconBreadcrumbs toggle={toggleFilter} />
-        <Hidden smUp implementation="css">
+        <Hidden smUp>
           <IconButton color="secondary" onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
@@ -176,7 +178,7 @@ function ResponsiveDrawer(props) {
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Hidden smUp implementation="css">
+        <Hidden smUp>
           <Drawer
             container={container}
             variant="temporary"
@@ -187,14 +189,15 @@ function ResponsiveDrawer(props) {
               paper: classes.drawerPaper,
             }}
             ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
+              //keepMounted: true, // Better open performance on mobile.
             }}
           >
             {drawer}
           </Drawer>
         </Hidden>
-        <Hidden xsDown implementation="css">
+        <Hidden xsDown>
           <Drawer
+            className={classes.drawer}
             classes={{
               paper: classes.drawerPaper,
             }}
