@@ -20,6 +20,11 @@ import Listing from './list'
 import IconBreadcrumbs from './breadCrumb'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
+import RestorePageIcon from '@material-ui/icons/RestorePage';
+import ClearIcon from '@material-ui/icons/Clear';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
+import Tooltip from '@material-ui/core/Tooltip';
+import { useSnackbar } from 'notistack';
 
 const drawerWidth = 240;
 
@@ -34,7 +39,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   appBar: {
+    //backgroundImage:`url(static/pexels.jpeg)`,
     marginLeft: drawerWidth,
+    zIndex: theme.zIndex.drawer ,
     [theme.breakpoints.up('sm')]: {
       width: `calc(100% - ${drawerWidth}px)`,
     },
@@ -86,14 +93,21 @@ const useStyles = makeStyles(theme => ({
   light: {
     backgroundColor: fade(theme.palette.secondary.main, 0.25),
   },
+  rightIcon: {
+    marginLeft: theme.spacing(1),
+  },
+  button: {
+    margin: theme.spacing(1),
+  },
 }));
 
-function ResponsiveDrawer(props) {
+function ResponsiveDrawer ( props ) {
   const { container } = props;
   const classes = useStyles();
   const theme = useTheme();
+  const { enqueueSnackbar , closeSnackbar } = useSnackbar();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [ filter , setFilter ] = React.useState ( "PE" );
+  const [ filter , setFilter ] = React.useState ( "PE" );
 
   function handleDrawerToggle() {
     setMobileOpen(!mobileOpen);
@@ -105,7 +119,7 @@ function ResponsiveDrawer(props) {
 
   function loadData ( page , get , logo ) {// eslint-disable-next-line
     props .fetcher ( page , get , logo );
-    handleDrawerClose ( );
+    handleDrawerClose ();
   }
 
   function toggleFilter ( ) {
@@ -120,6 +134,32 @@ function ResponsiveDrawer(props) {
       drawer.current.scrollTop = 0;
     }
   }
+
+  function handleRefresh ( ) {
+    // variant could be success, error, warning, info, or default
+    const action = ( key ) => (
+      <React.Fragment>
+        <Tooltip title="Proceed">
+          <IconButton color="primary" onClick={props.refresh}>
+            <DoneAllIcon/>
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Dismiss">
+          <IconButton color="secondary" onClick={() => { closeSnackbar(key) }}>
+            <ClearIcon/>
+          </IconButton>
+        </Tooltip>
+      </React.Fragment>
+    );
+
+    enqueueSnackbar ( "This Operation Will Diminish System Perfomance" , {
+        action ,
+        variant : "warning"  ,
+        autoHideDuration: 2500,
+    });
+
+  };
 
   const drawer = (
     <div>
@@ -170,8 +210,16 @@ function ResponsiveDrawer(props) {
           />{/* eslint-disable-next-line*/}
           <Divider orientation="vertical" className={classes.light}/>
           <Typography variant="h6" noWrap>
-          {props.sitePage}
+            {props.sitePage}
           </Typography>
+          <Divider orientation="vertical" color="secondary"/>
+
+          <Tooltip title="Refresh" placement="right">
+            <IconButton color="secondary" className={classes.margin} onClick={handleRefresh}>
+              <RestorePageIcon className={classes.rightIcon} />
+            </IconButton>
+          </Tooltip>
+
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">

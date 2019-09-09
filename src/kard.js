@@ -52,7 +52,7 @@ const useStyles = makeStyles ( theme =>  ({
   },
   appBar: {
     position: 'sticky',
-    top: 0
+    top: 0 ,
   },
   title: {
     marginLeft: theme.spacing(2),
@@ -150,8 +150,9 @@ export default function MediaCard ( props ) {
           toolSetOpen ( true );
           setTip ( 'Not allowed' )
         }
-        setTimeout ( handleTooltipClose , 1500 );
+
     }
+    setTimeout ( handleTooltipClose , 1500 );
   }
 
   let image = React.createRef ( );

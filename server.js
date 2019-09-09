@@ -2743,7 +2743,7 @@ function innovationquarter ( socket , monitor ) {
 function karmijnkapitaal ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -3869,56 +3869,62 @@ function zlto ( socket , monitor ) {
                 return results;
               } , url );
 
-              await Promise.all ( [ ...results .map ( ( item ) => {
-                return new Promise ( async ( resolve , reject ) => {
-                  try {
-                    await check_if_canceled ( browser , monitor , socket );
-                    const page = await browser.newPage ( );
-                    await page.setRequestInterception ( true );
-                    page.on ( 'request' , ( request ) => {
-                      if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-                          request .abort ( );
-                      } else {
-                          request .continue  ( );
-                      }
-                    } );
-                    page.on ( 'error' , err => {
-                      console.log ( 'error happen at the page: ' , err );
-                    });
-                    page.on ( 'pageerror' , pageerr => {
-                      console.log ( 'pageerror occurred: ' , pageerr );
-                    })
-                    page.on('dialog', async dialog => {
-                      console.log(dialog.message());
-                      await dialog.dismiss();
-                    });
-                    await check_if_canceled ( browser , monitor , socket );
-                    await page .goto ( item.about , {timeout:0} );
-                    await check_if_canceled ( browser , monitor , socket );
-                    item.about = await page.$$eval ( 'div.text > p' , ( query ) => {
-                      function  paragraphs  ( array ) {
-                        let paragraph = '';
-                        array.forEach ( ( para ) =>{
-                          paragraph += para.innerText + '\n';
-                        } );
-                        return paragraph;
-                      }
-                      return paragraphs ( query );
-                    } )
-                    item.phone = await page.$eval ( 'div.telephone' , ( query ) => {
-                      return query.innerText;
-                    } )
-                    item.mail = await page.$eval ( 'div.emailtext' , ( query ) => {
-                      return query.innerText ? query.innerText .replace ( 'E-mail:' , '' ) : '';
-                    } )
-                    await page.close (  );
-                    socket.emit ( "outgoing data" , [ item ] );
-                    return resolve ( item );
-                  } catch ( e ) {
-                    return reject ( e )
-                  }
-                });
-              } ) ] )
+              let i , j , chunk = 9;
+              for ( i = 0 , j = results.length; i < j; i += chunk ) {
+                //.slice ( i , i+chunk )
+                console.log ( "chunk --> " + i  )
+                await Promise.all ( [ ...results .slice ( i , i+chunk ) .map ( ( item ) => {
+                  return new Promise ( async ( resolve , reject ) => {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      await page.setRequestInterception ( true );
+                      page.on ( 'request' , ( request ) => {
+                        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                            request .abort ( );
+                        } else {
+                            request .continue  ( );
+                        }
+                      } );
+                      page.on ( 'error' , err => {
+                        console.log ( 'error happen at the page: ' , err );
+                      });
+                      page.on ( 'pageerror' , pageerr => {
+                        console.log ( 'pageerror occurred: ' , pageerr );
+                      })
+                      page.on('dialog', async dialog => {
+                        console.log(dialog.message());
+                        await dialog.dismiss();
+                      });
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await check_if_canceled ( browser , monitor , socket );
+                      item.about = await page.$$eval ( 'div.text > p' , ( query ) => {
+                        function  paragraphs  ( array ) {
+                          let paragraph = '';
+                          array.forEach ( ( para ) =>{
+                            paragraph += para.innerText + '\n';
+                          } );
+                          return paragraph;
+                        }
+                        return paragraphs ( query );
+                      } ).catch( console.log )
+                      item.phone = await page.$eval ( 'div.telephone' , ( query ) => {
+                        return query.innerText;
+                      } ).catch( console.log )
+                      item.mail = await page.$eval ( 'div.emailtext' , ( query ) => {
+                        return query.innerText ? query.innerText .replace ( 'E-mail:' , '' ) : '';
+                      } ).catch( console.log )
+                      await page.close (  );
+                      socket.emit ( "outgoing data" , [ item ] );
+                      return resolve ( item );
+                    } catch ( e ) {
+                      return reject ( e )
+                    }
+                  });
+                } ) ] )
+              }
+
               await page.close ( );
               return resolve ( results )
             }catch ( e ){
@@ -4105,8 +4111,8 @@ function npm_capital ( socket , monitor ) {
               } , url );
               await page.close ( );
 
-              let i , j , chunk = 10;
-              for ( i = 0 , j = 1; i < j; i += chunk ) {
+              let i , j , chunk = 7;
+              for ( i = 0 , j = results.length; i < j; i += chunk ) {
                 //.slice ( i , i+chunk )
                 console.log ( "chunk --> " + i  )
                 await Promise.all ( [ ...results .slice ( i , i + chunk ) .map ( ( item ) => {
