@@ -51,8 +51,8 @@ class App extends Component {
       characters: [ /*{ name: "burna boy" , job: "temperature " , image: "static/live-from-space.jpg" , market: "UK/London"}*/ ],
     } );
 
-    var leadsRef = Firebase.database().ref  ( get.toString ( ) );
-    leadsRef.once ( 'value' , ( snapshot )=> {
+    var Ref = Firebase.database().ref  ( get.toString ( ) );
+    Ref.once ( 'value' , ( snapshot )=> {
       let incoming = [ ];
       console.log ( site + "__" + snapshot.exists() )
       snapshot.forEach ( function ( childSnapshot) {
@@ -63,6 +63,7 @@ class App extends Component {
         loaded: snapshot.exists() ,
         path:  get ,
         refresh: () => {
+          Ref.remove ( );
           socket.emit ( get , site );
           this.props.enqueueSnackbar("refreshing... " + site , {
             variant : "info" ,
