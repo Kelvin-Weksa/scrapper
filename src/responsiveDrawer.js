@@ -26,6 +26,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
 import Card from '@material-ui/core/Card';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const drawerWidth = 240;
 
@@ -139,9 +140,18 @@ function DetectBottom() {
 }
 
 function MyResponsiveComponent() {
+  const classes = useStyles();
   const scroll = DetectBottom(); // Our custom Hook
+  let spinner = scroll ? <CircularProgress className={classes.progress} color="secondary" /> : ''
   return (
-    <p>{scroll ? 'bottomYet' :'' }</p>
+    <React.Fragment>
+      <Toolbar/>
+      <Typography className={classes.margin}>
+        <div className={classes.info}>
+          {spinner}
+        </div>
+      </Typography>
+    </React.Fragment>
   );
 }
 
