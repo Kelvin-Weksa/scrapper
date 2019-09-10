@@ -10335,7 +10335,7 @@ async function scheduler ( ) {
 function millsUntilMidnight ( ) {
   var midnight = new Date();
   midnight.setHours( 24 , 0 , 0 , 0 );
-  midnight.addHours ( 1 );
+  midnight.addHours ( -1 );
   return ( midnight.getTime ( ) - new Date ( ) .getTime ( ) );
 }
 console.log ( msToTime ( millsUntilMidnight (  ) ) );
