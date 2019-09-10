@@ -117,6 +117,34 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function DetectBottom() {
+  const [bottomYet, setBottom] = React.useState ( false );
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      if ( ( window.innerHeight + window.scrollY ) >= document.body.offsetHeight ) {
+        // you're at the bottom of the page
+        setBottom ( true )
+      }else{
+        setBottom ( false )
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  });
+
+  return bottomYet;
+}
+
+function MyResponsiveComponent() {
+  const scroll = DetectBottom(); // Our custom Hook
+  return (
+    <p>{scroll ? 'bottomYet' :'' }</p>
+  );
+}
+
 function ResponsiveDrawer ( props ) {
   const { container } = props;
   const classes = useStyles();
@@ -282,6 +310,7 @@ function ResponsiveDrawer ( props ) {
         </Typography>
         <Toolbar style={{height: theme.mixins.toolbar/2}}/>
         {props.content}
+        <MyResponsiveComponent/>
       </main>
     </div>
   );

@@ -64,6 +64,7 @@ class App extends Component {
       characters: [ /*{ name: "burna boy" , job: "temperature " , image: "static/live-from-space.jpg" , market: "UK/London"}*/ ],
     } );
 
+    window.scrollTo ( 0 , 0 );
     var Ref = Firebase.database().ref  ( get.toString ( ) );
     Ref.once ( 'value' , ( snapshot )=> {
       let incoming = [ ];
