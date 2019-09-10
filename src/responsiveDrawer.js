@@ -139,9 +139,16 @@ function DetectBottom() {
   return bottomYet;
 }
 
-function MyResponsiveComponent() {
+function MyResponsiveComponent ( props ) {
   const classes = useStyles();
   const scroll = DetectBottom(); // Our custom Hook
+  let dir = React.useRef(false);
+
+  React.useEffect ( ( ) => {
+    dir.current ? console.log('UP') : console.log(false);
+    dir.current = ! dir.current;
+  });
+
   let spinner = scroll ? <CircularProgress className={classes.progress} color="secondary" /> : ''
   return (
     <React.Fragment>

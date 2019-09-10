@@ -10325,11 +10325,11 @@ async function firePush ( scrapper ) {
 }
 
 async function scheduler ( ) {
-  try {
     for (var i = 0; i < Scrappers.length; i++) {
-      await firePush ( Scrappers [ i ] )
+      try {
+        await firePush ( Scrappers [ i ] )
+      } catch ( e ) { console.log ( e )  }
     }
-  } catch ( e ) { console.log ( e ) }
 };
 
 function millsUntilMidnight ( ) {
