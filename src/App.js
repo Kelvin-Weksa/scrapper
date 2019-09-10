@@ -10,6 +10,16 @@ const socket = io ( );
 
 let Land = Listing[ 1 ];
 
+function msToTime ( duration ) {
+  var minutes = parseInt ( ( duration / ( 1000 * 60 ) ) % 60 )
+      , hours = parseInt ( ( duration / ( 1000 * 60 * 60 ) ) % 24 );
+
+  hours =  ( hours < 10 ) ? "0" + hours : hours;
+  minutes = ( minutes < 10 ) ? "0" + minutes : minutes;
+  // eslint-disable-next-line
+  return hours + "hrs " + minutes + "mins" ;
+}
+
 class App extends Component {
   state = {
     characters: [ ] ,
@@ -18,6 +28,7 @@ class App extends Component {
     logo:"" ,
     path: 0 ,
     refresh: null ,
+    stale : '' ,
   };
 
   componentDidMount = ( )=> {
@@ -25,7 +36,8 @@ class App extends Component {
     socket.on ( "outgoing data", ( data ) => {
       //let set  = new Set( [ ...this.state.characters , ...data ] );
       data.forEach ( ( upload ) => {
-        Firebase.database().ref ( this.state.path +'/' + upload.name.replace ( /[^\w\s]/gi, '' ) )
+        upload.timestamp = new Date ( ).getTime ( );
+        Firebase.database().ref ( this.state.path +'/' + upload.name.replace ( /[^\w\s]/gi, '_' ) )
           .set ( upload ,  ( error )=> {
             if ( error ) {
               console.log ( error )
@@ -48,6 +60,7 @@ class App extends Component {
       refresh: null,
       sitePage: site  ,
       logo: logo ,
+      stale : '' ,
       characters: [ /*{ name: "burna boy" , job: "temperature " , image: "static/live-from-space.jpg" , market: "UK/London"}*/ ],
     } );
 
@@ -58,10 +71,12 @@ class App extends Component {
       snapshot.forEach ( function ( childSnapshot) {
         incoming.push ( childSnapshot.val ( ) );
       });
+
       this.setState ( {
         characters: snapshot.exists ( ) ? [...incoming ] : [ ] ,
         loaded: snapshot.exists() ,
         path:  get ,
+        stale: incoming[ 0 ] ? incoming[ 0 ].timestamp ? msToTime ( new Date ( ).getTime ( ) - incoming[ 0 ].timestamp ) : '' : ''  ,
         refresh: () => {
           Ref.remove ( );
           socket.emit ( get , site );
@@ -81,6 +96,7 @@ class App extends Component {
           sitePage={this.state.sitePage}
           refresh={this.state.refresh}
           logo={this.state.logo}
+          stale={this.state.stale}
           fetcher={this.fetcher}
           content={<NestedGrid elements={ this.state.characters } loaded={this.state.loaded}/>}
         />

@@ -25,6 +25,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
+import Card from '@material-ui/core/Card';
 
 const drawerWidth = 240;
 
@@ -40,6 +41,7 @@ const useStyles = makeStyles(theme => ({
   },
   appBar: {
     //backgroundImage:`url(static/pexels.jpeg)`,
+    boxShadow: `0 0 5px ${theme.palette.secondary.light}` ,
     marginLeft: drawerWidth,
     zIndex: theme.zIndex.drawer ,
     [theme.breakpoints.up('sm')]: {
@@ -58,6 +60,7 @@ const useStyles = makeStyles(theme => ({
     padding: '0 8px',
     ...theme.mixins.toolbar,
     justifyContent: 'center',
+    boxShadow: `0 0 5px ${theme.palette.primary.light}`
   },
   drawerPaper: {
     width: drawerWidth,
@@ -94,10 +97,23 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: fade(theme.palette.secondary.main, 0.25),
   },
   rightIcon: {
-    marginLeft: theme.spacing(1),
+    //margin: 'auto'
   },
   button: {
     margin: theme.spacing(1),
+  },
+  margin: {
+    display: 'flex' ,
+    justifyContent: 'center' ,
+  } ,
+  info: {
+    display: 'flex' ,
+    justifyContent: 'center' ,
+    width : theme.mixins.toolbar.minHeight,
+    height: theme.mixins.toolbar.minHeight,
+    "&:hover": {
+      boxShadow: `0 0 11px ${theme.palette.primary.main}`
+    }
   },
 }));
 
@@ -213,13 +229,6 @@ function ResponsiveDrawer ( props ) {
             {props.sitePage}
           </Typography>
           <Divider orientation="vertical" color="secondary"/>
-
-          <Tooltip title="Refresh" placement="right">
-            <IconButton color="secondary" className={classes.margin} onClick={handleRefresh}>
-              <RestorePageIcon className={classes.rightIcon} />
-            </IconButton>
-          </Tooltip>
-
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
@@ -258,6 +267,20 @@ function ResponsiveDrawer ( props ) {
           [classes.contentShift]: mobileOpen,
         })}
       >
+        <Toolbar style={{height: theme.mixins.toolbar/2}}/>
+        <Typography className={classes.margin}>
+          <Typography style={{padding:'12px'}} variant="h5" component="h2" >
+            {props.stale ? props.stale : ''}
+          </Typography>
+          <Card className={classes.info}>
+            <Tooltip title="Refresh" placement="right">
+              <IconButton color="secondary" onClick={handleRefresh} className={classes.rightIcon}>
+                <RestorePageIcon  />
+              </IconButton>
+            </Tooltip>
+          </Card>
+        </Typography>
+        <Toolbar style={{height: theme.mixins.toolbar/2}}/>
         {props.content}
       </main>
     </div>

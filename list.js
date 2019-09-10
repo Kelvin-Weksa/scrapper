@@ -132,5 +132,5 @@ const Listing = [
   [ "https://www.sbicparticipations.com/team/" , "127" , "SBIC Participations" , "https://www.sbicparticipations.com/img/main/sbic-partipations-logo.gif" , "VC" , 'sbicparticipations' ] ,
 ]
 
-//export default Listing
+//module.exports = Listing
 module.exports = Listing

@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles , useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
@@ -46,6 +46,7 @@ const useStyles = makeStyles ( theme =>  ({
     //position : "relative" ,
     maxWidth: 345,
     overflow:  'visible',
+    transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
   },
   media: {
     height: 150,
@@ -53,6 +54,7 @@ const useStyles = makeStyles ( theme =>  ({
   appBar: {
     position: 'sticky',
     top: 0 ,
+    boxShadow: `0 0 5px ${theme.palette.secondary.light}`
   },
   title: {
     marginLeft: theme.spacing(2),
@@ -72,8 +74,15 @@ const useStyles = makeStyles ( theme =>  ({
     flex: 1,
     color: theme.palette.primary.light ,
   },
-  image_card: {
-    display: 'block'
+  outer_card: {
+    position : "relative" ,
+    overflow:  "visible" ,
+    width: "100%",
+    textAlign:"center",
+    transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    "&:hover $inner_card": {
+      top: "-40px",
+    },
   },
   inner_card: {
     position : "relative" ,
@@ -85,15 +94,7 @@ const useStyles = makeStyles ( theme =>  ({
     top: "-10px",
     width : "90%",
     zIndex:`${theme.zIndex.mobileStepper + 1}` ,
-  },
-  outer_card: {
-    position : "relative" ,
-    overflow:  "visible" ,
-    width: "100%",
-    textAlign:"center",
-    "&:hover $inner_card": {
-      top: "-40px",
-    }
+    boxShadow: `0 0 11px ${theme.palette.primary.main}`
   },
   hidden_icon: {
     position:"absolute",
@@ -102,6 +103,9 @@ const useStyles = makeStyles ( theme =>  ({
     top:"50%" ,
     left:"35%",
     zIndex:theme.zIndex.mobileStepper ,
+    "&:hover $.outer_card": {
+      boxShadow: `0 0 11px ${theme.palette.primary.main}`
+    },
   },
   text:{
     display: 'flex',
@@ -124,6 +128,7 @@ const useStyles = makeStyles ( theme =>  ({
 
 export default function MediaCard ( props ) {
   const classes = useStyles();
+  const theme = useTheme();
   const { characterName , characterPost , characterImage , characterPhone , characterFax ,
     characterMail , characterMap , characterLinkedIn ,
     characterMarket , characterAbout , from } = props;
@@ -206,6 +211,14 @@ export default function MediaCard ( props ) {
     setShown( node );
   }
 
+  function raisecard ( ){
+    outer_card.current.style.boxShadow = `0 0 11px`;
+  }
+
+  function lowercard ( ){
+    outer_card.current.style.boxShadow = `none`;
+  }
+
   return (
     <div>
 
@@ -226,7 +239,7 @@ export default function MediaCard ( props ) {
         )}
         {characterName ? (
         <Tooltip title="View" placement="right">
-          <Button className={classes.hidden_icon} onClick={handleClickOpen} ref={hidden_icon}>
+          <Button className={classes.hidden_icon} onClick={handleClickOpen} ref={hidden_icon} onMouseOver={raisecard} onMouseLeave={lowercard}>
             <ViewListIcon/>
           </Button>
         </Tooltip>
@@ -346,7 +359,7 @@ export default function MediaCard ( props ) {
                 </div>
                 <Divider variant="middle" />
               </Grid>
-              <AppBar position="fixed" color="secondary" style={{top: 'auto', bottom: 0, opacity: .8,flexShrink: 0}} >
+              <AppBar position="fixed" color="secondary" style={{top: 'auto', bottom: 0, opacity: .8,flexShrink: 0 , boxShadow: `0 0 5px ${theme.palette.primary.light}`}} >
                 <Toolbar style={{display:"flex",flexDirection:'row',justifyContent:'center',alignItems:'center',maxHeight:'20vh'}}>
                   <Button size="small" color="primary" onClick={()=>show(
                     <div>

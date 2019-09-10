@@ -5,8 +5,24 @@ const puppeteer = require ( 'puppeteer' );
 const http = require  ( "http" );
 const socketIo = require  ( "socket.io" );
 var geoip = require('geoip-lite');
+var admin = require('firebase-admin');
+var fs = require('fs');
+
+const listPathFrom = path.join ( __dirname , 'src' , 'list.js' );
+var data = fs .readFileSync ( listPathFrom , 'utf-8' );
+let newValue = data.replace ( 'export default Listing' , 'module.exports = Listing' );
+const listPath = path.join ( __dirname , 'list.js' );
+fs .writeFileSync ( listPath , newValue , 'utf-8');
+const Listing = require ( listPathFrom );
+//console.log(Listing);
 
 const port = process.env.PORT || 8080;
+
+var serviceAccount = path.join ( __dirname , 'scrapper.json' ) ;
+admin.initializeApp({
+  credential: admin.credential.cert ( serviceAccount ) ,
+  databaseURL: "https://scrapper-1078c.firebaseio.com"
+});
 
 const app = express ( );
 const server = http .createServer ( app );[   ]
@@ -34,6 +50,24 @@ async function autoScroll ( page , interval = 50 ){
 }
 
 let sleep = ms => new Promise ( resolve => setTimeout ( resolve , ms ) );
+
+Date.prototype.addHours = function ( h ){
+    this.setHours ( this.getHours ( ) + h );
+    return this;
+}
+
+function msToTime ( duration ) {
+    var milliseconds = parseInt ( ( duration % 1000 ) / 100 )
+        , seconds = parseInt ( ( duration / 1000 ) % 60 )
+        , minutes = parseInt ( ( duration / ( 1000 * 60 ) ) % 60 )
+        , hours = parseInt ( ( duration / ( 1000 * 60 * 60 ) ) % 24 );
+
+    hours =  ( hours < 10 ) ? "0" + hours : hours;
+    minutes = ( minutes < 10 ) ? "0" + minutes : minutes;
+    seconds = ( seconds < 10 ) ? "0" + seconds : seconds;
+
+    return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+}
 
 async function check_if_canceled( browser , monitor , socket  ){
   if ( monitor .cancel ){
@@ -67,6 +101,8 @@ class AsyncArray /*extends Array*/ {
       .then ( result => data.filter ( ( element , index ) => result [ index ] )  );
   }
 }
+
+let Scrappers = [ ];
 
 function run3i ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -145,6 +181,7 @@ function run3i ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( run3i );
 
 function runaacc ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -206,6 +243,7 @@ function runaacc ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runaacc );
 
 function run5sq ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -286,6 +324,7 @@ function run5sq ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( run5sq );
 
 function runactivecapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -363,6 +402,7 @@ function runactivecapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runactivecapital );
 
 function runadventinternational ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -450,6 +490,7 @@ function runadventinternational ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runadventinternational );
 
 function runalpinvest ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -538,6 +579,7 @@ function runalpinvest ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runalpinvest );
 
 function runantea ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -588,6 +630,7 @@ function runantea ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runantea );
 
 function runbaincapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -673,6 +716,7 @@ function runbaincapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runbaincapital );
 
 function runbbcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -729,6 +773,7 @@ function runbbcapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runbbcapital );
 
 function runavedoncapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -809,6 +854,7 @@ function runavedoncapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runavedoncapital );
 
 function runbolsterinvestments ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -904,6 +950,7 @@ function runbolsterinvestments ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runbolsterinvestments );
 
 function runbridgepoint ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1021,6 +1068,7 @@ function runbridgepoint ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runbridgepoint );
 
 function runbrightlandsventurepartners ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1112,6 +1160,7 @@ function runbrightlandsventurepartners ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runbrightlandsventurepartners );
 
 function runcapitalapartners ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1204,6 +1253,7 @@ function runcapitalapartners ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runcapitalapartners );
 
 function runcinven ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1287,6 +1337,7 @@ function runcinven ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runcinven );
 
 function committedcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1340,6 +1391,7 @@ function committedcapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( committedcapital );
 
 function cottonwood ( socket , monitor) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1402,6 +1454,7 @@ function cottonwood ( socket , monitor) {
     }
   })
 }
+Scrappers.push ( cottonwood );
 
 function cvc ( socket , monitor) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1454,6 +1507,7 @@ function cvc ( socket , monitor) {
     }
   })
 }
+Scrappers.push ( cvc );
 
 function dehogedennencapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1511,6 +1565,7 @@ function dehogedennencapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( dehogedennencapital );
 
 function delftenterprises ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1564,6 +1619,7 @@ function delftenterprises ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( delftenterprises );
 
 function ecart ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1642,6 +1698,7 @@ function ecart ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( ecart );
 
 function egeria ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1714,6 +1771,7 @@ function egeria ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( egeria );
 
 function eqtpartners ( socket, monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1794,6 +1852,7 @@ function eqtpartners ( socket, monitor ) {
     }
   })
 }
+Scrappers.push ( eqtpartners );
 
 function forbion ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1890,6 +1949,7 @@ function forbion ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( forbion );
 
 function gembenelux ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -1979,6 +2039,7 @@ function gembenelux ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( gembenelux );
 
 function gilde ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2102,6 +2163,7 @@ function gilde ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( gilde );
 
 function gildehealthcare ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2191,6 +2253,7 @@ function gildehealthcare ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( gildehealthcare );
 
 function gimv ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2289,6 +2352,7 @@ function gimv ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( gimv );
 
 function healthinnovations ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2344,6 +2408,7 @@ function healthinnovations ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( healthinnovations );
 
 function healthinvestmentpartners ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2396,6 +2461,7 @@ function healthinvestmentpartners ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( healthinvestmentpartners );
 
 function hollandcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2448,6 +2514,7 @@ function hollandcapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( hollandcapital );
 
 function horizonflevoland ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2499,6 +2566,7 @@ function horizonflevoland ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( horizonflevoland );
 
 function hpegrowth ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2558,6 +2626,7 @@ function hpegrowth ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( hpegrowth );
 
 function ibsca ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2623,6 +2692,7 @@ function ibsca ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( ibsca );
 
 function innovationquarter ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2739,6 +2809,7 @@ function innovationquarter ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( innovationquarter );
 
 function karmijnkapitaal ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2854,6 +2925,7 @@ function karmijnkapitaal ( socket , monitor ) {
     }
   })
 } /*modals injected to dom*/
+Scrappers.push ( karmijnkapitaal );
 
 function kkr ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -2966,6 +3038,7 @@ function kkr ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( kkr );
 
 function llcp ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -3081,6 +3154,7 @@ function llcp ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( llcp );
 
 function liof ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -3201,6 +3275,7 @@ function liof ( socket , monitor ) {
     }
   })
 }/*hiden modals*/
+Scrappers.push ( liof );
 
 function lspvc ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -3328,6 +3403,7 @@ function lspvc ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( lspvc );
 
 function main ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -3443,6 +3519,7 @@ function main ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( main );
 
 function mgf ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -3503,6 +3580,7 @@ function mgf ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( mgf );
 
 function menthacapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -3577,6 +3655,7 @@ function menthacapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( menthacapital );
 
 function nom ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -3703,6 +3782,7 @@ function nom ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( nom );
 
 function navitascapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -3763,6 +3843,7 @@ function navitascapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( navitascapital );
 
 function shiftinvest ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -3826,6 +3907,7 @@ function shiftinvest ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( shiftinvest );
 
 function zlto ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -3944,6 +4026,7 @@ function zlto ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( zlto );
 
 function newion ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -4007,6 +4090,7 @@ function newion ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( newion );
 
 function nordian ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -4068,6 +4152,7 @@ function nordian ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( nordian );
 
 function npm_capital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -4188,6 +4273,7 @@ function npm_capital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( npm_capital );
 
 function oostnl ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -4251,6 +4337,7 @@ function oostnl ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( oostnl );
 
 function o2capital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -4373,6 +4460,7 @@ function o2capital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( o2capital );
 
 function parcomcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -4434,11 +4522,12 @@ function parcomcapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( parcomcapital );
 
 function plainvanilla ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
       await check_if_canceled ( browser , monitor , socket );
       let urls = [  ];
       const page = await browser .newPage ( );
@@ -4525,6 +4614,7 @@ function plainvanilla ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( plainvanilla );
 
 function pridecapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -4640,6 +4730,7 @@ function pridecapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( pridecapital );
 
 function primeventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -4758,6 +4849,7 @@ function primeventures ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( primeventures );
 
 function raboprivateequity ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -4874,6 +4966,7 @@ function raboprivateequity ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( raboprivateequity );
 
 function riversideeurope ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5022,6 +5115,7 @@ function riversideeurope ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( riversideeurope );
 
 function setventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5133,6 +5227,7 @@ function setventures ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( setventures );
 
 function smile_invest (socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5252,6 +5347,7 @@ function smile_invest (socket , monitor ) {
     }
   })
 }
+Scrappers.push ( smile_invest );
 
 function startgreen ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5314,6 +5410,7 @@ function startgreen ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( startgreen );
 
 function seaminvestments ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5380,6 +5477,7 @@ function seaminvestments ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( seaminvestments );
 
 function strongrootcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5444,6 +5542,7 @@ function strongrootcapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( strongrootcapital );
 
 function thujacapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5562,6 +5661,7 @@ function thujacapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( thujacapital );
 
 function tiincapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5623,6 +5723,7 @@ function tiincapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( tiincapital );
 
 function synergia ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5686,6 +5787,7 @@ function synergia ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( synergia );
 
 function torqxcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5808,6 +5910,7 @@ function torqxcapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( torqxcapital );
 
 function vepartners ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5869,6 +5972,7 @@ function vepartners ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( vepartners );
 
 function vendiscapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -5970,6 +6074,7 @@ function vendiscapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( vendiscapital );
 
 function victusparticipations ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6033,6 +6138,7 @@ function victusparticipations ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( victusparticipations );
 
 function vortexcp ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6094,6 +6200,7 @@ function vortexcp ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( vortexcp );
 
 function transequity ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6157,6 +6264,7 @@ function transequity ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( transequity );
 
 function wadinko ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6220,6 +6328,7 @@ function wadinko ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( wadinko );
 
 function waterland ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6347,6 +6456,7 @@ function waterland ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( waterland );
 
 function vpcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6408,6 +6518,7 @@ function vpcapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( vpcapital );
 
 function impulszeeland ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6470,6 +6581,7 @@ function impulszeeland ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( impulszeeland );
 
 function wmp ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6530,6 +6642,7 @@ function wmp ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( wmp );
 
 function keadyn ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6630,6 +6743,7 @@ function keadyn ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( keadyn );
 
 function uniiq ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6694,6 +6808,7 @@ function uniiq ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( uniiq );
 
 function nascentventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6756,6 +6871,7 @@ function nascentventures ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( nascentventures );
 
 function mkbfondsen_flevoland ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6817,6 +6933,7 @@ function mkbfondsen_flevoland ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( mkbfondsen_flevoland );
 
 function vectrix ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -6878,6 +6995,7 @@ function vectrix ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( vectrix );
 
 function aglaia_oncology ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7007,6 +7125,7 @@ function aglaia_oncology ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( aglaia_oncology );
 
 function hollandstartup ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7069,6 +7188,7 @@ function hollandstartup ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( hollandstartup );
 
 function thenextwomen ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7135,61 +7255,7 @@ function thenextwomen ( socket , monitor ) {
     }
   })
 }
-
-/*function liof ( ) {
-  return new Promise ( async ( resolve , reject ) => {
-    try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
-      //specific to website
-      function crawlUrl ( url ) {
-          return new Promise ( async ( resolve , reject ) => {
-            try{
-              let results = [ ];
-              const page = await browser .newPage ( );
-              await page.setRequestInterception ( true );
-              page.on ( 'request' , ( request ) => {
-                if (  [ 'font' ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-                    request .abort ( );
-                } else {
-                    request .continue  ( );
-                }
-              } );
-              await page .goto ( url , { timeout : 0 , } );
-              await page .addScriptTag ( { path: 'jquery.js'  } );
-              await autoScroll ( page );
-              results = await page.evaluate ( ( url ) => {
-                let results = [ ];
-                let items = $ ( 'div.com_contact_wrap.clearfix' );
-                Array.from ( items ).forEach ( ( item  , index ) => {
-                  results.push ( {
-                      //item    : $ ( item ) .html ( ) ,
-                      name    : $ ( item ) .find ( 'strong' ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  ) || $ ( item ) .find ( 'b' ) .text ( ) .replace ( /[\t\n]/g ,'' ) .trim (  ) ,
-                      job     : "investment manager" , //$ ( item ) .find ( 'a' ) .text ( ) ,
-                      //market  : $ ( item ) .find ( 'p.name-employee' ) .text ( )  .replace ( /[\t]+/g , ' ' ) .trim ( ) . split ( '\n' ) [ 2 ] ,
-                      image   : $ ( item )  .find ( 'img' ) .prop ( 'src' ) ,
-                      from    : url ,
-                      index   : index ,
-                  } );
-                } );
-                return results;
-              } , url );
-              await page.close ( );
-              return resolve ( results )
-            }catch ( e ){
-              return reject ( e )
-            }
-        } )
-      }
-      let urls = [ `https://www.liof.com/en/Contact` ];
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
-      //
-      browser.close ( );
-      return resolve ( [ ] .concat ( ...datas ) );
-    } catch ( e ) {
-      return reject ( e );
-    }
-  })
-}*/
+Scrappers.push ( thenextwomen );
 
 function bfly ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7254,6 +7320,7 @@ function bfly ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( bfly );
 
 function voccp ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7313,6 +7380,7 @@ function voccp ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( voccp );
 
 function blckprty ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7376,6 +7444,7 @@ function blckprty ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( blckprty );
 
 function vcxc ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7441,6 +7510,7 @@ function vcxc ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( vcxc );
 
 function bom ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7508,6 +7578,7 @@ function bom ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( bom );
 
 function dsif ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7595,6 +7666,7 @@ function dsif ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( dsif );
 
 function brooklyn_ventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7705,6 +7777,7 @@ function brooklyn_ventures ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( brooklyn_ventures );
 
 function biogenerationventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7798,6 +7871,7 @@ function biogenerationventures ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( biogenerationventures );
 
 function socialimpactventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7865,6 +7939,7 @@ function socialimpactventures ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( socialimpactventures );
 
 function henq ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -7928,6 +8003,7 @@ function henq ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( henq );
 
 function volta ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8038,6 +8114,7 @@ function volta ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( volta );
 
 function slingshot ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8145,6 +8222,7 @@ function slingshot ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( slingshot );
 
 function peak ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8210,6 +8288,7 @@ function peak ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( peak );
 
 function capitalmills ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8272,6 +8351,7 @@ function capitalmills ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( capitalmills );
 
 function mainportinnovationfund ( socket , monitor  ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8347,6 +8427,7 @@ function mainportinnovationfund ( socket , monitor  ) {
     }
   })
 }
+Scrappers.push ( mainportinnovationfund );
 
 function investion ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8410,6 +8491,7 @@ function investion ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( investion );
 
 function inkefcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8468,6 +8550,7 @@ function inkefcapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( inkefcapital );
 
 function icoscapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8566,6 +8649,7 @@ function icoscapital ( socket , monitor ) {
     }
   })
 }/*taking too long to load*/
+Scrappers.push ( icoscapital );
 
 function ogc_partners ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8635,6 +8719,7 @@ function ogc_partners ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( ogc_partners );
 
 function investinfuture ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8697,6 +8782,7 @@ function investinfuture ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( investinfuture );
 
 function otterlooventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8755,6 +8841,7 @@ function otterlooventures ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( otterlooventures );
 
 function solidventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8819,6 +8906,7 @@ function solidventures ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( solidventures );
 
 function doen ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8881,6 +8969,7 @@ function doen ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( doen );
 
 function endeit ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -8946,6 +9035,7 @@ function endeit ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( endeit );
 
 function keenventurepartners ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9051,6 +9141,7 @@ function keenventurepartners ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( keenventurepartners );
 
 function filsa ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9117,6 +9208,7 @@ function filsa ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( filsa );
 
 function catenainvestments ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9179,6 +9271,7 @@ function catenainvestments ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( catenainvestments );
 
 function anterracapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9298,6 +9391,7 @@ function anterracapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( anterracapital );
 
 function walvis ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9362,6 +9456,7 @@ function walvis ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( walvis );
 
 function percivalparticipations ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9423,6 +9518,7 @@ function percivalparticipations ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( percivalparticipations );
 
 function o2investment ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9540,6 +9636,7 @@ function o2investment ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( o2investment );
 
 function cleverclover ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9604,6 +9701,7 @@ function cleverclover ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( cleverclover );
 
 function runatlanticcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9663,6 +9761,7 @@ function runatlanticcapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( runatlanticcapital );
 
 function beekcapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9715,6 +9814,7 @@ function beekcapital ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( beekcapital );
 
 function velociyfintech ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9830,6 +9930,7 @@ function velociyfintech ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( velociyfintech );
 
 function pulsarpartners ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -9900,6 +10001,7 @@ function pulsarpartners ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( pulsarpartners );
 
 function axivate ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -10002,6 +10104,7 @@ function axivate ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( axivate );
 
 function zeeuwsinvesteringsfonds ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -10066,6 +10169,7 @@ function zeeuwsinvesteringsfonds ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( zeeuwsinvesteringsfonds );
 
 function sbicparticipations ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
@@ -10164,10 +10268,79 @@ function sbicparticipations ( socket , monitor ) {
     }
   })
 }
+Scrappers.push ( sbicparticipations );
 
 app.get ( '/*' , function ( req , res ) {
   res.sendFile ( path.join ( __dirname , 'build' , 'index.html' ) );
 });
+
+console.log ( Scrappers.length + "  +++Scrappers Registered." );
+var db = admin .database ( );
+
+async function firePush ( scrapper ) {
+  try {
+    console.log ( "...entering " + scrapper.name )
+    let truth = Listing.filter ( list => list.includes ( scrapper.name ) );
+    if ( truth.length < 1 ){
+      throw "Error in getting Function from Listing" + " > < " + truth.length;
+    }
+    var ref = db.ref ( truth [ 0 ] [ 1 ] );
+    let partialFresh = [ ];
+    let fireSet = [ ];
+
+    var socket = {
+      emit: ( room , datas ) =>  {
+        if ( room == "outgoing data" )
+          partialFresh = partialFresh .concat ( ...datas )
+      }
+    }
+
+    //let datas = [ ];
+    let datas = await scrapper ( socket , { cancel: false , confirm: false } );
+
+    datas.map ( item => {
+      item.timestamp = new Date ( ) .getTime ( );
+      ref.child(item.name.replace ( /[^\w\s]/gi, '_' ))
+        .set ( item ,( error )=> {
+          if ( error ) {
+            console.log ( error )
+          } else { // eslint-disable-next-line
+            console.log ( 'FireBase updated' + "+++>  " + item.name.replace ( /[^\w\s]/gi, '_' ) )
+          }
+      } );
+      return item;
+    } )
+
+    //await ref.once ( "value").then ( snapshot => {
+     //snapshot.forEach ( ( item ) => {
+       //fireSet.push ( item .val ( ) )
+     //} )
+   //} )
+
+    console.log ( datas );
+    console.log ( "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" );
+  } catch ( e ) {
+    console.log ( e  + "---" + scrapper.name )
+  }
+}
+
+async function scheduler ( ) {
+  try {
+    for (var i = 0; i < Scrappers.length; i++) {
+      await firePush ( Scrappers [ i ] )
+    }
+  } catch ( e ) { console.log ( e ) }
+};
+
+function millsUntilMidnight ( ) {
+  var midnight = new Date();
+  midnight.setHours( 24 , 0 , 0 , 0 );
+  midnight.addHours ( 1 );
+  return ( midnight.getTime ( ) - new Date ( ) .getTime ( ) );
+}
+console.log ( msToTime ( millsUntilMidnight (  ) ) );
+
+setTimeout ( scheduler , millsUntilMidnight ( ) );
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];

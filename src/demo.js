@@ -2,8 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Card from './kard';
-import Toolbar from '@material-ui/core/Toolbar';
-//import Skeleton from '@material-ui/lab/Skeleton';
 
 const useStyles = makeStyles ( theme => ( {
   root: {
@@ -21,7 +19,7 @@ const NestedGrid =  props => {
   function FormRow (  ) {
     const items = [ ];
     let data = [ ];// eslint-disable-next-line
-    ! props.loaded ? data = new Array ( 10 ) .fill ( { } ) .entries ( ) : data = props.elements .entries ( );
+    ! props.loaded ? data = new Array ( 6 ) .fill ( { } ) .entries ( ) : data = props.elements .entries ( );
     for ( const [ index , value ] of data ) {
       items.push (
         <Grid item xl={2} md={3} sm={12} xs={12} key={index}>
@@ -50,7 +48,6 @@ const NestedGrid =  props => {
   //console.log ( JSON.stringify ( props ) );
   return (
     <div className={classes.root} >
-        <Toolbar/>
         <Grid container spacing={4} justify="space-evenly">
           <FormRow />
         </Grid>

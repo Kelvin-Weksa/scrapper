@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles , useTheme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Linkedin from 'mdi-material-ui/LinkedinBox';
 import Email from '@material-ui/icons/EmailOutlined';
@@ -29,6 +29,7 @@ const useStyles = makeStyles ( theme =>  ( {
     zIndex : theme.zIndex.appBar - 1 ,
     backgroundColor: theme.palette.secondary.light ,
     borderRadius: theme.shape.borderRadius ,
+    boxShadow: `0 0 11px ${theme.palette.primary.main}`
   } ,
   image:{
     maxHeight : '75%' ,
@@ -43,6 +44,7 @@ const useStyles = makeStyles ( theme =>  ( {
 
 export default function ImageCard ( props ) {
   const classes = useStyles ( );
+  const theme = useTheme();
   let image = React.createRef ( );
   let layer1 = React.createRef ( );
   let layer2 = React.createRef ( );
@@ -102,6 +104,7 @@ export default function ImageCard ( props ) {
           src={props.src}
           className={classes.image}
           alt=""
+          style={{boxShadow: `0 0 11px ${theme.palette.primary.main}`}}
         />
       </div>
       <div className={classes.layer2} ref={layer2}>
