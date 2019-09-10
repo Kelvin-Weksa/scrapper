@@ -10325,7 +10325,7 @@ async function firePush ( scrapper ) {
 }
 
 async function scheduler ( ) {
-    for (var i = 0; i < Scrappers.length; i++) {
+    for (var i = 5; i < Scrappers.length; i++) {
       try {
         await firePush ( Scrappers [ i ] )
       } catch ( e ) { console.log ( e )  }

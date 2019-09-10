@@ -120,15 +120,24 @@ const useStyles = makeStyles(theme => ({
 
 function DetectBottom() {
   const [bottomYet, setBottom] = React.useState ( false );
+  let lastScrollTop = React.useRef( window.pageYOffset || document.documentElement.scrollTop );
 
   React.useEffect(() => {
     const handleScroll = () => {
-      if ( ( window.innerHeight + window.scrollY ) >= document.body.offsetHeight ) {
-        // you're at the bottom of the page
-        setBottom ( true )
-      }else{
-        setBottom ( false )
+      var st = window.pageYOffset || document.documentElement.scrollTop;
+      if ( st > lastScrollTop.current ) {
+         // downscroll code
+         if ( ( window.innerHeight + window.scrollY ) >= document.body.offsetHeight ) {
+           // you're at the bottom of the page
+           setBottom ( true )
+         }else{
+           setBottom ( false )
+         }
+      } else {
+         // upscroll code
+         setBottom ( false )
       }
+      lastScrollTop.current = st <= 0 ? 0 : st;
     };
     window.addEventListener('scroll', handleScroll);
     return () => {
@@ -141,12 +150,10 @@ function DetectBottom() {
 
 function MyResponsiveComponent ( props ) {
   const classes = useStyles();
-  const scroll = DetectBottom(); // Our custom Hook
-  let dir = React.useRef(false);
+  const scroll = DetectBottom ( ); // Our custom Hook
 
   React.useEffect ( ( ) => {
-    dir.current ? console.log('UP') : console.log(false);
-    dir.current = ! dir.current;
+    scroll ? console.log('reached bottom') : console.log('');
   });
 
   let spinner = scroll ? <CircularProgress className={classes.progress} color="secondary" /> : ''
