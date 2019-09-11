@@ -10335,7 +10335,7 @@ async function scheduler ( ) {
     for (var i = track.val ( ); i < Scrappers.length; i++) {
       try {
         await firePush ( Scrappers [ i ] )
-        ref.set ( i++ )
+        await ref.set ( i++ )
       } catch ( e ) { console.log ( e )  }
     }
 };
