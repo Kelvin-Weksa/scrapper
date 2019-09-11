@@ -29,12 +29,13 @@ class App extends Component {
     path: 0 ,
     refresh: null ,
     stale : '' ,
+    page : 0 ,
   };
 
   componentDidMount = ( )=> {
     this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
     socket.on ( "outgoing data", ( data ) => {
-      //let set  = new Set( [ ...this.state.characters , ...data ] );
+      //let set  = new Set(  );
       data.forEach ( ( upload ) => {
         upload.timestamp = new Date ( ).getTime ( );
         Firebase.database().ref ( this.state.path +'/' + upload.name.replace ( /[^\w\s]/gi, '_' ) )
@@ -56,6 +57,7 @@ class App extends Component {
 
   fetcher = ( site , get , logo ) => {
     this.setState ( {
+      page : 1 ,
       loaded: false ,
       refresh: null,
       sitePage: site  ,
@@ -65,7 +67,7 @@ class App extends Component {
     } );
 
     window.scrollTo ( 0 , 0 );
-    var Ref = Firebase.database().ref  ( get.toString ( ) );
+    var Ref = Firebase.database().ref  ( get.toString ( ) ).orderByChild ( `name` ).limitToFirst ( 7 );
     Ref.once ( 'value' , ( snapshot )=> {
       let incoming = [ ];
       console.log ( site + "__" + snapshot.exists() )
@@ -90,6 +92,38 @@ class App extends Component {
     });
   }
 
+  paginate = (  ) => {
+    let page = this.state.page
+    console.log ( page );
+    if ( this.state.characters[ this.state.characters.length - 1 ] ){
+      let name = this.state.characters[ this.state.characters.length - 1 ].name
+      var Ref = Firebase.database ( ).ref ( this.state.path.toString ( ) )
+        .orderByChild ( `name` )
+          .startAt (  name + "Z" )
+            .limitToFirst ( 7 );
+      Ref.once ( 'value' , ( snapshot )=> {
+        let incoming = [ ]; // eslint-disable-next-line
+        console.log ( this.state.path + `--page.${this.state.page}` + "__" + snapshot.exists() )
+        snapshot.forEach ( function ( childSnapshot) {
+          incoming.push ( childSnapshot.val ( ) );
+        });
+        console.log ( incoming )
+        if ( snapshot.exists ( ) ){
+          this.setState ( {
+            characters : [ ...this.state.characters , ...incoming ] ,
+            page : this.state.page + 1
+          } )
+        }else {
+          this.setState ( {
+            page : 0
+          } )
+        }
+
+
+      })
+    }
+  }
+
   render ( ) {
     return (
       <div style={{backgroundColor:"#D3D3D3"}}>
@@ -98,7 +132,9 @@ class App extends Component {
           refresh={this.state.refresh}
           logo={this.state.logo}
           stale={this.state.stale}
+          page={this.state.page}
           fetcher={this.fetcher}
+          paginate={this.paginate}
           content={<NestedGrid elements={ this.state.characters } loaded={this.state.loaded}/>}
         />
 

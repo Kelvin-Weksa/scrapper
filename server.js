@@ -10298,19 +10298,23 @@ async function firePush ( scrapper ) {
     //let datas = [ ];
     let datas = await scrapper ( socket , { cancel: false , confirm: false } );
 
-    datas.map ( item => {
-      item.timestamp = new Date ( ) .getTime ( );
-      ref.child(item.name.replace ( /[^\w\s]/gi, '_' ))
-        .set ( item ,( error )=> {
-          if ( error ) {
-            console.log ( error )
-          } else { // eslint-disable-next-line
-            console.log ( 'FireBase updated' + "+++>  " + item.name.replace ( /[^\w\s]/gi, '_' ) )
-          }
-      } );
-      return item;
-    } )
-
+    ref.remove( );
+    let k , j , chunk = 4 ;
+    for ( k = 0 , j = datas.length;k < j; k += chunk ) {
+      //.slice ( i , i+chunk )
+      datas.slice ( k , k + chunk ).map ( item => {
+        item.timestamp = new Date ( ) .getTime ( );
+        ref.child(item.name.replace ( /[^\w\s]/gi, '_' ))
+          .set ( item ,( error )=> {
+            if ( error ) {
+              console.log ( error )
+            } else { // eslint-disable-next-line
+              console.log ( 'FireBase updated' + "+++>  " + item.name.replace ( /[^\w\s]/gi, '_' ) )
+            }
+        } );
+        return item;
+      } )
+    }
     //await ref.once ( "value").then ( snapshot => {
      //snapshot.forEach ( ( item ) => {
        //fireSet.push ( item .val ( ) )
@@ -10325,7 +10329,7 @@ async function firePush ( scrapper ) {
 }
 
 async function scheduler ( ) {
-    for (var i = 0; i < Scrappers.length; i++) {
+    for (var i = 80; i < Scrappers.length; i++) {
       try {
         await firePush ( Scrappers [ i ] )
       } catch ( e ) { console.log ( e )  }
@@ -10340,7 +10344,9 @@ function millsUntilMidnight ( ) {
 }
 console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
-//setTimeout ( scheduler , millsUntilMidnight ( ) );
+setTimeout ( scheduler , millsUntilMidnight ( ) );
+
+//scheduler (  );
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
