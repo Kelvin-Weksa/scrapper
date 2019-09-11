@@ -10329,9 +10329,13 @@ async function firePush ( scrapper ) {
 }
 
 async function scheduler ( ) {
-    for (var i = 80; i < Scrappers.length; i++) {
+    var ref = db.ref ( '/step' );
+    let track = await ref.once ( 'value' )
+    console.log ( "starting from index... " + track.val ( ) )
+    for (var i = 0; i < Scrappers.length; i++) {
       try {
         await firePush ( Scrappers [ i ] )
+        ref.set ( i++ )
       } catch ( e ) { console.log ( e )  }
     }
 };
@@ -10344,9 +10348,9 @@ function millsUntilMidnight ( ) {
 }
 console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
-setTimeout ( scheduler , millsUntilMidnight ( ) );
+//setTimeout ( scheduler , millsUntilMidnight ( ) );
 
-//scheduler (  );
+scheduler (  );
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
