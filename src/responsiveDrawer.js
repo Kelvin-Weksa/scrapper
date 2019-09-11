@@ -181,7 +181,7 @@ function DetectBottom() {
       lastScrollTop.current = st <= 0 ? 0 : st;
 
     };
-    let debounceScroll = debounce ( handleScroll , 300 )
+    let debounceScroll = debounce ( handleScroll , 500 )
     window.addEventListener( 'scroll' , debounceScroll );
     return () => {
       window.removeEventListener( 'scroll' , debounceScroll );
@@ -196,7 +196,7 @@ function MyResponsiveComponent ( props ) {
   const scroll = DetectBottom ( ); // Our custom Hook
 
   React.useEffect ( ( ) => {
-    if (  ( window.innerHeight + window.scrollY ) >= document.body.offsetHeight ){
+    if (  ( window.innerHeight + window.scrollY + 100 ) >= document.body.offsetHeight ){
       if ( scroll && props.page ){
         props.paginate ( );
       }
