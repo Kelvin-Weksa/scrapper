@@ -10350,9 +10350,9 @@ function millsUntilMidnight ( ) {
 }
 console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
-//setTimeout ( scheduler , millsUntilMidnight ( ) );
+setTimeout ( scheduler , millsUntilMidnight ( ) );
 
-scheduler ( );
+//scheduler ( );
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
