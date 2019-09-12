@@ -10337,7 +10337,12 @@ async function scheduler ( ) {
     for (var i = track.val ( ); i < Scrappers.length; i++) {
       try {
         await firePush ( Scrappers [ i ] )
-        await ref.set ( i++ )
+        if ( i == 123 ){
+          await ref.set ( 0 )
+        }else{
+          await ref.set ( i+1 )
+        }
+
       } catch ( e ) { console.log ( e )  }
     }
 };
@@ -10350,9 +10355,9 @@ function millsUntilMidnight ( ) {
 }
 console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
-setTimeout ( scheduler , millsUntilMidnight ( ) );
+//setTimeout ( scheduler , millsUntilMidnight ( ) );
 
-//scheduler ( );
+scheduler ( );
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
