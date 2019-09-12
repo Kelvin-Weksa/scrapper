@@ -67,8 +67,8 @@ class App extends Component {
     } );
 
     window.scrollTo ( 0 , 0 );
-    var Ref = Firebase.database().ref  ( get.toString ( ) ).orderByChild ( `name` ).limitToFirst ( 7 );
-    Ref.once ( 'value' , ( snapshot )=> {
+    var Ref = Firebase.database().ref  ( get.toString ( ) );
+    Ref.orderByChild ( `name` ).limitToFirst ( 7 ).once ( 'value' , ( snapshot )=> {
       let incoming = [ ];
       console.log ( site + "__" + snapshot.exists() )
       snapshot.forEach ( function ( childSnapshot) {

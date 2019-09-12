@@ -10292,26 +10292,28 @@ async function firePush ( scrapper ) {
       emit: ( room , datas ) =>  {
         if ( room == "outgoing data" )
           partialFresh = partialFresh .concat ( ...datas )
+          datas.forEach ( ( item ) => {
+            item.timestamp = new Date ( ) .getTime ( );
+            ref.child(item.name.replace ( /[^\w\s]/gi, '_' ))
+              .set ( item ,( error )=> {
+                if ( error ) {
+                  console.log ( error )
+                } else { // eslint-disable-next-line
+                  console.log ( 'FireBase updated' + "+++>  " + item.name.replace ( /[^\w\s]/gi, '_' ) )
+                }
+            } );
+          } );
       }
     }
 
     //let datas = [ ];
     let datas = await scrapper ( socket , { cancel: false , confirm: false } );
 
-    ref.remove( );
+    //ref.remove( );
     let k , j , chunk = 4 ;
     for ( k = 0 , j = datas.length;k < j; k += chunk ) {
       //.slice ( i , i+chunk )
       datas.slice ( k , k + chunk ).map ( item => {
-        item.timestamp = new Date ( ) .getTime ( );
-        ref.child(item.name.replace ( /[^\w\s]/gi, '_' ))
-          .set ( item ,( error )=> {
-            if ( error ) {
-              console.log ( error )
-            } else { // eslint-disable-next-line
-              console.log ( 'FireBase updated' + "+++>  " + item.name.replace ( /[^\w\s]/gi, '_' ) )
-            }
-        } );
         return item;
       } )
     }
@@ -10350,7 +10352,7 @@ console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
 //setTimeout ( scheduler , millsUntilMidnight ( ) );
 
-scheduler ( );
+//scheduler ( );
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
