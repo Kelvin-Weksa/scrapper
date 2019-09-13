@@ -10336,7 +10336,7 @@ async function scheduler ( ) {
     console.log ( "starting from index... " + track.val ( ) )
     for (var i = track.val ( ); i < Scrappers.length; i++) {
       try {
-        await firePush ( Scrappers [ i ] )
+        await firePush ( Scrappers.reverse ( ) [ i ] )
         if ( i == 123 ){
           await ref.set ( 0 )
         }else{

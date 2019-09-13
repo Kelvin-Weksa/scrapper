@@ -48,7 +48,7 @@ const NestedGrid =  props => {
   //console.log ( JSON.stringify ( props ) );
   return (
     <div className={classes.root} >
-        <Grid container spacing={4} justify="space-evenly">
+        <Grid container spacing={4} justify="center">
           <FormRow />
         </Grid>
     </div>

@@ -26,7 +26,16 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
 import Card from '@material-ui/core/Card';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Badge from '@material-ui/core/Badge';
+import MailIcon from '@material-ui/icons/Mail';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import MoreIcon from '@material-ui/icons/MoreVert';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import { Link } from 'react-router-dom';
+import Subscription from './cardsDialog'
+import Scroller from './scrollMain'
 
 const drawerWidth = 240;
 
@@ -102,6 +111,7 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     margin: theme.spacing(1),
+
   },
   margin: {
     display: 'flex' ,
@@ -116,111 +126,23 @@ const useStyles = makeStyles(theme => ({
       boxShadow: `0 0 11px ${theme.palette.primary.main}`
     }
   },
+  grow: {
+    flexGrow: 1,
+  },
+  sectionDesktop: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+    },
+  },
+  sectionMobile: {
+    display: 'flex',
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
+  },
 }));
 
-function debounce( func, wait, immediate) {
-  // 'private' variable for instance
-  // The returned function will be able to reference this due to closure.
-  // Each call to the returned function will share this common timer.
-  var timeout;
-
-  // Calling debounce returns a new anonymous function
-  return function() {
-    // reference the context and args for the setTimeout function
-    var context = this,
-      args = arguments;
-
-    // Should the function be called now? If immediate is true
-    //   and not already in a timeout then the answer is: Yes
-    var callNow = immediate && !timeout;
-
-    // This is the basic debounce behaviour where you can call this
-    //   function several times, but it will only execute once
-    //   [before or after imposing a delay].
-    //   Each time the returned function is called, the timer starts over.
-    clearTimeout(timeout);
-
-    // Set the new timeout
-    timeout = setTimeout(function() {
-
-      // Inside the timeout function, clear the timeout variable
-      // which will let the next execution run when in 'immediate' mode
-      timeout = null;
-
-      // Check if the function already ran with the immediate flag
-      if (!immediate) {
-        // Call the original function with apply
-        // apply lets you define the 'this' object as well as the arguments
-        //    (both captured before setTimeout)
-        func.apply(context, args);
-      }
-    }, wait);
-
-    // Immediate mode and no wait timer? Execute the function..
-    if (callNow) func.apply(context, args);
-  }
-}
-
-function DetectBottom() {
-  const [bottomYet, setBottom] = React.useState ( false );
-  let lastScrollTop = React.useRef ( window.pageYOffset );
-
-  React.useEffect(() => {
-    const handleScroll = () => {
-      var st = window.pageYOffset //|| document.documentElement.scrollTop;
-      if (  ( window.innerHeight + window.scrollY ) >= document.body.offsetHeight ) {
-         if ( st > lastScrollTop.current ) {
-           setBottom ( true )
-         }else{
-           setBottom ( false )
-         }
-      } else {
-         setBottom ( false )
-      }
-
-      lastScrollTop.current = st <= 0 ? 0 : st;
-
-    };
-    let debounceScroll = debounce ( handleScroll , 500 )
-    window.addEventListener( 'scroll' , debounceScroll );
-    return () => {
-      window.removeEventListener( 'scroll' , debounceScroll );
-    };
-  });
-
-  return bottomYet;
-}
-
-function MyResponsiveComponent ( props ) {
-  const classes = useStyles();
-  const scroll = DetectBottom ( ); // Our custom Hook
-
-  React.useEffect ( ( ) => {
-    if (  ( window.innerHeight + window.scrollY + 100 ) >= document.body.offsetHeight ){
-      if ( scroll && props.page ){
-        props.paginate ( );
-      }
-    }
-
-    return () => {
-
-    };
-  });
-
-  let spinner = ( scroll && props.page ) ? <CircularProgress className={classes.progress} color="secondary" /> : 'More...'
-  if ( ! props.page )
-    spinner = `Thats all of it!`;
-  return (
-    <React.Fragment>
-      <Toolbar/>
-      <Typography className={classes.margin}>
-        <div className={classes.info}>
-          {spinner}
-        </div>
-      </Typography>
-    </React.Fragment>
-  );
-}
 
 function ResponsiveDrawer ( props ) {
   const { container } = props;
@@ -229,6 +151,9 @@ function ResponsiveDrawer ( props ) {
   const { enqueueSnackbar , closeSnackbar } = useSnackbar();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [ filter , setFilter ] = React.useState ( "PE" );
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   function handleDrawerToggle() {
     setMobileOpen(!mobileOpen);
@@ -256,6 +181,29 @@ function ResponsiveDrawer ( props ) {
     }
   }
 
+  const isMenuOpen = Boolean(anchorEl);
+  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  function handleProfileMenuOpen(event) {
+    setAnchorEl(event.currentTarget);
+  }
+
+  function handleMobileMenuClose() {
+    setMobileMoreAnchorEl(null);
+  }
+
+  function handleMenuClose() {
+    setAnchorEl(null);
+    handleMobileMenuClose();
+  }
+
+  function handleMobileMenuOpen(event) {
+    setMobileMoreAnchorEl(event.currentTarget);
+  }
+
+  const menuId = 'primary-search-account-menu';
+  const mobileMenuId = 'primary-search-account-menu-mobile';
+
   function handleRefresh ( ) {
     // variant could be success, error, warning, info, or default
     const action = ( key ) => (
@@ -281,6 +229,62 @@ function ResponsiveDrawer ( props ) {
     });
 
   };
+
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+    >
+      <MenuItem>
+        <IconButton aria-label="show 4 new mails" color="inherit">
+          <Badge badgeContent={4} color="secondary">
+            <MailIcon />
+          </Badge>
+        </IconButton>
+        <p>Messages</p>
+      </MenuItem>
+      <MenuItem>
+        <IconButton aria-label="show 11 new notifications" color="inherit">
+          <Badge badgeContent={11} color="secondary">
+            <NotificationsIcon />
+          </Badge>
+        </IconButton>
+        <p>Notifications</p>
+      </MenuItem>
+      <MenuItem onClick={handleProfileMenuOpen}>
+        <IconButton
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+        >
+          <AccountCircle />
+        </IconButton>
+        <p>Profile</p>
+      </MenuItem>
+    </Menu>
+  );
+
+  const renderMenu = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <Link to='/'>
+        <MenuItem onClick={handleMenuClose}>log out</MenuItem>
+      </Link>
+    </Menu>
+  );
 
   const drawer = (
     <div>
@@ -313,29 +317,68 @@ function ResponsiveDrawer ( props ) {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            className={classes.menuButton}
-          >
-            <MenuIcon />
-          </IconButton>
-          <CardMedia
-            className={classes.logo}
-            image={props.logo}
-            component='img'
-          />{/* eslint-disable-next-line*/}
-          <Divider orientation="vertical" className={classes.light}/>
-          <Typography variant="h6" noWrap>
-            {props.sitePage}
-          </Typography>
-          <Divider orientation="vertical" color="secondary"/>
-        </Toolbar>
-      </AppBar>
+      <div>
+        <AppBar position="fixed" className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              className={classes.menuButton}
+            >
+              <MenuIcon />
+            </IconButton>
+            <CardMedia
+              className={classes.logo}
+              image={props.logo}
+              component='img'
+            />{/* eslint-disable-next-line*/}
+            <Divider orientation="vertical" className={classes.light}/>
+            <Typography variant="h6" noWrap>
+              {props.sitePage}
+            </Typography>
+            <Divider orientation="vertical" color="secondary"/>
+            <div className={classes.grow} />
+            <Subscription/>
+            <div className={classes.sectionDesktop}>
+              <IconButton aria-label="show 4 new mails" color="inherit">
+                <Badge badgeContent={4} color="secondary">
+                  <MailIcon />
+                </Badge>
+              </IconButton>
+              <IconButton aria-label="show 17 new notifications" color="inherit">
+                <Badge badgeContent={17} color="secondary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+              <IconButton
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+            </div>
+            <div className={classes.sectionMobile}>
+              <IconButton
+                aria-label="show more"
+                aria-controls={mobileMenuId}
+                aria-haspopup="true"
+                onClick={handleMobileMenuOpen}
+                color="inherit"
+              >
+                <MoreIcon />
+              </IconButton>
+            </div>
+          </Toolbar>
+        </AppBar>
+        {renderMobileMenu}
+        {renderMenu}
+      </div>
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
         <Hidden smUp implementation="css">
@@ -387,7 +430,7 @@ function ResponsiveDrawer ( props ) {
         </Typography>
         <Toolbar style={{height: theme.mixins.toolbar/2}}/>
         {props.content}
-        <MyResponsiveComponent
+        <Scroller
           page={props.page}
           paginate={props.paginate}
         />
