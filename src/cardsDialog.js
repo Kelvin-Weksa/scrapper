@@ -50,6 +50,12 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '2px',
 
   },
+  unlock:{
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: ' flex',
+    },
+  }
 }));
 
 function SimpleCard ( props ) {
@@ -99,7 +105,7 @@ function SimpleCard ( props ) {
 }
 
 export default function AlertDialog() {
-  //const classes = useStyles ( );
+  const classes = useStyles ( );
   const [ open , setOpen ] = React.useState ( false );
 
   function handleClickOpen() {
@@ -111,7 +117,7 @@ export default function AlertDialog() {
   }
 
   return (
-    <div>
+    <div className={classes.unlock}>
       <Button
         variant="contained"
         color="secondary"
