@@ -25,8 +25,12 @@ const useStyles = makeStyles( theme => ({
     textAlign: 'center'
   },
   Card: {
+    [theme.breakpoints.up('md')]: {
+      //display: 'none',
+      width: '30%',
+    },
     position: 'relative',
-    width: '30%',
+    width: '90%',
     margin: 'auto',
     height: '90vh',
     top: '0vh' ,
@@ -46,7 +50,11 @@ const useStyles = makeStyles( theme => ({
   },
   Kard:{
     background : `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(static/bg7.jpg)` ,
-    height: '130vh' ,
+    //height: '150vh' ,
+    [theme.breakpoints.up('md')]: {
+      //display: 'none',
+      height: '130vh' ,
+    },
   }
 }));
 
