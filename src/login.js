@@ -35,6 +35,8 @@ const useStyles = makeStyles( theme => ({
     top: '-15vh' ,
     overflow: "visible" ,
     transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    transform: `translateY(10vh)` ,
+    //boxShadow: `0 0 11px` ,
   },
   bullet: {
     display: 'inline-block',
@@ -59,11 +61,19 @@ export default function SimpleCard ( ) {
   //const theme = useTheme();
 
   React.useEffect ( ( ) => {
-    setTimeout( card.current.style.top = '0vh' , 0 );
+    setTimeout( card.current.style.top = '0vh' , 300 );
     return () => {
       //setTimeout( card.current.style.top = '-15vh' , 0 );
     };
   });
+
+  function handleFocus (){
+    setTimeout( card.current.style.boxShadow = '0 0 11px' , 0 );
+  }
+
+  function handleBlur (){
+    setTimeout( card.current.style.boxShadow = 'none' , 0 );
+  }
 
   return (
       <div className={classes.Kard}>
@@ -87,26 +97,30 @@ export default function SimpleCard ( ) {
           </Card>
           <CardContent >
             <TextField
-              label="Name"
+              label="Email/Name"
               variant="outlined"
               id="mui-theme-provider-outlined-input"
               fullWidth={true}
               style={{paddingTop:'12px',paddingBottom:'12px'}}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
-            <TextField
+            {/*<TextField
               label="Email"
               variant="outlined"
               id="mui-theme-provider-outlined-input"
               fullWidth={true}
               style={{paddingTop:'12px',paddingBottom:'12px'}}
-            />
+            />*/}
             <TextField
-              label="password"
+              label="Password"
               variant="outlined"
               id="mui-theme-provider-outlined-input"
               fullWidth={true}
               type="password"
               style={{paddingTop:'12px'}}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
           </CardContent>
           <CardActions >
