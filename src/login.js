@@ -32,8 +32,7 @@ const useStyles = makeStyles( theme => ({
     position: 'relative',
     width: '90%',
     margin: 'auto',
-    height: '90vh',
-    top: '0vh' ,
+    top: '-15vh' ,
     overflow: "visible" ,
     transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
   },
@@ -50,11 +49,7 @@ const useStyles = makeStyles( theme => ({
   },
   Kard:{
     background : `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(static/bg7.jpg)` ,
-    //height: '150vh' ,
-    [theme.breakpoints.up('md')]: {
-      //display: 'none',
-      height: '130vh' ,
-    },
+    height : '100vh',
   }
 }));
 
@@ -64,8 +59,9 @@ export default function SimpleCard ( ) {
   //const theme = useTheme();
 
   React.useEffect ( ( ) => {
-    setTimeout( card.current.style.top = '15vh' , 0 );
+    setTimeout( card.current.style.top = '0vh' , 0 );
     return () => {
+      //setTimeout( card.current.style.top = '-15vh' , 0 );
     };
   });
 
@@ -115,7 +111,7 @@ export default function SimpleCard ( ) {
           </CardContent>
           <CardActions >
             <Link to='/dashboard' style={{margin:'0 auto'}}>
-              <Button color='secondary' size="small" >
+              <Button color='secondary' size="small">
                 Let's Go
               </Button>
             </Link>

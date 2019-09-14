@@ -64,8 +64,8 @@ function SimpleCard ( props ) {
   return (
     <Grid item >
     <Button style={{textAlign:'left'}}>
-    <Card className={classes.card} style={{backgroundColor:props.shade}}>
-      <Card className={classes.info}>
+    <Card  className={classes.card} style={{backgroundColor:props.shade}}>
+      <Card  className={classes.info}>
         <Tooltip title="Refresh" placement="right">
           <IconButton color="secondary" className={classes.rightIcon}>
             {props.icon}
