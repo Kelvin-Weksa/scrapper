@@ -12,6 +12,8 @@ import TwitterBox from 'mdi-material-ui/Twitter';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { Link } from 'react-router-dom';
+import FingerprintIcon from '@material-ui/icons/Fingerprint';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 
 const useStyles = makeStyles( theme => ({
   HeaderCard: {
@@ -19,6 +21,16 @@ const useStyles = makeStyles( theme => ({
     margin: 'auto',
     backgroundColor: theme.palette.primary.main ,
     height :  '25vh',
+    position: 'relative',
+    top:'-5vh',
+    boxShadow: `0 0 5px ${theme.palette.primary.main}` ,
+    textAlign: 'center'
+  },
+  HeaderCard2: {
+    width: '90%',
+    margin: 'auto',
+    backgroundColor: theme.palette.primary.main ,
+    height :  '14vh',
     position: 'relative',
     top:'-5vh',
     boxShadow: `0 0 5px ${theme.palette.primary.main}` ,
@@ -34,9 +46,22 @@ const useStyles = makeStyles( theme => ({
     margin: 'auto',
     top: '-15vh' ,
     overflow: "visible" ,
-    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    //transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
     transform: `translateY(10vh)` ,
-    //boxShadow: `0 0 11px` ,
+    //visibility:'hidden',
+  },
+  Card2: {
+    visibility:'hidden',
+    [theme.breakpoints.up('md')]: {
+      //display: 'none',
+      width: '60%',
+    },
+    position: 'relative',
+    width: '90%',
+    margin: 'auto',
+    top: '-85vh' ,
+    overflow: "visible" ,
+    //transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
   },
   bullet: {
     display: 'inline-block',
@@ -52,16 +77,16 @@ const useStyles = makeStyles( theme => ({
   Kard:{
     background : `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(static/bg7.jpg)` ,
     height : '100vh',
-  }
+  },
 }));
 
 export default function SimpleCard ( ) {
   const classes = useStyles ( );
   let card = React.createRef ( );
-  //const theme = useTheme();
+  let card2 = React.createRef ( );
 
   React.useEffect ( ( ) => {
-    setTimeout( card.current.style.top = '0vh' , 300 );
+    loginCard ( );
     return () => {
       //setTimeout( card.current.style.top = '-15vh' , 0 );
     };
@@ -69,68 +94,178 @@ export default function SimpleCard ( ) {
 
   function handleFocus (){
     setTimeout( card.current.style.boxShadow = '0 0 11px' , 0 );
+    setTimeout( card2.current.style.boxShadow = '0 0 11px' , 0 );
   }
 
   function handleBlur (){
     setTimeout( card.current.style.boxShadow = 'none' , 0 );
+    setTimeout( card2.current.style.boxShadow = 'none' , 0 );
+  }
+
+  function registerCard ( ){
+    card.current.style.transition = `none`;
+    card.current.style.visibility = 'hidden';
+    setTimeout( card.current.style.top = '-15vh' , 300 );
+
+    card2.current.style.transition = `all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)`;
+    setTimeout( card2.current.style.visibility = 'visible' , 300 );
+    setTimeout( card2.current.style.top = '-57vh' , 300 );
+  }
+
+  function loginCard ( ){
+    card2.current.style.transition = `none`
+    card2.current.style.visibility = 'hidden';
+    setTimeout( card2.current.style.top = '-85vh' , 300 );
+
+    card.current.style.transition = `all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)`;
+    setTimeout( card.current.style.visibility = 'visible' , 300 );
+    setTimeout( card.current.style.top = '0vh' , 300 );
   }
 
   return (
       <div className={classes.Kard}>
-        <Toolbar/>
-        <Card ref={card} className={classes.Card}>
-          <Card className={classes.HeaderCard}>
-            <Typography style={{padding:'12px' , color: 'white'}}>
+          <Toolbar style={{display:'flex',justifyContent:'flex-end',color:'white'}}>
+            <Button style={{color:'white'}} onClick={registerCard}>
+              <FingerprintIcon/>
+              Register
+            </Button>
+            <Button style={{color:'white'}} onClick={loginCard}>
+              <VpnKeyIcon/>
               Log in
-            </Typography>
-            <CardActions style={{ display:'flex' , justifyContent:"center" , padding:'12px' }}>
-              <IconButton style={{color:'white'}}>
-                <FacebookBox/>
-              </IconButton>
-              <IconButton style={{color:'white'}}>
-                <TwitterBox/>
-              </IconButton>
-              <IconButton style={{color:'white'}}>
-                <Linkedin/>
-              </IconButton>
+            </Button>
+          </Toolbar>
+          <Card ref={card} className={classes.Card}>
+            <Card className={classes.HeaderCard}>
+              <Typography style={{padding:'12px' , color: 'white'}}>
+                Log in
+              </Typography>
+              <CardActions style={{ display:'flex' , justifyContent:"center" , padding:'12px' }}>
+                <IconButton style={{color:'white'}}>
+                  <FacebookBox/>
+                </IconButton>
+                <IconButton style={{color:'white'}}>
+                  <TwitterBox/>
+                </IconButton>
+                <IconButton style={{color:'white'}}>
+                  <Linkedin/>
+                </IconButton>
+              </CardActions>
+            </Card>
+            <CardContent >
+              <TextField
+                label="Email/Name"
+                variant="outlined"
+                id="mui-theme-provider-outlined-input"
+                fullWidth={true}
+                style={{paddingTop:'12px',paddingBottom:'12px'}}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              />
+              <TextField
+                label="Password"
+                variant="outlined"
+                id="mui-theme-provider-outlined-input"
+                fullWidth={true}
+                type="password"
+                style={{paddingTop:'12px'}}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+              />
+            </CardContent>
+            <CardActions >
+              <Link to='/dashboard' style={{margin:'0 auto'}}>
+                <Button color='secondary' size="small">
+                  Let's Go
+                </Button>
+              </Link>
             </CardActions>
           </Card>
-          <CardContent >
-            <TextField
-              label="Email/Name"
-              variant="outlined"
-              id="mui-theme-provider-outlined-input"
-              fullWidth={true}
-              style={{paddingTop:'12px',paddingBottom:'12px'}}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-            />
-            {/*<TextField
-              label="Email"
-              variant="outlined"
-              id="mui-theme-provider-outlined-input"
-              fullWidth={true}
-              style={{paddingTop:'12px',paddingBottom:'12px'}}
-            />*/}
-            <TextField
-              label="Password"
-              variant="outlined"
-              id="mui-theme-provider-outlined-input"
-              fullWidth={true}
-              type="password"
-              style={{paddingTop:'12px'}}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-            />
-          </CardContent>
-          <CardActions >
-            <Link to='/dashboard' style={{margin:'0 auto'}}>
-              <Button color='secondary' size="small">
-                Let's Go
-              </Button>
-            </Link>
-          </CardActions>
-        </Card>
+          <Card ref={card2} className={classes.Card2}>
+            <Card className={classes.HeaderCard2}>
+              <Typography style={{padding:'2px' , color: 'white'}}>
+                Register
+              </Typography>
+              <CardActions style={{ display:'flex' , justifyContent:"center" , padding:'2px' }}>
+                <IconButton style={{color:'white'}}>
+                  <FacebookBox/>
+                </IconButton>
+                <IconButton style={{color:'white'}}>
+                  <TwitterBox/>
+                </IconButton>
+                <IconButton style={{color:'white'}}>
+                  <Linkedin/>
+                </IconButton>
+              </CardActions>
+              </Card>
+              <div style={{height:'50vh',overflowY:'scroll'}}>
+                <CardContent>
+                  <Typography style={{paddingLeft:'4px'}}>
+                    contact details
+                  </Typography>
+                  <TextField
+                    label="Name"
+                    variant="outlined"
+                    id="mui-theme-provider-outlined-input"
+                    style={{padding:'2px'}}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                  />
+                  <TextField
+                    label="Email"
+                    variant="outlined"
+                    id="mui-theme-provider-outlined-input"
+                    style={{padding:'2px'}}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                  />
+                  <TextField
+                    label="phone"
+                    variant="outlined"
+                    id="mui-theme-provider-outlined-input"
+                    style={{padding:'2px'}}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                  />
+                  <TextField
+                    label="Password"
+                    variant="outlined"
+                    id="mui-theme-provider-outlined-input"
+                    type="password"
+                    style={{padding:'2px'}}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                  />
+                  <hr/>
+                  <Typography style={{paddingLeft:'4px'}}>
+                    billing details
+                  </Typography>
+                  <TextField
+                    label="credit card"
+                    variant="outlined"
+                    id="mui-theme-provider-outlined-input"
+                    style={{padding:'2px'}}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                  />
+                  <TextField
+                    label="pass number"
+                    variant="outlined"
+                    id="mui-theme-provider-outlined-input"
+                    style={{padding:'2px'}}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                  />
+                  <hr/>
+                </CardContent>
+              </div>
+              <CardActions >
+                <Link to='/dashboard' style={{margin:'0 auto'}}>
+                  <Button color='secondary' size="small">
+                    Let's Go
+                  </Button>
+                </Link>
+              </CardActions>
+          </Card>
       </div>
   );
 }
