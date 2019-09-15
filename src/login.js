@@ -44,7 +44,7 @@ const useStyles = makeStyles( theme => ({
     position: 'relative',
     width: '90%',
     margin: 'auto',
-    top: '-15vh' ,
+    top: '-25vh' ,
     overflow: "visible" ,
     //transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
     transform: `translateY(10vh)` ,
@@ -105,7 +105,7 @@ export default function SimpleCard ( ) {
   function registerCard ( ){
     card.current.style.transition = `none`;
     card.current.style.visibility = 'hidden';
-    setTimeout( card.current.style.top = '-15vh' , 300 );
+    setTimeout( card.current.style.top = '-25vh' , 300 );
 
     card2.current.style.transition = `all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)`;
     setTimeout( card2.current.style.visibility = 'visible' , 300 );
