@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles , } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
@@ -33,12 +33,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SimpleCard ( props ) {
+
+export default React.forwardRef( function SimpleCard ( props , ref ) {
   const classes = useStyles();
+  //const theme = useTheme ( );
+  //let button =  React.createRef ( );
+
+  function clicked ( ){
+    props.onClick ( )
+  }
+
 
   return (
     <Grid item >
-    <Button style={{textAlign:'left'}}>
+    <Button style={{textAlign:'left'}} onClick={clicked} ref={ref}>
     <Card  className={classes.card} style={{backgroundColor:props.shade}}>
       <Card  className={classes.info}>
         <Tooltip title="Refresh" placement="right">
@@ -78,3 +86,5 @@ export default function SimpleCard ( props ) {
     </Grid>
   );
 }
+)
+//export default function React.forwardRef ( ( props , ref ) =>  ( SimpleCard ))
