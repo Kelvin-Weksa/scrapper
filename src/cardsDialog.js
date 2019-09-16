@@ -5,17 +5,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import LockIcon from '@material-ui/icons/Lock';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
-import CardContent from '@material-ui/core/CardContent';
-import Grid from '@material-ui/core/Grid';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
 import Toolbar from '@material-ui/core/Toolbar';
-import PersonIcon from '@material-ui/icons/Person';
-import PeopleIcon from '@material-ui/icons/People';
-import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import Stepper from './stepper'
+
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -58,52 +51,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function SimpleCard ( props ) {
-  const classes = useStyles();
-
-  return (
-    <Grid item >
-    <Button style={{textAlign:'left'}}>
-    <Card  className={classes.card} style={{backgroundColor:props.shade}}>
-      <Card  className={classes.info}>
-        <Tooltip title="Refresh" placement="right">
-          <IconButton color="secondary" className={classes.rightIcon}>
-            {props.icon}
-          </IconButton>
-        </Tooltip>
-      </Card>
-      <CardContent style={{position:'relative',top:'-3vh'}}>
-        <Typography variant='subtitle2'>
-          {props.type}
-        </Typography>
-        <div style={{display:"inline-block"}}>
-          <Typography variant="h4" component="h2" style={{float:'left'}}>
-            <AttachMoneyIcon/>{props.value}
-          </Typography>
-          <Typography variant="overline" style={{float:'left'}}>
-            Month
-          </Typography>
-        </div>
-        <Typography color="textSecondary">
-          {props.user}
-        </Typography>
-        <hr/>
-        <Typography variant="caption" component="p" color="textSecondary">
-          analytics Dashboard
-        </Typography>
-        <Typography variant="caption" component="p" color="textSecondary">
-          email Alerts
-        </Typography>
-        <Typography variant="caption" component="p" color="textSecondary">
-          social Media Activity
-        </Typography>
-      </CardContent>
-    </Card>
-    </Button>
-    </Grid>
-  );
-}
-
 export default function AlertDialog() {
   const classes = useStyles ( );
   const [ open , setOpen ] = React.useState ( false );
@@ -135,34 +82,12 @@ export default function AlertDialog() {
         fullWidth={true}
       >
         <DialogTitle id="alert-dialog-title" style={{margin:'auto'}}>
-          <Typography variant='h4' component="h2" color="textSecondary">
+          <Typography variant='h5' component="h2" color="textSecondary">
             Subscribe and Start Today ...
           </Typography>
         </DialogTitle>
         <Toolbar/>
-        <Grid container spacing={3} justify="center">
-          <SimpleCard
-            icon={<PersonIcon/>}
-            type={'10 Companies'}
-            value={5}
-            user={'Max 1 User'}
-            shade={'#448aff'}
-          />
-          <SimpleCard
-            icon={<PeopleIcon/>}
-            type={'50 Companies'}
-            value={50}
-            user={'Max 5 Users'}
-            shade={'#6a1b9a'}
-          />
-          <SimpleCard
-            icon={<BusinessCenterIcon/>}
-            type={'Enterprise Package'}
-            value={500}
-            user={'Max 1 Company'}
-            shade={'#00c853'}
-          />
-        </Grid>
+        <Stepper/>
         <DialogActions>
 
         </DialogActions>

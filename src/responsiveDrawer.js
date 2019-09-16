@@ -300,14 +300,14 @@ function ResponsiveDrawer ( props ) {
       <Divider light={true} className={classes.light}/>
     </div>
       <Divider />
-      <List>{/* eslint-disable-next-line*/}
-        {Listing .filter ( item => item .includes ( filter ) ) .map ( (list , index ) => (// eslint-disable-next-line
-          <ListItem button key={index} onClick={( ) => loadData ( list [ 2 ] , list [ 1 ] , list [ 3 ] )} title={list [ 0 ]}>
+      <List>
+        {Listing.filter ( item => item.includes ( filter ) ).map ( (list , index ) => (
+          <ListItem button key={index} onClick={( ) => loadData ( list[ 2 ] , list[ 1 ] , list[ 3 ] )} title={list[ 0 ]}>
               <CardMedia
                 className={classes.media}
                 image={list[ 3 ]}
-              />{/* eslint-disable-next-line*/}
-            <ListItemText primary={list [ 2 ]} />
+              />
+            <ListItemText primary={list[ 2 ]} />
           </ListItem>
         ))}
       </List>
