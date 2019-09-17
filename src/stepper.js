@@ -96,13 +96,12 @@ function ListCompanies ( props ){
 
   var st = {}
   Listing.forEach ( ( list ) => {
-    st[ list[ 2 ].replace ( /\s/g, '_') ] = card_chosen.num === 9999 ? true : false;
-    st[ list[ 2 ].replace ( /\s/g, '_') ] = selected.includes( list[ 2 ].replace ( /\s/g, '_') ) ? true : false;
+    st[ list[ 2 ].replace ( /\s/g, '_') ] = (selected.includes( list[ 2 ].replace ( /\s/g, '_') ) || card_chosen.num === 9999  ) ? true : false;
   } )
   const [ state , setState ] = React.useState(st);
 
   React.useEffect ( ( ) => {
-    if ( (card_chosen.num - selected.length)  === 0 ){
+    if ( ( ( card_chosen.num - selected.length )  === 0 ) || card_chosen.num === 9999 ){
       props.continue ( true )
     }else {
       props.continue ( false )
@@ -162,7 +161,7 @@ function CheckOut ( ){
   return (
     <div>
       <Box fontWeight="fontWeightBold" style={{paddingLeft:'4px'}}>
-        {`You have chosen to follow the following companies`}:
+        {`You have chosen to follow the ${card_chosen.num === 9999 ? 'ALL the' : 'The following'} Companies`}:
         <Grid container spacing={1}>
           {selected.map ( (item) =>
             <Grid item xs={3} wrap="nowrap">
