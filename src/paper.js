@@ -170,8 +170,6 @@ export default function CustomizedInputs() {
         label="CSS validation style"
         required
         variant="outlined"
-        defaultValue="Success"
-        id="validation-outlined-input"
       />
     </form>
   );

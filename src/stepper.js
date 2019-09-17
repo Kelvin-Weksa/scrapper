@@ -96,7 +96,8 @@ function ListCompanies ( props ){
 
   var st = {}
   Listing.forEach ( ( list ) => {
-    st[ list[ 2 ].replace ( /\s/g, '_') ] = (selected.includes( list[ 2 ].replace ( /\s/g, '_') ) || card_chosen.num === 9999  ) ? true : false;
+    st[ list[ 2 ].replace ( /\s/g, '_') ] =
+        (selected.includes( list[ 2 ].replace ( /\s/g, '_') ) || card_chosen.num === 9999  ) ? true : false;
   } )
   const [ state , setState ] = React.useState(st);
 

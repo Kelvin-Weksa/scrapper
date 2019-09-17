@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles , makeStyles , } from '@material-ui/core/styles';
+import { makeStyles , } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -18,6 +18,7 @@ import { withSnackbar , useSnackbar } from 'notistack';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import clsx from 'clsx';
 
 function validateEmail(email) {// eslint-disable-next-line
   var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -39,12 +40,12 @@ function strongPass ( pwd ){
   let strength = '';
   if ( array[ 4 ] ){
     switch (sum) {
-      case 0: strength = ["weird..." , true ]; break;
-      case 2: strength = ["weak" , true ]; break;
-      case 3: strength = ["ok" , false ]; break;
-      case 4: strength = ["strong" , false ]; break;
-      case 5: strength = ["awesome" , false ]; break;
-      default: strength = ["weird..." , true ]; break;
+      case 0: strength = [ "weird..." , true ]; break;
+      case 2: strength = [ "weak" , true ]; break;
+      case 3: strength = [ "ok" , false ]; break;
+      case 4: strength = [ "strong" , false ]; break;
+      case 5: strength = [ "awesome" , false ]; break;
+      default: strength = [ "weird..." , true ]; break;
     }
   }else {
     strength = ["too short" , true ]
@@ -122,49 +123,100 @@ const useStyles = makeStyles( theme => ({
     background : `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(static/bg7.jpg)` ,
     height : '100vh',
   },
-}));
-
-const ValidationTextField = withStyles({
-  root: {
-    '& input:valid + fieldset': {
-      borderColor: 'green',
-      borderWidth: 2,
+  input: {
+    '& label.Mui-focused': {
+      color: theme.palette.primary.main,
     },
-    '& input:invalid + fieldset': {
-      borderColor: 'red',
-      borderWidth: 2,
-    },
-    '& input:valid:focus + fieldset': {
-      borderLeftWidth: 6,
-      padding: '4px !important', // override inline-style
+    '& .MuiOutlinedInput-root': {
+      '&:hover fieldset': {
+        borderWidth: 2,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.primary.main,
+        borderLeftWidth: 6,
+        padding: '4px !important', // override inline-style
+      },
     },
   },
-})(TextField);
+  inputValid: {
+    '& label.Mui-focused': {
+      color: 'green',
+    },
+    '& .MuiOutlinedInput-root': {
+      '&:hover fieldset': {
+          borderWidth: 2,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'green',
+        borderLeftWidth: 6,
+        padding: '4px !important', // override inline-style
+      },
+    },
+  },
+  inputError: {
+    '& label.Mui-focused': {
+      color: 'red',
+    },
+    '& .MuiOutlinedInput-root': {
+      '&:hover fieldset': {
+        borderWidth: 2,
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'red',
+        borderLeftWidth: 6,
+        padding: '4px !important', // override inline-style
+      },
+    },
+  },
+}));
 
 function SimpleCard ( ) {
   const classes = useStyles ( );
   let card = React.createRef ( );
   let card2 = React.createRef ( );
-  const [email_log, setEmail_log] = React.useState('');
-  const [emailValid_log, setEmailValid_log] = React.useState(false);
-  const [email_reg, setEmail_reg] = React.useState('');
-  const [emailValid_reg, setEmailValid_reg] = React.useState(false);
   const [page, setPage] = React.useState(true);
-  const [pass, setPass] = React.useState({
-    value:'',
-    eval: false,
-    label:'Password'
+  const [email_log, setEmail_log] = React.useState({
+    val:'',
+    error:false,
+    valid:false
   });
-  const [pass2, setPass2] = React.useState('');
-  const [passMatch, setPassMatch] = React.useState(false);
-  const [fName, setfName] = React.useState('');
-  const [fNameValid, setfNameValid] = React.useState(false);
-  const [sName, setsName] = React.useState('');
-  const [sNameValid, setsNameValid] = React.useState(false);
+  const [email_reg, setEmail_reg] = React.useState({
+    val:'',
+    error:false,
+    valid:false
+  });
+  const [pass3, setPass3] = React.useState({
+    val:'',
+    label:'Password',
+    error:false,
+    valid:false
+  });
+  const [pass, setPass] = React.useState({
+    val:'',
+    label:'Password',
+    error:false,
+    valid:false
+  });
+  const [pass2, setPass2] = React.useState({
+    val:'',
+    error:false,
+    valid:false
+  });
+  const [fName, setfName] = React.useState({
+    val:'',
+    error:false,
+    valid:false
+  });
+  const [sName, setsName] = React.useState({
+    val:'',
+    error:false,
+    valid:false
+  });
   const { enqueueSnackbar , } = useSnackbar();
-  const [values, setValues] = React.useState({
+  const [visiblePass, setValues] = React.useState({
     showPassword0: false,
     showPassword: false,
+    showPassword3: false,
   });
 
   React.useEffect ( ( ) => {
@@ -182,11 +234,15 @@ function SimpleCard ( ) {
   }
 
   const handleClickShowPassword0 = () => {
-    setValues({ ...values, showPassword0: !values.showPassword0 });
+    setValues({ ...visiblePass, showPassword0: !visiblePass.showPassword0 });
   };
 
   const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
+    setValues({ ...visiblePass, showPassword: !visiblePass.showPassword });
+  };
+
+  const handleClickShowPassword3 = () => {
+    setValues({ ...visiblePass, showPassword3: !visiblePass.showPassword3 });
   };
 
   const handleMouseDownPassword = event => {
@@ -226,88 +282,110 @@ function SimpleCard ( ) {
   }
 
   function handleEmailChange_log (event) {
-    setEmail_log ( event.target.value );
-    setEmailValid_log( ! validateEmail( event.target.value ) && event.target.value )
-    //console.log(email_log);
+    if ( event.target.value ){
+      let error = ! validateEmail( event.target.value );
+      setEmail_log ( {...email_log , val:event.target.value , error:error , valid:!error} );
+    }else {
+      setEmail_log ( {...email_log , val:event.target.value , error:false , valid:false} );
+    }
+
   }
 
   function handleEmailChange_reg (event) {
-    setEmail_reg ( event.target.value );
-    setEmailValid_reg( ! validateEmail( event.target.value ) && event.target.value )
-    //console.log(email_reg);
+    let error = !validateEmail( event.target.value );
+    if (!event.target.value){
+      setEmail_reg( {...fName , error:false , valid:false , val: event.target.value} );
+    }else {
+      setEmail_reg ( {...fName , error:error , valid:true , val: event.target.value} );
+    }
   }
 
   function handlePass ( event ){
     if ( event.target.value ){
       let asses = strongPass ( event.target.value )
-      setPass ( { ...pass, value: event.target.value , label: asses[ 0 ] , eval: asses[ 1 ] } );
-      setPassMatch ( true )
+      setPass ( { ...pass, val: event.target.value , label: asses[ 0 ] , error: asses[ 1 ] , valid:!asses[ 1 ] } );
+      setPass2 ( {...pass2 , error:true} );
     }else {
-      setPass ( { ...pass, value: event.target.value , label: "Password" , eval:false} );
-      setPassMatch ( false )
+      setPass ( { ...pass, val: event.target.value , label: "Password" , error:false , valid:false} );
+      setPass2 ( {...pass2 , error:false} );
     }
   }
 
   function handlePass2 ( event ){
-    setPass2 ( event.target.value );
-    if ( (pass.value === event.target.value) && event.target.value ){
-      setPassMatch ( false )
+    setPass2 ( {...pass2 , val:event.target.value} );
+    if ( (pass.val === event.target.value) && event.target.value ){
+      setPass2 ( {...pass2 , error:false , valid:true} );
     }else{
-      setPassMatch ( true )
+      setPass2 ( {...pass2 , error:true} );
+    }
+  }
+
+  function handlePass3 ( event ){
+    if ( event.target.value ){
+      let asses = strongPass ( event.target.value )
+      setPass3 ( { ...pass, val: event.target.value , label: asses[ 0 ] , error: asses[ 1 ] , valid:!asses[ 1 ] } );
+    }else {
+      setPass3 ( { ...pass, val: event.target.value , label: "Password" , error:false , valid:false} );
     }
   }
 
   function handlefName ( event ){
-    setfName ( event.target.value )
-    setfNameValid ( false );
+    if (!event.target.value){
+      setfName( {...fName , error:false , valid:false , val: event.target.value} );
+    }else {
+      setfName ( {...fName , error:false , valid:true , val: event.target.value} );
+    }
   }
 
   function handlesName ( event ){
-    setsName ( event.target.value )
-    setsNameValid ( false );
+    if (!event.target.value){
+      setsName( {...sName , error:false , valid:false , val: event.target.value} );
+    }else {
+      setsName ( {...sName , error:false , valid:true , val: event.target.value} );
+    }
   }
 
   function handleRegister (  ){
-    if( !fName ){
-      setfNameValid ( true );
+    if( !fName.val ){
+    setfName ( {...fName , error:true} );
       enqueueSnackbar ( "First Name is required" , {
           variant : "error"  ,
           autoHideDuration: 2500,
       });
       return;
     }
-    if( !sName ){
-      setsNameValid ( true );
+    if( !sName.val ){
+      setsName ( {...sName , error:true} );
       enqueueSnackbar ( "Second Name is required" , {
           variant : "error"  ,
           autoHideDuration: 2500,
       });
       return;
     }
-    if( !email_reg ){
-      setsNameValid ( true );
+    if( !email_reg.val ){
+      setEmail_reg ( {...email_reg , error:true} )
       enqueueSnackbar ( "Email is required" , {
           variant : "error"  ,
           autoHideDuration: 2500,
       });
       return;
     }
-    if( emailValid_reg ){
+    if( email_reg.error ){
       enqueueSnackbar ( "Enter Valid Email" , {
           variant : "error"  ,
           autoHideDuration: 2500,
       });
       return;
     }
-    if( !pass.value ){
-      setsNameValid ( true );
+    if( !pass.val ){
+      setPass ( {...pass , error:true } );
       enqueueSnackbar ( "Password is required" , {
           variant : "error"  ,
           autoHideDuration: 2500,
       });
       return;
     }
-    if( strongPass ( pass.value )[ 1 ] ){
+    if( strongPass ( pass.val )[ 1 ] ){
       enqueueSnackbar (
         "Password must be alteast 5 characters long containing Upper, Lower Case, number & special" , {
           variant : "error"  ,
@@ -315,7 +393,7 @@ function SimpleCard ( ) {
       });
       return;
     }
-    if( passMatch ){
+    if( pass2.error ){
       enqueueSnackbar ( "Passwords Dont Match" , {
           variant : "error"  ,
           autoHideDuration: 2500,
@@ -327,7 +405,7 @@ function SimpleCard ( ) {
         variant : "success"  ,
         autoHideDuration: 2500,
     });
-    console.log(fName + " " + sName + " " + email_reg + " " + email_log + " " + pass2);
+    console.log(fName.val + " " + sName.val + " " + email_reg + " " + email_log + " " + pass2.val);
   }
 
   return (
@@ -361,8 +439,14 @@ function SimpleCard ( ) {
             </Card>
             <CardContent >
               <TextField
-                error={emailValid_log}
-                label={emailValid_log ? "Enter Valid Email" : "Email"}
+                required
+                className={clsx({
+                  [classes.inputError]: email_log.error,
+                  [classes.input]: !email_log.error,
+                  [classes.inputValid]: email_log.valid,
+                })}
+                error={email_log.error}
+                label={email_log.error ? "Invalid Email" : "Your Email"}
                 variant="outlined"
                 type="email"
                 id="mui-theme-provider-outlined-input"
@@ -373,14 +457,35 @@ function SimpleCard ( ) {
                 onChange={handleEmailChange_log}
               />
               <TextField
+                className={clsx({
+                  [classes.inputError]: pass3.error,
+                  [classes.input]: !pass3.error,
+                  [classes.inputValid]: pass3.valid,
+                })}
+                required
                 label="Password"
                 variant="outlined"
                 id="mui-theme-provider-outlined-input"
                 fullWidth={true}
-                type="password"
+                type={visiblePass.showPassword3 ? 'text' : 'password'}
                 style={{paddingTop:'12px'}}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
+                onChange={handlePass3}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        edge="end"
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword3}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {visiblePass.showPassword3 ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </CardContent>
             <CardActions >
@@ -413,11 +518,15 @@ function SimpleCard ( ) {
                   <Typography style={{paddingLeft:'4px'}}>
                     contact details
                   </Typography>
-                  <ValidationTextField
-                    className={classes.margin}
+                  <TextField
+                    className={clsx({
+                      [classes.inputError]: fName.error,
+                      [classes.input]: !fName.error,
+                      [classes.inputValid]: fName.valid,
+                    })}
                     required
-                    error={fNameValid}
-                    label={fNameValid ? "First Name" : "First Name"}
+                    error={fName.error}
+                    label={fName.error ? "First Name" : "First Name"}
                     variant="outlined"
                     id="mui-theme-provider-outlined-input"
                     style={{padding:'2px'}}
@@ -425,10 +534,14 @@ function SimpleCard ( ) {
                     onBlur={handleBlur}
                     onChange={handlefName}
                   />
-                  <ValidationTextField
-                    className={classes.margin}
+                  <TextField
+                    className={clsx({
+                      [classes.inputError]: sName.error,
+                      [classes.input]: !sName.error,
+                      [classes.inputValid]: sName.valid,
+                    })}
                     required
-                    error={sNameValid}
+                    error={sName.error}
                     label="Second Name"
                     variant="outlined"
                     id="mui-theme-provider-outlined-input"
@@ -437,11 +550,15 @@ function SimpleCard ( ) {
                     onBlur={handleBlur}
                     onChange={handlesName}
                   />
-                  <ValidationTextField
-                    className={classes.margin}
+                  <TextField
+                    className={clsx({
+                      [classes.inputError]: email_reg.error,
+                      [classes.input]: !email_reg.error,
+                      [classes.inputValid]: email_reg.valid,
+                    })}
                     required
-                    error={emailValid_reg}
-                    label= {emailValid_reg ? "Invalid Email" : "Email" }
+                    error={email_reg.error}
+                    label= {email_reg.error ? "Invalid Email" : "Enter Email" }
                     variant="outlined"
                     id="mui-theme-provider-outlined-input"
                     type="email"
@@ -450,15 +567,19 @@ function SimpleCard ( ) {
                     onBlur={handleBlur}
                     onChange={handleEmailChange_reg}
                   />
-                  <ValidationTextField
+                  <TextField
+                    className={clsx({
+                      [classes.inputError]: pass.error,
+                      [classes.input]: !pass.error,
+                      [classes.inputValid]: pass.valid,
+                    })}
                     onPaste={disablePaste}
-                    className={classes.margin}
                     required
-                    error={pass.eval}
+                    error={pass.error}
                     label={pass.label}
                     variant="outlined"
                     id="mui-theme-provider-outlined-input"
-                    type={values.showPassword0 ? 'text' : 'password'}
+                    type={visiblePass.showPassword0 ? 'text' : 'password'}
                     style={{padding:'2px'}}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
@@ -472,21 +593,25 @@ function SimpleCard ( ) {
                             onClick={handleClickShowPassword0}
                             onMouseDown={handleMouseDownPassword}
                           >
-                            {values.showPassword0 ? <VisibilityOff /> : <Visibility />}
+                            {visiblePass.showPassword0 ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
                         </InputAdornment>
                       ),
                     }}
                   />
-                  <ValidationTextField
+                  <TextField
                     onPaste={disablePaste}
-                    className={classes.margin}
+                    className={clsx({
+                      [classes.inputError]: pass2.error,
+                      [classes.input]: !pass2.error,
+                      [classes.inputValid]: pass2.valid,
+                    })}
                     required
-                    error={passMatch}
-                    label={passMatch ? "Doesn't match!" : "Confirm Password"}
+                    error={pass2.error}
+                    label={pass2.error ? "Doesn't match!" : "Confirm Password"}
                     variant="outlined"
                     id="mui-theme-provider-outlined-input"
-                    type={values.showPassword ? 'text' : 'password'}
+                    type={visiblePass.showPassword ? 'text' : 'password'}
                     style={{padding:'2px'}}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
@@ -500,7 +625,7 @@ function SimpleCard ( ) {
                             onClick={handleClickShowPassword}
                             onMouseDown={handleMouseDownPassword}
                           >
-                            {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                            {visiblePass.showPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
                         </InputAdornment>
                       ),
@@ -510,7 +635,7 @@ function SimpleCard ( ) {
                   <Typography style={{paddingLeft:'4px'}}>
                     billing details
                   </Typography>
-                  <ValidationTextField
+                  <TextField
                     label="credit card"
                     variant="outlined"
                     id="mui-theme-provider-outlined-input"
@@ -518,7 +643,7 @@ function SimpleCard ( ) {
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                   />
-                  <ValidationTextField
+                  <TextField
                     label="pass number"
                     variant="outlined"
                     id="mui-theme-provider-outlined-input"
