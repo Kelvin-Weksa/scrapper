@@ -3,7 +3,7 @@ import NestedGrid from './demo'
 import Listing from './list'
 import Drawer from './responsiveDrawer'
 import Firebase from './firebase'
-import { SnackbarProvider , withSnackbar } from 'notistack';
+import { withSnackbar } from 'notistack';
 //import './App.css';
 
 const io = require ( 'socket.io-client' );
@@ -144,11 +144,4 @@ class App extends Component {
  }
 }
 
-let App1 =  withSnackbar ( App );
-export default function IntegrationNotistack (  ) {
-  return (
-    <SnackbarProvider maxSnack={2} preventDuplicate>
-      <App1/>
-    </SnackbarProvider>
-  );
-}
+export default withSnackbar ( App );

@@ -36,13 +36,10 @@ const useStyles = makeStyles(theme => ({
 
 export default React.forwardRef( function SimpleCard ( props , ref ) {
   const classes = useStyles();
-  //const theme = useTheme ( );
-  //let button =  React.createRef ( );
 
   function clicked ( ){
     props.onClick ( )
   }
-
 
   return (
     <Grid item >

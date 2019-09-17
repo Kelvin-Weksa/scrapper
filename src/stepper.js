@@ -38,6 +38,10 @@ var card_chosen = {};
 
 let selected = [ ]
 
+function getSteps ( ){
+  return ['Select Plan', 'Select Companies', 'Check Out'];
+}
+
 function PricingCards ( props ){
   const theme = useTheme ( );
   let button1 =  React.createRef ( );
@@ -107,7 +111,6 @@ function ListCompanies ( props ){
 
     };
   });
-
 
   const handleChange = name => event => {
     setState({ ...state, [name]: event.target.checked });
@@ -186,11 +189,7 @@ function CheckOut ( ){
   )
 }
 
-function getSteps() {
-  return ['Select Plan', 'Select Companies', 'Check Out'];
-}
-
-function getStepContent(step , fn) {
+function getStepContent ( step , fn ){
   switch (step) {
     case 0:
       return <PricingCards continue={fn}/>;
@@ -203,7 +202,7 @@ function getStepContent(step , fn) {
   }
 }
 
-export default function VerticalLinearStepper() {
+export default function VerticalLinearStepper ( ){
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [nexty, setNext] = React.useState(false);
