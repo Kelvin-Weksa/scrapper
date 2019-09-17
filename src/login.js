@@ -241,8 +241,10 @@ function SimpleCard ( ) {
     if ( event.target.value ){
       let asses = strongPass ( event.target.value )
       setPass ( { ...pass, value: event.target.value , label: asses[ 0 ] , eval: asses[ 1 ] } );
+      setPassMatch ( true )
     }else {
       setPass ( { ...pass, value: event.target.value , label: "Password" , eval:false} );
+      setPassMatch ( false )
     }
   }
 
