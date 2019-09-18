@@ -10274,6 +10274,31 @@ app.get ( '/*' , function ( req , res ) {
   res.sendFile ( path.join ( __dirname , 'build' , 'index.html' ) );
 });
 
+app.use ( express.json ( ) );
+
+app.post ( '/register', function ( request , response ){
+  console.log ( request.body );      // your JSON
+  admin.auth().createUser({
+    email: request.body.email,
+    emailVerified: false,
+    //phoneNumber: '+11234567890',
+    password: request.body.pass,
+    displayName: request.body.fname + " " + request.body.sname,
+    //photoURL: 'http://www.example.com/12345678/photo.png',
+    disabled: false
+  })
+  .then( userRecord=> {
+    // See the UserRecord reference doc for the contents of userRecord.
+    console.log('Successfully created new user:', userRecord.uid);
+    response.send ( userRecord );
+  })
+  .catch( error=> {
+    console.log('Error creating new user:', error.errorInfo);
+    response.send ( error.errorInfo );
+  });
+  //response.send ( request.body );    // echo the result back
+});
+
 console.log ( Scrappers.length + "  +++Scrappers Registered." );
 var db = admin .database ( );
 

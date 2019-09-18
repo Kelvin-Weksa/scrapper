@@ -6,12 +6,13 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter , Switch , Route } from "react-router-dom";
 import { SnackbarProvider } from 'notistack';
 import LoginPage from './login'
+import PrivateRoute from './privateRoute'
 
 ReactDOM.render(
   <SnackbarProvider maxSnack={2} preventDuplicate>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/dashboard" component={App} />
+        <PrivateRoute exact path="/dashboard" component={App} />
         <Route exact path="/" component={LoginPage} />
       </Switch>
     </BrowserRouter>

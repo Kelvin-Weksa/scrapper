@@ -11,7 +11,6 @@ import FacebookBox from 'mdi-material-ui/FacebookBox';
 import TwitterBox from 'mdi-material-ui/Twitter';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { Link } from 'react-router-dom';
 import FingerprintIcon from '@material-ui/icons/Fingerprint';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import { withSnackbar , useSnackbar } from 'notistack';
@@ -19,6 +18,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import clsx from 'clsx';
+import Firebase from './firebase'
 
 function validateEmail(email) {// eslint-disable-next-line
   var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -170,7 +170,7 @@ const useStyles = makeStyles( theme => ({
   },
 }));
 
-function SimpleCard ( ) {
+function SimpleCard ( props ) {
   const classes = useStyles ( );
   let card = React.createRef ( );
   let card2 = React.createRef ( );
@@ -314,7 +314,7 @@ function SimpleCard ( ) {
   function handlePass2 ( event ){
     setPass2 ( {...pass2 , val:event.target.value} );
     if ( (pass.val === event.target.value) && event.target.value ){
-      setPass2 ( {...pass2 , error:false , valid:true} );
+      setPass2 ( {...pass2 , error:false , valid:true , val:event.target.value} );
     }else{
       setPass2 ( {...pass2 , error:true} );
     }
@@ -406,6 +406,101 @@ function SimpleCard ( ) {
         autoHideDuration: 2500,
     });
     console.log(fName.val + " " + sName.val + " " + email_reg + " " + email_log + " " + pass2.val);
+    (async () => {
+      const rawResponse = await fetch ( '/register' , {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({fname:fName.val,sname:sName.val,email:email_reg.val,pass:pass2.val })
+      }).catch ( console.log );
+      const content = await rawResponse.json ( );
+      if( content.code ){
+        enqueueSnackbar (
+          content.message , {
+            variant : "error"  ,
+            autoHideDuration: 3500,
+        });
+      }else if ( content.uid ){
+        enqueueSnackbar (
+          "You have been registered!" , {
+            variant : "success"  ,
+            autoHideDuration: 3500,
+        });
+        (async ()=> {
+          await Firebase.auth()
+            .signInWithEmailAndPassword ( email_reg.val , pass2.val )
+              .catch ( error=>{
+                enqueueSnackbar (
+                  error.message , {
+                    variant : "error"  ,
+                    autoHideDuration: 3500,
+                  });
+                })
+                .then( (signIn)=> {
+                  enqueueSnackbar (
+                    "Log In Successful!" , {
+                      variant : "success"  ,
+                      autoHideDuration: 3500,
+                    });
+                    if ( Firebase.auth().currentUser ){
+                      props.history.push("/dashboard")
+                    }
+                });
+        })();
+      }else {
+        enqueueSnackbar (
+          "uknown error has occured!" , {
+            variant : "error"  ,
+            autoHideDuration: 3500,
+        });
+      }
+      console.log( JSON.stringify ( content ) );
+    })();
+  }
+
+  function handleLogin (  ){
+    if( !email_log.val ){
+      setEmail_reg ( {...email_reg , error:true} )
+      enqueueSnackbar ( "Email is required" , {
+          variant : "error"  ,
+          autoHideDuration: 2500,
+      });
+      return;
+    }
+    if( email_log.error ){
+      enqueueSnackbar ( "Enter Valid Email" , {
+          variant : "error"  ,
+          autoHideDuration: 2500,
+      });
+      return;
+    }
+    if( !pass3.valid ){
+      enqueueSnackbar ( "Enter Valid Password" , {
+          variant : "error"  ,
+          autoHideDuration: 2500,
+      });
+    }
+    (async ()=> {
+      await Firebase.auth()
+        .signInWithEmailAndPassword ( email_log.val , pass3.val )
+          .catch ( error=>{
+            enqueueSnackbar (
+              error.message , {
+                variant : "error"  ,
+                autoHideDuration: 3500,
+              });
+            })
+            .then( (signIn)=> {
+              enqueueSnackbar (
+                "Log In Successful!" , {
+                  variant : "success"  ,
+                  autoHideDuration: 3500,
+                });
+              props.history.push("/dashboard")
+            });
+    })();
   }
 
   return (
@@ -489,11 +584,9 @@ function SimpleCard ( ) {
               />
             </CardContent>
             <CardActions >
-              <Link to='/dashboard' style={{margin:'0 auto'}}>
-                <Button color='secondary' size="small">
+              <Button color='secondary' size="small" onClick={handleLogin} style={{margin:'0 auto'}}>
                   Let's Go
                 </Button>
-              </Link>
             </CardActions>
           </Card>
           <Card ref={card2} className={classes.Card2}>
@@ -655,11 +748,9 @@ function SimpleCard ( ) {
                 </CardContent>
               </div>
               <CardActions >
-                <Link  style={{margin:'0 auto'}}>
-                  <Button color='secondary' size="small" onClick={handleRegister}>
-                    Let's Go
-                  </Button>
-                </Link>
+                <Button color='secondary' size="small" onClick={handleRegister} style={{margin:'0 auto'}}>
+                  Let's Go
+                </Button>
               </CardActions>
           </Card>
       </div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
@@ -33,9 +32,10 @@ import MoreIcon from '@material-ui/icons/MoreVert';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { Link } from 'react-router-dom';
 import Subscription from './cardsDialog'
 import Scroller from './scrollMain'
+import Firebase from './firebase'
+import { withRouter } from 'react-router-dom'
 
 const drawerWidth = 240;
 
@@ -143,7 +143,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
 function ResponsiveDrawer ( props ) {
   const { container } = props;
   const classes = useStyles();
@@ -195,6 +194,23 @@ function ResponsiveDrawer ( props ) {
   function handleMenuClose() {
     setAnchorEl(null);
     handleMobileMenuClose();
+  }
+
+  function handleLogout() {
+    Firebase.auth().signOut().then( ()=> {
+      enqueueSnackbar ( "Sign-out successful" , {
+          variant : "info"  ,
+          autoHideDuration: 2500,
+      });
+    }).catch( error=> {
+      enqueueSnackbar ( "An error happened" , {
+          variant : "error"  ,
+          autoHideDuration: 2500,
+      });
+      console.log(error);
+    });
+    handleMenuClose()
+    props.history.push("/")
   }
 
   function handleMobileMenuOpen(event) {
@@ -280,9 +296,7 @@ function ResponsiveDrawer ( props ) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <Link to='/'>
-        <MenuItem onClick={handleMenuClose}>log out</MenuItem>
-      </Link>
+      <MenuItem onClick={handleLogout}>log out</MenuItem>
     </Menu>
   );
 
@@ -439,12 +453,4 @@ function ResponsiveDrawer ( props ) {
   );
 }
 
-ResponsiveDrawer.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  container: PropTypes.instanceOf(typeof Element === 'undefined' ? Object : Element),
-};
-
-export default ResponsiveDrawer;
+export default withRouter( ResponsiveDrawer );
