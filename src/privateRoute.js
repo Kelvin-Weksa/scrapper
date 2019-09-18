@@ -10,8 +10,9 @@ import { withSnackbar , useSnackbar } from 'notistack';
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const { enqueueSnackbar , } = useSnackbar();
-  const isLogged = Firebase.auth().currentUser
 
+  const isLogged = Firebase.auth().currentUser
+  console.log(isLogged);
   if ( ! isLogged ){
     enqueueSnackbar ( "you have to log in first..." , {
         variant : "error"  ,

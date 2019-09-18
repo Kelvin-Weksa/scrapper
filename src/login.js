@@ -428,25 +428,26 @@ function SimpleCard ( props ) {
             variant : "success"  ,
             autoHideDuration: 3500,
         });
+
         (async ()=> {
           await Firebase.auth()
-            .signInWithEmailAndPassword ( email_reg.val , pass2.val )
-              .catch ( error=>{
+            .signInWithEmailAndPassword ( email_log.val , pass3.val )
+              .then( (signIn)=> {
+                enqueueSnackbar (
+                  "Log In Successful!" , {
+                    variant : "success"  ,
+                    autoHideDuration: 3500,
+                  }
+                );
+                if ( Firebase.auth().currentUser ){
+                  props.history.push("/dashboard")
+                }
+              }).catch ( error=>{
                 enqueueSnackbar (
                   error.message , {
                     variant : "error"  ,
                     autoHideDuration: 3500,
                   });
-                })
-                .then( (signIn)=> {
-                  enqueueSnackbar (
-                    "Log In Successful!" , {
-                      variant : "success"  ,
-                      autoHideDuration: 3500,
-                    });
-                    if ( Firebase.auth().currentUser ){
-                      props.history.push("/dashboard")
-                    }
                 });
         })();
       }else {
@@ -485,20 +486,20 @@ function SimpleCard ( props ) {
     (async ()=> {
       await Firebase.auth()
         .signInWithEmailAndPassword ( email_log.val , pass3.val )
-          .catch ( error=>{
+          .then( (signIn)=> {
+            enqueueSnackbar (
+              "Log In Successful!" , {
+                variant : "success"  ,
+                autoHideDuration: 3500,
+              }
+            );
+            props.history.push("/dashboard")
+          }).catch ( error=>{
             enqueueSnackbar (
               error.message , {
                 variant : "error"  ,
                 autoHideDuration: 3500,
               });
-            })
-            .then( (signIn)=> {
-              enqueueSnackbar (
-                "Log In Successful!" , {
-                  variant : "success"  ,
-                  autoHideDuration: 3500,
-                });
-              props.history.push("/dashboard")
             });
     })();
   }
