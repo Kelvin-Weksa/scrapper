@@ -440,6 +440,7 @@ function SimpleCard ( props ) {
                   }
                 );
                 if ( Firebase.auth().currentUser ){
+                  sessionStorage.setItem('User', JSON.stringify ( Firebase.auth().currentUser ) );
                   props.history.push("/dashboard")
                 }
               }).catch ( error=>{
@@ -493,6 +494,7 @@ function SimpleCard ( props ) {
                 autoHideDuration: 3500,
               }
             );
+            sessionStorage.setItem('User', JSON.stringify ( Firebase.auth().currentUser ) );
             props.history.push("/dashboard")
           }).catch ( error=>{
             enqueueSnackbar (
