@@ -53,6 +53,11 @@ function strongPass ( pwd ){
   return strength;
 }
 
+function validateName(name) {// eslint-disable-next-line
+  var re = /[^\w\s]/g;
+  return re.test(name);
+}
+
 const useStyles = makeStyles( theme => ({
   root: {
     display: 'flex',
@@ -330,22 +335,31 @@ function SimpleCard ( props ) {
   }
 
   function handlefName ( event ){
+    let error = validateName( event.target.value );
     if (!event.target.value){
       setfName( {...fName , error:false , valid:false , val: event.target.value} );
     }else {
-      setfName ( {...fName , error:false , valid:true , val: event.target.value} );
+      setfName ( {...fName , error:error , valid:true , val: event.target.value} );
     }
   }
 
   function handlesName ( event ){
+    let error = validateName( event.target.value );
     if (!event.target.value){
       setsName( {...sName , error:false , valid:false , val: event.target.value} );
     }else {
-      setsName ( {...sName , error:false , valid:true , val: event.target.value} );
+      setsName ( {...sName , error:error , valid:true , val: event.target.value} );
     }
   }
 
   function handleRegister (  ){
+    if( fName.error || sName.error ){
+      enqueueSnackbar ( "control characters not allowed" , {
+          variant : "error"  ,
+          autoHideDuration: 2500,
+      });
+      return;
+    }
     if( !fName.val ){
     setfName ( {...fName , error:true} );
       enqueueSnackbar ( "First Name is required" , {
@@ -405,7 +419,7 @@ function SimpleCard ( props ) {
         variant : "success"  ,
         autoHideDuration: 2500,
     });
-    console.log(fName.val + " " + sName.val + " " + email_reg + " " + email_log + " " + pass2.val);
+    console.log(fName.val + " " + sName.val + " " + email_reg.val + " " + pass2.val);
     (async () => {
       const rawResponse = await fetch ( '/register' , {
         method: 'POST',
@@ -416,7 +430,7 @@ function SimpleCard ( props ) {
         body: JSON.stringify({fname:fName.val,sname:sName.val,email:email_reg.val,pass:pass2.val })
       }).catch ( console.log );
       const content = await rawResponse.json ( );
-      if( content.code ){
+      if( content.code && !content.uid){
         enqueueSnackbar (
           content.message , {
             variant : "error"  ,
@@ -431,7 +445,7 @@ function SimpleCard ( props ) {
 
         (async ()=> {
           await Firebase.auth()
-            .signInWithEmailAndPassword ( email_log.val , pass3.val )
+            .signInWithEmailAndPassword ( email_reg.val , pass2.val )
               .then( (signIn)=> {
                 enqueueSnackbar (
                   "Log In Successful!" , {
@@ -440,7 +454,7 @@ function SimpleCard ( props ) {
                   }
                 );
                 if ( Firebase.auth().currentUser ){
-                  sessionStorage.setItem('User', JSON.stringify ( Firebase.auth().currentUser ) );
+                  //sessionStorage.setItem('User', JSON.stringify ( Firebase.auth().currentUser ) );
                   props.history.push("/dashboard")
                 }
               }).catch ( error=>{
@@ -458,7 +472,7 @@ function SimpleCard ( props ) {
             autoHideDuration: 3500,
         });
       }
-      console.log( JSON.stringify ( content ) );
+      console.log( content );
     })();
   }
 
@@ -494,7 +508,7 @@ function SimpleCard ( props ) {
                 autoHideDuration: 3500,
               }
             );
-            sessionStorage.setItem('User', JSON.stringify ( Firebase.auth().currentUser ) );
+            //sessionStorage.setItem('User', JSON.stringify ( Firebase.auth().currentUser ) );
             props.history.push("/dashboard")
           }).catch ( error=>{
             enqueueSnackbar (

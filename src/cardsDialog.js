@@ -69,6 +69,7 @@ export default function AlertDialog() {
         variant="contained"
         color="secondary"
         onClick={handleClickOpen}
+        style={{margin:'auto'}}
       >
         <LockIcon />
         Trial Expired

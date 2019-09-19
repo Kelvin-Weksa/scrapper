@@ -10279,10 +10279,10 @@ app.use ( express.json ( ) );
 app.post ( '/register', function ( request , response ){
   console.log ( request.body );      // your JSON
   admin.auth().createUser({
-    email: request.body.email,
+    email: request.body.email.trim(),
     emailVerified: false,
     //phoneNumber: '+11234567890',
-    password: request.body.pass,
+    password: request.body.pass.trim(),
     displayName: request.body.fname + " " + request.body.sname,
     //photoURL: 'http://www.example.com/12345678/photo.png',
     disabled: false

@@ -9,8 +9,6 @@ import { withSnackbar } from 'notistack';
 const io = require ( 'socket.io-client' );
 const socket = io ( );
 
-let Land = Listing[ 1 ];
-
 function msToTime ( duration ) {
   var minutes = parseInt ( ( duration / ( 1000 * 60 ) ) % 60 )
       , hours = parseInt ( ( duration / ( 1000 * 60 * 60 ) ) % 24 );
@@ -31,10 +29,27 @@ class App extends Component {
     refresh: null ,
     stale : '' ,
     page : 0 ,
+    permitted: [ ],
   };
 
   componentDidMount = ( )=> {
-    this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
+    let user = Firebase.auth().currentUser;
+    if ( user ){
+      Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
+        .once ( 'value' , snapshot=>{
+          let incoming = [ ];
+          console.log ( "User__permissions__" + snapshot.exists() )
+          snapshot.forEach ( function ( childSnapshot) {
+            incoming.push ( childSnapshot.val ( ) );
+          });
+          this.setState ( {...this.state , permitted: incoming} );
+          let Listed = Listing.filter ( companyList => incoming
+            .some ( permission => companyList.includes( permission ) ) )
+          let Land = Listed[ 0 ];
+          this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
+        } )
+    }
+
     socket.on ( "outgoing data", ( data ) => {
       //let set  = new Set(  );
       data.forEach ( ( upload ) => {
@@ -134,6 +149,7 @@ class App extends Component {
           logo={this.state.logo}
           stale={this.state.stale}
           page={this.state.page}
+          permitted={this.state.permitted}
           fetcher={this.fetcher}
           paginate={this.paginate}
           content={<NestedGrid elements={ this.state.characters } loaded={this.state.loaded}/>}

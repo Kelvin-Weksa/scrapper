@@ -9,7 +9,10 @@ import LoginPage from './login'
 import PrivateRoute from './privateRoute'
 
 ReactDOM.render(
-  <SnackbarProvider maxSnack={2} preventDuplicate>
+  <SnackbarProvider maxSnack={2} preventDuplicate anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'center',
+    }}>
     <BrowserRouter>
       <Switch>
         <PrivateRoute exact path="/dashboard" component={App} />

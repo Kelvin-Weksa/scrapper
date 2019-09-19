@@ -25,9 +25,9 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
 import Card from '@material-ui/core/Card';
-import Badge from '@material-ui/core/Badge';
-import MailIcon from '@material-ui/icons/Mail';
-import NotificationsIcon from '@material-ui/icons/Notifications';
+//import Badge from '@material-ui/core/Badge';
+//import MailIcon from '@material-ui/icons/Mail';
+//import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -202,6 +202,7 @@ function ResponsiveDrawer ( props ) {
           variant : "info"  ,
           autoHideDuration: 2500,
       });
+      //sessionStorage.removeItem ( 'User' );
     }).catch( error=> {
       enqueueSnackbar ( "An error happened" , {
           variant : "error"  ,
@@ -256,7 +257,7 @@ function ResponsiveDrawer ( props ) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+      {/*<MenuItem>
         <IconButton aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="secondary">
             <MailIcon />
@@ -271,7 +272,7 @@ function ResponsiveDrawer ( props ) {
           </Badge>
         </IconButton>
         <p>Notifications</p>
-      </MenuItem>
+      </MenuItem>*/}
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           aria-label="account of current user"
@@ -300,6 +301,8 @@ function ResponsiveDrawer ( props ) {
     </Menu>
   );
 
+  let Listed = Listing.filter ( companyList => props.permitted.some ( permission => companyList.includes( permission ) ) )
+
   const drawer = (
     <div>
     <div className={classes.sticky} >
@@ -315,15 +318,19 @@ function ResponsiveDrawer ( props ) {
     </div>
       <Divider />
       <List>
-        {Listing.filter ( item => item.includes ( filter ) ).map ( (list , index ) => (
-          <ListItem button key={index} onClick={( ) => loadData ( list[ 2 ] , list[ 1 ] , list[ 3 ] )} title={list[ 0 ]}>
-              <CardMedia
-                className={classes.media}
-                image={list[ 3 ]}
-              />
-            <ListItemText primary={list[ 2 ]} />
-          </ListItem>
-        ))}
+        {Listed.length? (
+          Listed.filter ( item => item.includes ( filter ) ).map ( (list , index ) => (
+            <ListItem button key={index} onClick={( ) => loadData ( list[ 2 ] , list[ 1 ] , list[ 3 ] )} title={list[ 0 ]}>
+                <CardMedia
+                  className={classes.media}
+                  image={list[ 3 ]}
+                />
+              <ListItemText primary={list[ 2 ]} />
+            </ListItem>
+          ))
+        ):(
+          <Subscription style={{position:'relative',margin:'auto'}}/>
+        )}
       </List>
     </div>
   );
@@ -354,9 +361,8 @@ function ResponsiveDrawer ( props ) {
             </Typography>
             <Divider orientation="vertical" color="secondary"/>
             <div className={classes.grow} />
-            <Subscription/>
             <div className={classes.sectionDesktop}>
-              <IconButton aria-label="show 4 new mails" color="inherit">
+              {/*<IconButton aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={4} color="secondary">
                   <MailIcon />
                 </Badge>
@@ -365,7 +371,7 @@ function ResponsiveDrawer ( props ) {
                 <Badge badgeContent={17} color="secondary">
                   <NotificationsIcon />
                 </Badge>
-              </IconButton>
+              </IconButton>*/}
               <IconButton
                 edge="end"
                 aria-label="account of current user"
@@ -430,7 +436,7 @@ function ResponsiveDrawer ( props ) {
         })}
       >
         <Toolbar style={{height: theme.mixins.toolbar/2}}/>
-        <Typography className={classes.margin}>
+        {Listed.length?(<Typography className={classes.margin}>
           <Typography style={{padding:'12px'}} variant="h5" component="h2" >
             {props.stale ? props.stale : ''}
           </Typography>
@@ -441,7 +447,7 @@ function ResponsiveDrawer ( props ) {
               </IconButton>
             </Tooltip>
           </Card>
-        </Typography>
+        </Typography>):(null)}
         <Toolbar style={{height: theme.mixins.toolbar/2}}/>
         {props.content}
         <Scroller

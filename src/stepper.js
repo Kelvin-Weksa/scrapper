@@ -17,6 +17,8 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import Box from '@material-ui/core/Box';
+import Firebase from './firebase'
+import { withSnackbar , useSnackbar } from 'notistack';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,8 +37,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 var card_chosen = {};
-
-let selected = [ ]
 
 function getSteps ( ){
   return ['Select Plan', 'Select Companies', 'Check Out'];
@@ -97,12 +97,12 @@ function ListCompanies ( props ){
   var st = {}
   Listing.forEach ( ( list ) => {
     st[ list[ 2 ].replace ( /\s/g, '_') ] =
-        (selected.includes( list[ 2 ].replace ( /\s/g, '_') ) || card_chosen.num === 9999  ) ? true : false;
+        (props.selected.includes( list[ 2 ].replace ( /\s/g, '_') ) || card_chosen.num === 9999  ) ? true : false;
   } )
   const [ state , setState ] = React.useState(st);
 
   React.useEffect ( ( ) => {
-    if ( ( ( card_chosen.num - selected.length )  === 0 ) || card_chosen.num === 9999 ){
+    if ( ( ( card_chosen.num - props.selected.length )  === 0 ) || card_chosen.num === 9999 ){
       props.continue ( true )
     }else {
       props.continue ( false )
@@ -115,22 +115,22 @@ function ListCompanies ( props ){
   const handleChange = name => event => {
     setState({ ...state, [name]: event.target.checked });
     if (event.target.checked){
-      selected.push ( name )
+      props.selected.push ( name )
     }else {
-      var index = selected.indexOf(name);
+      var index = props.selected.indexOf ( name );
       if (index > -1) {
-        selected.splice(index, 1);
+        props.selected.splice ( index , 1 );
       }
     }
   };
 
   const helperText = ( ) => {
-    if ( card_chosen.num - selected.length > 0 ){
-      return `Select ${card_chosen.num - selected.length} More  Companies...`
-    }else if ( card_chosen.num - selected.length === 0 ) {
+    if ( card_chosen.num - props.selected.length > 0 ){
+      return `Select ${card_chosen.num - props.selected.length} More  Companies...`
+    }else if ( card_chosen.num - props.selected.length === 0 ) {
       return `You are Done`
-    }else if ( card_chosen.num - selected.length < 0 ) {
-      return `In Excess , please Remove ${selected.length - card_chosen.num} Companies...`
+    }else if ( card_chosen.num - props.selected.length < 0 ) {
+      return `In Excess , please Remove ${props.selected.length - card_chosen.num} Companies...`
     }
   }
 
@@ -158,13 +158,13 @@ function ListCompanies ( props ){
   );
 }
 
-function CheckOut ( ){
+function CheckOut ( props ){
   return (
     <div>
       <Box fontWeight="fontWeightBold" style={{paddingLeft:'4px'}}>
         {`You have chosen to follow the ${card_chosen.num === 9999 ? 'ALL the' : 'The following'} Companies`}:
         <Grid container spacing={1}>
-          {selected.map ( (item) =>
+          {props.selected.map ( (item) =>
             <Grid item xs={3} wrap="nowrap">
               <Typography color='secondary'>{item.replace ( /_/g, ' ')}</Typography>
             </Grid>)}
@@ -189,27 +189,63 @@ function CheckOut ( ){
   )
 }
 
-function getStepContent ( step , fn ){
+function getStepContent ( step , fn , selected ){
   switch (step) {
     case 0:
-      return <PricingCards continue={fn}/>;
+      return <PricingCards continue={fn} selected={selected}/>;
     case 1:
-      return <ListCompanies continue={fn}/>;
+      return <ListCompanies continue={fn} selected={selected}/>;
     case 2:
-      return <CheckOut continue={fn}/>;
+      return <CheckOut continue={fn} selected={selected}/>;
     default:
       return 'Unknown step';
   }
 }
 
-export default function VerticalLinearStepper ( ){
+function VerticalLinearStepper ( ){
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const [nexty, setNext] = React.useState(false);
+  let selected = React.useRef([])
+  const { enqueueSnackbar , } = useSnackbar();
   const steps = getSteps();
 
-  function handleNext() {
+  React.useEffect ( ()=>{
+    let user = JSON.parse ( sessionStorage.getItem ( 'User' ) )
+    if ( user ){
+      Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
+        .once ( 'value' , snapshot=>{
+          let incoming = [ ];
+          snapshot.forEach ( function ( childSnapshot) {
+            incoming.push ( childSnapshot.val ( ).replace ( /\s/g, '_') );
+            let set = new Set ( incoming );
+            selected.current = Array.from ( set );
+          });
+          console.log ( "User__permissions__" + snapshot.exists() + '__' + incoming.length )
+      })
+    }
+  }, [selected])
+
+  function handleNext ( finish ) {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
+    if ( finish ){
+      alert("checking out")
+      Firebase.database().ref ( "Users/" + Firebase.auth().currentUser.uid.toString ( ) )
+        .set ( selected.current.map ( item => item.replace ( /_/g, ' ') ) ,  ( error )=> {
+          if ( error ) {
+            console.log ( error )
+            alert ( 'failed to update FireBase!' );
+          } else { // eslint-disable-next-line
+            console.log ( 'FireBase updated' + "__" + Firebase.auth().currentUser.displayName )
+            enqueueSnackbar (
+              "companies updated" , {
+                variant : "success"  ,
+                autoHideDuration: 3500,
+              }
+            );
+          }
+        } );
+    }
   }
 
   function handleBack() {
@@ -228,7 +264,7 @@ export default function VerticalLinearStepper ( ){
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
             <StepContent>
-              <Typography>{getStepContent( index , setNext)}</Typography>
+              <Typography>{getStepContent( index , setNext , selected.current)}</Typography>
               <div className={classes.actionsContainer}>
                 <div>
                   <Button
@@ -241,7 +277,7 @@ export default function VerticalLinearStepper ( ){
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleNext}
+                    onClick={()=>{handleNext(activeStep === steps.length - 1)}}
                     className={classes.button}
                     disabled={!nexty}
                   >
@@ -264,3 +300,5 @@ export default function VerticalLinearStepper ( ){
     </div>
   );
 }
+
+export default withSnackbar ( VerticalLinearStepper );
