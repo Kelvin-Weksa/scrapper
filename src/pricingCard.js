@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     left: '5vh',
     border: `1px solid ${theme.palette.secondary.main}` ,
     borderRadius: '2px',
-
+    backgroundColor: theme.palette.secondary.main
   },
 }));
 
@@ -47,7 +47,7 @@ export default React.forwardRef( function SimpleCard ( props , ref ) {
     <Card  className={classes.card} style={{backgroundColor:props.shade}}>
       <Card  className={classes.info}>
         <Tooltip title="Refresh" placement="right">
-          <IconButton color="secondary" className={classes.rightIcon}>
+          <IconButton  className={classes.rightIcon}>
             {props.icon}
           </IconButton>
         </Tooltip>

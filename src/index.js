@@ -5,8 +5,11 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter , Switch , Route } from "react-router-dom";
 import { SnackbarProvider } from 'notistack';
-import LoginPage from './login'
-import PrivateRoute from './privateRoute'
+import LoginPage from './login';
+import PrivateRoute from './privateRoute';
+import Loader from './loader';
+import Account from './account';
+import Pricing from './pricing';
 
 ReactDOM.render(
   <SnackbarProvider maxSnack={2} preventDuplicate anchorOrigin={{
@@ -14,8 +17,11 @@ ReactDOM.render(
         horizontal: 'center',
     }}>
     <BrowserRouter>
+      <Loader/>
       <Switch>
-        <PrivateRoute exact path="/dashboard" component={App} />
+        <PrivateRoute exact path="/pricing" component={Pricing} />
+        <PrivateRoute exact path="/account" component={Account}/>
+        <PrivateRoute exact path="/dashboard" component={App}/>
         <Route exact path="/" component={LoginPage} />
       </Switch>
     </BrowserRouter>

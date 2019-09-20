@@ -1,13 +1,8 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import LockIcon from '@material-ui/icons/Lock';
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Toolbar from '@material-ui/core/Toolbar';
-import Stepper from './stepper'
+import { withRouter } from 'react-router-dom'
 
 
 const useStyles = makeStyles(theme => ({
@@ -51,48 +46,22 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function AlertDialog() {
+function AlertDialog ( props ) {
   const classes = useStyles ( );
-  const [ open , setOpen ] = React.useState ( false );
-
-  function handleClickOpen() {
-    setOpen(true);
-  }
-
-  function handleClose() {
-    setOpen(false);
-  }
 
   return (
     <div className={classes.unlock}>
       <Button
         variant="contained"
         color="secondary"
-        onClick={handleClickOpen}
+        onClick={()=>{props.history.push ( '/pricing' )}}
         style={{margin:'auto'}}
       >
         <LockIcon />
         Trial Expired
       </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        maxWidth='md'
-        fullWidth={true}
-      >
-        <DialogTitle id="alert-dialog-title" style={{margin:'auto'}}>
-          <Typography variant='h5' component="h2" color="textSecondary">
-            Subscribe and Start Today ...
-          </Typography>
-        </DialogTitle>
-        <Toolbar/>
-        <Stepper/>
-        <DialogActions>
-
-        </DialogActions>
-      </Dialog>
     </div>
   )
 }
+
+export default withRouter ( AlertDialog )

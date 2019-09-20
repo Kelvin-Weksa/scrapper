@@ -25,7 +25,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
 import Card from '@material-ui/core/Card';
-//import Badge from '@material-ui/core/Badge';
+import Badge from '@material-ui/core/Badge';
 //import MailIcon from '@material-ui/icons/Mail';
 //import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
@@ -36,8 +36,10 @@ import Subscription from './cardsDialog'
 import Scroller from './scrollMain'
 import Firebase from './firebase'
 import { withRouter } from 'react-router-dom'
+import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
-const drawerWidth = 240;
+const drawerWidth = 225;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -151,7 +153,6 @@ function ResponsiveDrawer ( props ) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [ filter , setFilter ] = React.useState ( "PE" );
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   function handleDrawerToggle() {
@@ -180,20 +181,10 @@ function ResponsiveDrawer ( props ) {
     }
   }
 
-  const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  function handleProfileMenuOpen(event) {
-    setAnchorEl(event.currentTarget);
-  }
 
   function handleMobileMenuClose() {
     setMobileMoreAnchorEl(null);
-  }
-
-  function handleMenuClose() {
-    setAnchorEl(null);
-    handleMobileMenuClose();
   }
 
   function handleLogout() {
@@ -210,7 +201,6 @@ function ResponsiveDrawer ( props ) {
       });
       console.log(error);
     });
-    handleMenuClose()
     props.history.push("/")
   }
 
@@ -218,7 +208,6 @@ function ResponsiveDrawer ( props ) {
     setMobileMoreAnchorEl(event.currentTarget);
   }
 
-  const menuId = 'primary-search-account-menu';
   const mobileMenuId = 'primary-search-account-menu-mobile';
 
   function handleRefresh ( ) {
@@ -257,47 +246,25 @@ function ResponsiveDrawer ( props ) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      {/*<MenuItem>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="secondary">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton aria-label="show 11 new notifications" color="inherit">
-          <Badge badgeContent={11} color="secondary">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>*/}
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem onClick>
         <IconButton
           aria-label="account of current user"
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
           color="inherit"
         >
-          <AccountCircle />
+          <Badge badgeContent={1} color="secondary">
+            <AccountCircle />
+          </Badge>
         </IconButton>
-        <p>Profile</p>
+        <p>Account</p>
       </MenuItem>
-    </Menu>
-  );
-
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleLogout}>log out</MenuItem>
+      <MenuItem  onClick={handleLogout}>
+        <IconButton color="inherit">
+          <ExitToAppOutlinedIcon/>
+        </IconButton>
+        <p>LogOut</p>
+      </MenuItem>
     </Menu>
   );
 
@@ -362,26 +329,23 @@ function ResponsiveDrawer ( props ) {
             <Divider orientation="vertical" color="secondary"/>
             <div className={classes.grow} />
             <div className={classes.sectionDesktop}>
-              {/*<IconButton aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={4} color="secondary">
-                  <MailIcon />
-                </Badge>
-              </IconButton>
-              <IconButton aria-label="show 17 new notifications" color="inherit">
-                <Badge badgeContent={17} color="secondary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>*/}
-              <IconButton
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <AccountCircle />
-              </IconButton>
+              <Tooltip title="Account">
+                <IconButton onClick={()=>props.history.push ( '/account' )}>
+                  <Badge badgeContent={1} color="secondary">
+                    <AccountCircle />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Pricing">
+                <IconButton>
+                  <AddShoppingCartIcon onClick={()=>props.history.push( '/pricing' )} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="LogOut">
+                <IconButton onClick={handleLogout}>
+                  <ExitToAppOutlinedIcon/>
+                </IconButton>
+              </Tooltip>
             </div>
             <div className={classes.sectionMobile}>
               <IconButton
@@ -397,7 +361,6 @@ function ResponsiveDrawer ( props ) {
           </Toolbar>
         </AppBar>
         {renderMobileMenu}
-        {renderMenu}
       </div>
       <nav className={classes.drawer} aria-label="mailbox folders">
         {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
