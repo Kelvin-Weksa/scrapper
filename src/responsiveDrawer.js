@@ -38,6 +38,7 @@ import Firebase from './firebase'
 import { withRouter } from 'react-router-dom'
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 const drawerWidth = 225;
 
@@ -321,7 +322,7 @@ function ResponsiveDrawer ( props ) {
               className={classes.logo}
               image={props.logo}
               component='img'
-            />{/* eslint-disable-next-line*/}
+            />
             <Divider orientation="vertical" className={classes.light}/>
             <Typography variant="h6" noWrap>
               {props.sitePage}
@@ -329,6 +330,11 @@ function ResponsiveDrawer ( props ) {
             <Divider orientation="vertical" color="secondary"/>
             <div className={classes.grow} />
             <div className={classes.sectionDesktop}>
+              <Tooltip title="Dashboard">
+                <IconButton color="secondary">
+                  <DashboardIcon onClick={()=>props.history.push( '/dashboard' )} />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Account">
                 <IconButton onClick={()=>props.history.push ( '/account' )}>
                   <Badge badgeContent={1} color="secondary">

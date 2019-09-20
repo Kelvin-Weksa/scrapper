@@ -12,6 +12,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import Button from '@material-ui/core/Button';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Badge from '@material-ui/core/Badge';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,6 +43,13 @@ function PaperSheet ( props ) {
         <Tooltip title="Dashboard">
           <IconButton edge="start" aria-label="close">
             <DashboardIcon onClick={()=>props.history.push( '/dashboard' )} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Account">
+          <IconButton onClick={()=>props.history.push ( '/account' )} color="secondary">
+            <Badge badgeContent={1} color="secondary">
+              <AccountCircle />
+            </Badge>
           </IconButton>
         </Tooltip>
         <Tooltip title="Pricing">

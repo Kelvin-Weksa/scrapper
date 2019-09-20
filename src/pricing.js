@@ -32,6 +32,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { withSnackbar , useSnackbar } from 'notistack';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 
 var card_chosen = {};
 
@@ -321,6 +322,11 @@ function PaperSheet ( props ) {
               <Badge badgeContent={1} color="secondary">
                 <AccountCircle />
               </Badge>
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Pricing">
+            <IconButton color="secondary">
+              <AddShoppingCartIcon onClick={()=>props.history.push( '/pricing' )} />
             </IconButton>
           </Tooltip>
           <Tooltip title="LogOut">
