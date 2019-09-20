@@ -3,17 +3,19 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 //import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import { withRouter , } from 'react-router-dom';
 import Tooltip from '@material-ui/core/Tooltip';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
-import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import Button from '@material-ui/core/Button';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Badge from '@material-ui/core/Badge';
+import CardMedia from '@material-ui/core/CardMedia';
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,7 +31,35 @@ const useStyles = makeStyles(theme => ({
     margin: 'auto',
     width: '100%',
     height: '10vh'
-  }
+  },
+  outer:{
+    height:'75vh',
+    overflow:'visible',
+  },
+  inner:{
+    width: '90%',
+    height: '15vh',
+    position: 'relative',
+    top: '-5vh',
+    backgroundColor: theme.palette.primary.main,
+    margin: 'auto',
+  },
+  outer_card: {
+    position : "relative" ,
+    overflow:  "visible" ,
+    textAlign:"center",
+    height:'50vh',
+  },
+  inner_card: {
+    position : "relative" ,
+    borderRadius: "3px",
+    margin:'auto',
+    transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    top: "-19vh",
+    zIndex:`${theme.zIndex.mobileStepper + 1}` ,
+    boxShadow: `0 0 11px ${theme.palette.primary.main}`,
+    transform: `scale(0.7)` ,
+  },
 }));
 
 function PaperSheet ( props ) {
@@ -37,11 +67,10 @@ function PaperSheet ( props ) {
 
   return (
     <div>
-    <AppBar className={classes.appBar}>
       <Toolbar>
         <div className={classes.grow} />
         <Tooltip title="Dashboard">
-          <IconButton edge="start" aria-label="close">
+          <IconButton>
             <DashboardIcon onClick={()=>props.history.push( '/dashboard' )} />
           </IconButton>
         </Tooltip>
@@ -53,7 +82,7 @@ function PaperSheet ( props ) {
           </IconButton>
         </Tooltip>
         <Tooltip title="Pricing">
-          <IconButton edge="start" aria-label="close">
+          <IconButton>
             <AddShoppingCartIcon onClick={()=>props.history.push( '/pricing' )} />
           </IconButton>
         </Tooltip>
@@ -63,22 +92,34 @@ function PaperSheet ( props ) {
           </IconButton>
         </Tooltip>
       </Toolbar>
-    </AppBar>
     <div className={classes.root}>
-      <Toolbar/>
-      <Grid container spacing={3}>
+      <Grid container spacing={3} style={{justifyContent:'flex-end'}}>
         <Grid item xs={8}>
-          <Paper style={{height:'75vh'}}/>
+          <Paper className={classes.outer}>
+            <Paper className={classes.inner}>
+              <Typography style={{position:'relative',padding:'2px',color:'white'}}>
+                
+              </Typography>
+            </Paper>
+          </Paper>
         </Grid>
-        <Grid item xs={4}>
-          <Grid container spacing={2} style={{display:'flex',flexDirection:'column',justifyContent:'space-around',height:'75vh'}}>
+        <Grid item xs={3}>
+          <Grid container spacing={2} style={{display:'flex',flexDirection:'column',justifyContent:'flex-end',height:'75vh'}}>
             <Grid item >
-              <Paper style={{height:'50vh'}}/>
+              <Paper className={classes.outer_card}>
+                <CardMedia
+                  component='img'
+                  alt="KW"
+                  height="300"
+                  image="static/person.png"
+                  className={classes.inner_card}
+                />
+              </Paper>
             </Grid>
             <Grid item >
               <Button variant="contained" color="secondary" className={classes.button} onClick={()=>{props.history.push ( '/pricing' )}}>
-                Pricing
-                <AddShoppingCartIcon className={classes.rightIcon} />
+                Subscription
+                <AccountBalanceIcon className={classes.rightIcon} />
               </Button>
             </Grid>
           </Grid>
