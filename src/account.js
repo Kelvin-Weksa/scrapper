@@ -34,7 +34,8 @@ const useStyles = makeStyles(theme => ({
   button:{
     margin: 'auto',
     width: '100%',
-    height: '10vh'
+    height: '10vh',
+    boxShadow: `0 0 4px`,
   },
   outer:{
     height:'75vh',
@@ -47,6 +48,7 @@ const useStyles = makeStyles(theme => ({
     top: '-5vh',
     backgroundColor: theme.palette.primary.main,
     margin: 'auto',
+    boxShadow: `0 0 4px`,
   },
   outer_card: {
     position : "relative" ,
@@ -81,7 +83,6 @@ function PaperSheet ( props ) {
       root.current.style.top = '0vh';
       root.current.style.opacity = 1;
     }, 10);
-    console.log('fadeInUpSlow');
   }, [root])
 
   return (

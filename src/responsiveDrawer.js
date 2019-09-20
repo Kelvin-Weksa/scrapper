@@ -38,6 +38,7 @@ import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import Paper from '@material-ui/core/Paper';
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
 
 const drawerWidth = 225;
 
@@ -420,18 +421,38 @@ function ResponsiveDrawer ( props ) {
         })}
       >
         <Toolbar style={{height: theme.mixins.toolbar/2}}/>
-        {Listed.length?(<Typography className={classes.margin}>
-          <Typography style={{padding:'12px'}} variant="h5" component="h2" >
-            {props.stale ? props.stale : ''}
-          </Typography>
-          <Card className={classes.info}>
-            <Tooltip title="Refresh" placement="right">
-              <IconButton color="secondary" onClick={handleRefresh} className={classes.rightIcon}>
-                <RestorePageIcon  />
-              </IconButton>
-            </Tooltip>
-          </Card>
-        </Typography>):(null)}
+        <div>
+          {Listed.length?
+            (<Typography className={classes.margin}>
+              <Typography style={{padding:'12px'}} variant="h5" component="h2" >
+                {props.stale ? props.stale : ''}
+              </Typography>
+              <Card className={classes.info}>
+                <Tooltip title="Refresh" placement="right">
+                  <IconButton color="secondary" onClick={handleRefresh} className={classes.rightIcon}>
+                    <RestorePageIcon  />
+                  </IconButton>
+                </Tooltip>
+              </Card>
+            </Typography>):
+            ! props.permissionsLoaded ?
+            (<Typography className={classes.margin}>
+              <Typography style={{padding:'12px'}} variant="h5" component="h2" >
+                ...loading data
+              </Typography>
+              <Card className={classes.info}>
+                <Tooltip title="...loading" placement="right">
+                  <IconButton color="secondary" className={classes.rightIcon}>
+                    <HourglassEmptyIcon  />
+                  </IconButton>
+                </Tooltip>
+              </Card>
+            </Typography>) :
+            (<Paper className={classes.info1}>
+              Choose which companies to follow...
+            </Paper>
+          )}
+        </div>
         <Toolbar style={{height: theme.mixins.toolbar/2}}/>
         {props.content}
         {Listed.length? (
@@ -440,18 +461,8 @@ function ResponsiveDrawer ( props ) {
             paginate={props.paginate}
           />
         ):(
-          ! props.permissionsLoaded ?
-          (
-            <Paper className={classes.info1}>
-              ...loading your data
-            </Paper>
-          ) :(
-            <Paper className={classes.info1}>
-                Choose which companies to follow...
-            </Paper>
-          )
+          null
         )}
-
       </main>
     </div>
   );
