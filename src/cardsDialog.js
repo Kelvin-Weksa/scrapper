@@ -2,7 +2,8 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import LockIcon from '@material-ui/icons/Lock';
 import { makeStyles } from '@material-ui/core/styles';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const useStyles = makeStyles(theme => ({
@@ -51,15 +52,17 @@ function AlertDialog ( props ) {
 
   return (
     <div className={classes.unlock}>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={()=>{props.history.push ( '/pricing' )}}
-        style={{margin:'auto'}}
-      >
-        <LockIcon />
-        Trial Expired
-      </Button>
+      <Tooltip title="follow companies">
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={()=>{props.history.push ( '/pricing' )}}
+          style={{margin:'auto'}}
+        >
+          <LockIcon />
+          Subscribe
+        </Button>
+      </Tooltip>
     </div>
   )
 }
