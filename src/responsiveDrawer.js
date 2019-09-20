@@ -26,8 +26,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
 import Card from '@material-ui/core/Card';
 import Badge from '@material-ui/core/Badge';
-//import MailIcon from '@material-ui/icons/Mail';
-//import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -39,6 +37,7 @@ import { withRouter } from 'react-router-dom'
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import Paper from '@material-ui/core/Paper';
 
 const drawerWidth = 225;
 
@@ -142,6 +141,15 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     [theme.breakpoints.up('md')]: {
       display: 'none',
+    },
+  },
+  info1:{
+    position:'relative',
+    margin:'auto',
+    width:'80%',
+    textAlign:"center",
+    "&:hover": {
+      boxShadow: `0 0 11px ${theme.palette.primary.main}`
     },
   },
 }));
@@ -297,7 +305,14 @@ function ResponsiveDrawer ( props ) {
             </ListItem>
           ))
         ):(
-          <Subscription style={{position:'relative',margin:'auto'}}/>
+          ! props.permissionsLoaded ?
+          (
+            <Paper className={classes.info1}>
+              "...loading your data"
+            </Paper>
+          ) :(
+              <Subscription className={classes.info1}/>
+          )
         )}
       </List>
     </div>
@@ -419,10 +434,24 @@ function ResponsiveDrawer ( props ) {
         </Typography>):(null)}
         <Toolbar style={{height: theme.mixins.toolbar/2}}/>
         {props.content}
-        <Scroller
-          page={props.page}
-          paginate={props.paginate}
-        />
+        {Listed.length? (
+          <Scroller
+            page={props.page}
+            paginate={props.paginate}
+          />
+        ):(
+          ! props.permissionsLoaded ?
+          (
+            <Paper className={classes.info1}>
+              ...loading your data
+            </Paper>
+          ) :(
+            <Paper className={classes.info1}>
+                Choose which companies to follow...
+            </Paper>
+          )
+        )}
+
       </main>
     </div>
   );

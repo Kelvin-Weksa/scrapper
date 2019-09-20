@@ -20,6 +20,10 @@ import Typography from '@material-ui/core/Typography';
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    opacity: 0,
+    position: 'relative',
+    top: '-7vh'
   },
   grow: {
     flexGrow: 1,
@@ -54,16 +58,31 @@ const useStyles = makeStyles(theme => ({
     position : "relative" ,
     borderRadius: "3px",
     margin:'auto',
-    transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
     top: "-19vh",
     zIndex:`${theme.zIndex.mobileStepper + 1}` ,
     boxShadow: `0 0 11px ${theme.palette.primary.main}`,
     transform: `scale(0.7)` ,
   },
+  typography:{
+    color:'white',
+    alignItems:'center',
+    padding:'8px',
+    ...theme.typography.h6,
+    fontWeight:300,
+    textAlign:'center',
+  },
 }));
 
 function PaperSheet ( props ) {
   const classes = useStyles();
+  let root = React.createRef();
+  React.useEffect ( ( ) => {
+    setTimeout( ()=> {
+      root.current.style.top = '0vh';
+      root.current.style.opacity = 1;
+    }, 10);
+    console.log('fadeInUpSlow');
+  }, [root])
 
   return (
     <div>
@@ -92,13 +111,13 @@ function PaperSheet ( props ) {
           </IconButton>
         </Tooltip>
       </Toolbar>
-    <div className={classes.root}>
+    <div className={classes.root} ref={root}>
       <Grid container spacing={3} style={{justifyContent:'flex-end'}}>
         <Grid item xs={8}>
           <Paper className={classes.outer}>
             <Paper className={classes.inner}>
-              <Typography style={{position:'relative',padding:'2px',color:'white'}}>
-                
+              <Typography className={classes.typography}>
+                Edit Profile
               </Typography>
             </Paper>
           </Paper>

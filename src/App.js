@@ -30,6 +30,7 @@ class App extends Component {
     stale : '' ,
     page : 0 ,
     permitted: [ ],
+    permissionsLoaded: false,
   };
 
   componentDidMount = ( )=> {
@@ -42,7 +43,7 @@ class App extends Component {
           snapshot.forEach ( function ( childSnapshot) {
             incoming.push ( childSnapshot.val ( ) );
           });
-          this.setState ( {...this.state , permitted: incoming} );
+          this.setState ( {...this.state , permitted: incoming , permissionsLoaded: true} );
           let Listed = Listing.filter ( companyList => incoming
             .some ( permission => companyList.includes( permission ) ) )
           let Land = Listed[ 0 ];
@@ -150,6 +151,7 @@ class App extends Component {
           stale={this.state.stale}
           page={this.state.page}
           permitted={this.state.permitted}
+          permissionsLoaded={this.state.permissionsLoaded}
           fetcher={this.fetcher}
           paginate={this.paginate}
           content={<NestedGrid elements={ this.state.characters } loaded={this.state.loaded}/>}
