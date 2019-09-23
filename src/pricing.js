@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles ,useTheme } from '@material-ui/core/styles';
+import { makeStyles , } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
@@ -33,8 +33,54 @@ import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { withSnackbar , useSnackbar } from 'notistack';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+//import CardMedia from '@material-ui/core/CardMedia';
 
-var card_chosen = {};
+function debounce( func, wait, immediate) {
+  // 'private' variable for instance
+  // The returned function will be able to reference this due to closure.
+  // Each call to the returned function will share this common timer.
+  var timeout;
+
+  // Calling debounce returns a new anonymous function
+  return function() {
+    // reference the context and args for the setTimeout function
+    var context = this,
+      args = arguments;
+
+    // Should the function be called now? If immediate is true
+    //   and not already in a timeout then the answer is: Yes
+    var callNow = immediate && !timeout;
+
+    // This is the basic debounce behaviour where you can call this
+    //   function several times, but it will only execute once
+    //   [before or after imposing a delay].
+    //   Each time the returned function is called, the timer starts over.
+    clearTimeout(timeout);
+
+    // Set the new timeout
+    timeout = setTimeout(function() {
+
+      // Inside the timeout function, clear the timeout variable
+      // which will let the next execution run when in 'immediate' mode
+      timeout = null;
+
+      // Check if the function already ran with the immediate flag
+      if (!immediate) {
+        // Call the original function with apply
+        // apply lets you define the 'this' object as well as the arguments
+        //    (both captured before setTimeout)
+        func.apply(context, args);
+      }
+    }, wait);
+
+    // Immediate mode and no wait timer? Execute the function..
+    if (callNow) func.apply(context, args);
+  }
+}
+
+var card_chosen = {
+  num: 0,
+};
 
 function getSteps ( ){
   return ['Select Companies', 'Check Out'];
@@ -66,14 +112,24 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
   prices:{
+    justifyContent:'flex-end',
+    alignItems:'center',
+    height:'100vh'
+  },
+  transitionGroup:{
     transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
     opacity: 0,
     position: 'relative',
     top: '-7vh',
-    justifyContent:'space-evenly',
-    alignItems:'center',
-    height:'100vh'
-  }
+  },
+  loading:{
+    cursor: 'wait !important'
+  },
+  media: {
+    height: 30,
+    width: 80,
+    transform:'scale(0.6,0.8)'
+  },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -81,7 +137,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function ListCompanies ( props ){
-
+  //const classes = useStyles();
+  const { enqueueSnackbar , } = useSnackbar();
   var st = {}
   Listing.forEach ( ( list ) => {
     st[ list[ 2 ].replace ( /\s/g, '_') ] =
@@ -92,11 +149,12 @@ function ListCompanies ( props ){
   React.useEffect ( ( ) => {
     if ( ( ( card_chosen.num - props.selected.length )  === 0 ) || card_chosen.num === 9999 ){
       props.continue ( true )
-    }else {
+    }else if ( props.selected.length >= 10 ){
+      props.continue ( true )
+    }else{
       props.continue ( false )
     }
     return () => {
-
     };
   });
 
@@ -110,13 +168,24 @@ function ListCompanies ( props ){
         props.selected.splice ( index , 1 );
       }
     }
+    enqueueSnackbar (
+      helperText() , {
+        variant : "info"  ,
+        autoHideDuration: 2000,
+        anchorOrigin:{
+              vertical: 'top',
+              horizontal: 'right',
+          }
+      }
+    );
   };
 
   const helperText = ( ) => {
     if ( card_chosen.num - props.selected.length > 0 ){
-      return `Select ${card_chosen.num - props.selected.length} More  Companies...`
+      let more = card_chosen.num - props.selected.length;
+      return `${props.selected.length < 10? `(${props.selected.length})  Select a minimum of 10 Companies!` : `(${more}) Companies remaining...`}`
     }else if ( card_chosen.num - props.selected.length === 0 ) {
-      return `You are Done`
+      return `You have reached limit`
     }else if ( card_chosen.num - props.selected.length < 0 ) {
       return `In Excess , please Remove ${props.selected.length - card_chosen.num} Companies...`
     }
@@ -199,11 +268,26 @@ function VerticalLinearStepper ( props ){
     setActiveStep(prevActiveStep => prevActiveStep + 1);
     if ( finish ){
       alert("checking out")
+      Firebase.database().ref ( "Plans/" + Firebase.auth().currentUser.uid.toString ( ) )
+        .set ( card_chosen ,  ( error )=> {
+          if ( error ) {
+            console.log ( error )
+            alert ( 'failed to update plan to FireBase!' );
+          } else { // eslint-disable-next-line
+            console.log ( 'FireBase updated' + "__" + Firebase.auth().currentUser.displayName )
+            enqueueSnackbar (
+              "plan updated" , {
+                variant : "success"  ,
+                autoHideDuration: 3500,
+              }
+            );
+          }
+      } );
       Firebase.database().ref ( "Users/" + Firebase.auth().currentUser.uid.toString ( ) )
         .set ( props.selected.map ( item => item.replace ( /_/g, ' ') ) ,  ( error )=> {
           if ( error ) {
             console.log ( error )
-            alert ( 'failed to update FireBase!' );
+            alert ( 'failed to update companies to FireBase!' );
           } else { // eslint-disable-next-line
             console.log ( 'FireBase updated' + "__" + Firebase.auth().currentUser.displayName )
             enqueueSnackbar (
@@ -212,8 +296,9 @@ function VerticalLinearStepper ( props ){
                 autoHideDuration: 3500,
               }
             );
+            props.history.push ( '/dashboard' );
           }
-        } );
+      } );
     }
   }
 
@@ -272,48 +357,16 @@ function VerticalLinearStepper ( props ){
 
 function PaperSheet ( props ) {
   const classes = useStyles();
-  const theme = useTheme ( );
+  //const theme = useTheme ( );
   let button1 =  React.createRef ( );
   let button2 =  React.createRef ( );
   let button3 =  React.createRef ( );
   let button4 =  React.createRef ( );
   let selected = React.useRef ( [ ] );
-
-  let root = React.createRef();
-
-  React.useEffect ( ()=>{
-    setTimeout( ()=> {
-      root.current.style.top = '0vh';
-      root.current.style.opacity = 1;
-    }, 10);
-    let user = Firebase.auth().currentUser;
-    if ( user ){
-      Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
-        .once ( 'value' , snapshot=>{
-          let incoming = [ ];
-          snapshot.forEach ( function ( childSnapshot) {
-            incoming.push ( childSnapshot.val ( ).replace ( /\s/g, '_') );
-            let set = new Set ( incoming );
-            selected.current = Array.from ( set );
-          });
-          console.log ( "User__permissions_++_" + snapshot.exists() + '__' + incoming.length )
-      })
-    }
-
-  })
-
-  function choose ( num , ref ){
-    button1.current.style.border= `none`;
-    button2.current.style.border= `none`
-    button3.current.style.border= `none`
-    button4.current.style.border= `none`
-    card_chosen['num'] = num;
-    console.log(card_chosen);
-    ref.current.style.border= `thin solid ${theme.palette.secondary.main}`
-    handleClickOpen ( );
-  }
-
+  let root = React.createRef ( );
   const [open, setOpen] = React.useState(false);
+  let done = false
+  const { enqueueSnackbar , closeSnackbar } = useSnackbar();
 
   function handleClickOpen() {
     setOpen(true);
@@ -321,6 +374,79 @@ function PaperSheet ( props ) {
 
   function handleClose() {
     setOpen(false);
+  }
+
+  React.useEffect ( ()=>{
+    (async ()=> {
+      let user = Firebase.auth().currentUser;
+      if ( user ){
+        let key =
+        enqueueSnackbar (
+          "loading..." , {
+            variant : "warning"  ,
+            persist: true,
+          }
+        );
+        document.body.style.cursor = "wait";
+        await Promise.all( [
+          Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
+            .once ( 'value').then ( snapshot=>{
+              let incoming = [ ];
+              snapshot.forEach ( function ( childSnapshot) {
+                incoming.push ( childSnapshot.val ( ).replace ( /\s/g, '_') );
+                let set = new Set ( incoming );
+                selected.current = Array.from ( set );
+              });
+              console.log ( "User__permissions_++_" + snapshot.exists() + '__' + incoming.length );
+          } ).catch ( console.log )
+          ,
+          Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
+            .once ( 'value').then ( snapshot=>{
+              let incoming = [];
+              snapshot.forEach ( function ( childSnapshot) {
+                incoming.push ( childSnapshot.val ( ) );
+              });
+              if ( incoming.length === 1 ){
+                switch ( incoming[ 0 ] ){
+                  case ( 10 ) : decorate ( 10 , button1 , '448aff' ); break;
+                  case ( 50 ) : decorate ( 50 , button2 , '6a1b9a' ); break;
+                  case ( 80 ) : decorate ( 80 , button3 , 'e040fb' ); break;
+                  case ( 9999 ) : decorate ( 9999 , button4 , '00c853' ); break;
+                  default:
+                }
+              }
+              console.log ( "User__plans_++_" + snapshot.exists() + '_-_' + incoming[0] );
+          } ).catch ( console.log )
+        ] )
+        setTimeout( ()=> {
+          root.current.style.top = '0vh';
+          root.current.style.opacity = 1;
+          closeSnackbar ( key.current );
+          document.body.style.cursor = "default";
+          // eslint-disable-next-line
+          done=true;//rest of the page works from here!
+        }, 10);
+      }
+    })();
+  })
+
+  function decorate ( num , ref , color){
+    button1.current.style.border= `none`
+    button2.current.style.border= `none`
+    button3.current.style.border= `none`
+    button4.current.style.border= `none`
+    console.log(card_chosen);
+    ref.current.style.border= `4px solid ${'#' + color}`
+  }
+
+  function choose ( num , ref, color ){
+    if ( done ){
+      card_chosen.num = num;
+      decorate ( num , ref, color);
+      handleClickOpen ( );
+    }else {
+      console.log ( 'averted' );
+    }
   }
 
   return (
@@ -351,45 +477,54 @@ function PaperSheet ( props ) {
         </Tooltip>
       </Toolbar>
       <div className={classes.root}>
-        <Grid container spacing={3} ref={root} className={classes.prices}>
-          <div className={classes.grow} />
-          <SimpleCard
-            onClick={()=>choose(10,button1)}
-            ref={button1}
-            icon={<PersonIcon/>}
-            type={'10 Companies'}
-            value={5}
-            user={'Max 1 User'}
-            shade={'#448aff'}
-          />
-          <SimpleCard
-            onClick={()=>choose(50,button2)}
-            ref={button2}
-            icon={<PeopleIcon/>}
-            type={'50 Companies'}
-            value={50}
-            user={'Max 5 Users'}
-            shade={'#6a1b9a'}
-          />
-          <SimpleCard
-            onClick={()=>choose(80,button3)}
-            ref={button3}
-            icon={<EmojiPeopleIcon/>}
-            type={'80 Companies'}
-            value={150}
-            user={'Max 15 Users'}
-            shade={'#e040fb'}
-          />
-          <SimpleCard
-            onClick={()=>choose(9999,button4)}
-            ref={button4}
-            icon={<BusinessCenterIcon color='white'/>}
-            type={'Enterprise Package'}
-            value={500}
-            user={'Max 1 Company'}
-            shade={'#00c853'}
-          />
-        </Grid>
+        <div className={classes.transitionGroup} ref={root}>
+          <Typography variant="h2" component="p" color="textSecondary" style={{textAlign:'center'}}>
+            Choose a plan that is best for you
+          </Typography>
+          <Grid container spacing={5} className={classes.prices}>
+            <SimpleCard
+              onClick={debounce(()=>choose(10,button1,'448aff'),300)}
+              ref={button1}
+              icon={<PersonIcon/>}
+              type={'10 Companies'}
+              value={5}
+              user={'Max 1 User'}
+              shade={'#448aff'}
+              title={card_chosen.num === 10? 'Your current Plan' : ''}
+            />
+            <SimpleCard
+              onClick={debounce(()=>choose(50,button2,'6a1b9a'),300)}
+              ref={button2}
+              icon={<PeopleIcon/>}
+              type={'50 Companies'}
+              value={50}
+              user={'Max 5 Users'}
+              shade={'#6a1b9a'}
+              tooltipOpen={false}
+              title={card_chosen.num === 50? 'Your current Plan' : ''}
+            />
+            <SimpleCard
+              onClick={debounce(()=>choose(80,button3,'e040fb'),300)}
+              ref={button3}
+              icon={<EmojiPeopleIcon/>}
+              type={'80 Companies'}
+              value={150}
+              user={'Max 15 Users'}
+              shade={'#e040fb'}
+              title={card_chosen.num === 80? 'Your current Plan' : ''}
+            />
+            <SimpleCard
+              onClick={debounce(()=>choose(9999,button4,'00c853'),300)}
+              ref={button4}
+              icon={<BusinessCenterIcon color='white'/>}
+              type={'Enterprise Package'}
+              value={500}
+              user={'Max 1 Company'}
+              shade={'#00c853'}
+              title={card_chosen.num === 9999? 'Your current Plan' : ''}
+            />
+          </Grid>
+        </div>
         <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition} >
           <AppBar className={classes.appBar}>
             <Toolbar>
@@ -399,11 +534,11 @@ function PaperSheet ( props ) {
             </Toolbar>
           </AppBar>
           <Toolbar/>
-          <VerticalLinearStepper selected={selected.current}/>
+          <VerticalLinearStepper {...props} selected={selected.current}/>
         </Dialog>
       </div>
     </div>
   );
 }
-let App = withSnackbar ( PaperSheet )
-export default withRouter ( App )
+
+export default withRouter ( withSnackbar ( PaperSheet ) )
