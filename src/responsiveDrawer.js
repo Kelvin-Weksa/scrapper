@@ -147,7 +147,7 @@ const useStyles = makeStyles(theme => ({
   info1:{
     position:'relative',
     margin:'auto',
-    width:'80%',
+    width:'60%',
     textAlign:"center",
     "&:hover": {
       boxShadow: `0 0 11px ${theme.palette.primary.main}`
@@ -312,7 +312,7 @@ function ResponsiveDrawer ( props ) {
               "...loading your data"
             </Paper>
           ) :(
-              <Subscription className={classes.info1}/>
+              null
           )
         )}
       </List>
@@ -450,6 +450,7 @@ function ResponsiveDrawer ( props ) {
             </Typography>) :
             (<Paper className={classes.info1}>
               Choose which companies to follow...
+              <Subscription className={classes.info1}/>
             </Paper>
           )}
         </div>

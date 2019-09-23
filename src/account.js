@@ -121,6 +121,14 @@ function PaperSheet ( props ) {
                 Edit Profile
               </Typography>
             </Paper>
+            <Grid container spacing={3}>
+              <Grid item xs={6}>
+
+              </Grid>
+              <Grid item xs={6}>
+                
+              </Grid>
+            </Grid>
           </Paper>
         </Grid>
         <Grid item xs={3}>

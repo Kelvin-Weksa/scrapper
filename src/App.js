@@ -46,8 +46,10 @@ class App extends Component {
           this.setState ( {...this.state , permitted: incoming , permissionsLoaded: true} );
           let Listed = Listing.filter ( companyList => incoming
             .some ( permission => companyList.includes( permission ) ) )
-          let Land = Listed[ 0 ];
-          this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
+          if ( Listed.length ){
+            let Land = Listed[ 0 ];
+            this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
+          }
         } )
     }
 
