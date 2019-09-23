@@ -31,6 +31,8 @@ class App extends Component {
     page : 0 ,
     permitted: [ ],
     permissionsLoaded: false,
+    error: null,
+    errorInfo: null
   };
 
   componentDidMount = ( )=> {
@@ -143,24 +145,47 @@ class App extends Component {
     }
   }
 
-  render ( ) {
-    return (
-      <div style={{backgroundColor:"#D3D3D3"}}>
-        <Drawer
-          sitePage={this.state.sitePage}
-          refresh={this.state.refresh}
-          logo={this.state.logo}
-          stale={this.state.stale}
-          page={this.state.page}
-          permitted={this.state.permitted}
-          permissionsLoaded={this.state.permissionsLoaded}
-          fetcher={this.fetcher}
-          paginate={this.paginate}
-          content={<NestedGrid elements={ this.state.characters } loaded={this.state.loaded}/>}
-        />
+  componentDidCatch = ( error , errorInfo )=> {
+    // Catch errors in any components below and re-render with error message
+    this.setState({
+      error: error,
+      errorInfo: errorInfo
+    })
+    // You can also log error messages to an error reporting service here
+  }
 
-      </div>
-    );
+  render ( ) {
+    if (this.state.errorInfo) {
+      // Error path
+      return (
+        <div>
+          <h2>Something went wrong.</h2>
+          <details style={{ whiteSpace: 'pre-wrap' }}>
+            {this.state.error && this.state.error.toString()}
+            <br />
+            {this.state.errorInfo.componentStack}
+          </details>
+        </div>
+      );
+    }else{
+      return (
+        <div style={{backgroundColor:"#D3D3D3"}}>
+          <Drawer
+            sitePage={this.state.sitePage}
+            refresh={this.state.refresh}
+            logo={this.state.logo}
+            stale={this.state.stale}
+            page={this.state.page}
+            permitted={this.state.permitted}
+            permissionsLoaded={this.state.permissionsLoaded}
+            fetcher={this.fetcher}
+            paginate={this.paginate}
+            content={<NestedGrid elements={ this.state.characters } loaded={this.state.loaded}/>}
+          />
+
+        </div>
+      );
+    }
  }
 }
 

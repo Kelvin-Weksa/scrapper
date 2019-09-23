@@ -379,53 +379,57 @@ function PaperSheet ( props ) {
   React.useEffect ( ()=>{
     (async ()=> {
       let user = Firebase.auth().currentUser;
-      if ( user ){
-        let key =
-        enqueueSnackbar (
-          "loading..." , {
-            variant : "warning"  ,
-            persist: true,
-          }
-        );
-        document.body.style.cursor = "wait";
-        await Promise.all( [
-          Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
-            .once ( 'value').then ( snapshot=>{
-              let incoming = [ ];
-              snapshot.forEach ( function ( childSnapshot) {
-                incoming.push ( childSnapshot.val ( ).replace ( /\s/g, '_') );
-                let set = new Set ( incoming );
-                selected.current = Array.from ( set );
-              });
-              console.log ( "User__permissions_++_" + snapshot.exists() + '__' + incoming.length );
-          } ).catch ( console.log )
-          ,
-          Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
-            .once ( 'value').then ( snapshot=>{
-              let incoming = [];
-              snapshot.forEach ( function ( childSnapshot) {
-                incoming.push ( childSnapshot.val ( ) );
-              });
-              if ( incoming.length === 1 ){
-                switch ( incoming[ 0 ] ){
-                  case ( 10 ) : decorate ( 10 , button1 , '448aff' ); break;
-                  case ( 50 ) : decorate ( 50 , button2 , '6a1b9a' ); break;
-                  case ( 80 ) : decorate ( 80 , button3 , 'e040fb' ); break;
-                  case ( 9999 ) : decorate ( 9999 , button4 , '00c853' ); break;
-                  default:
+      try {
+        if ( user ){
+          let key =
+          enqueueSnackbar (
+            "loading..." , {
+              variant : "warning"  ,
+              persist: true,
+            }
+          );
+          document.body.style.cursor = "wait";
+          await Promise.all( [
+            Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
+              .once ( 'value').then ( snapshot=>{
+                let incoming = [ ];
+                snapshot.forEach ( function ( childSnapshot) {
+                  incoming.push ( childSnapshot.val ( ).replace ( /\s/g, '_') );
+                  let set = new Set ( incoming );
+                  selected.current = Array.from ( set );
+                });
+                console.log ( "User__permissions_++_" + snapshot.exists() + '__' + incoming.length );
+            } ).catch ( console.log )
+            ,
+            Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
+              .once ( 'value').then ( snapshot=>{
+                let incoming = [];
+                snapshot.forEach ( function ( childSnapshot) {
+                  incoming.push ( childSnapshot.val ( ) );
+                });
+                if ( incoming.length === 1 ){
+                  switch ( incoming[ 0 ] ){
+                    case ( 10 ) : decorate ( 10 , button1 , '448aff' ); break;
+                    case ( 50 ) : decorate ( 50 , button2 , '6a1b9a' ); break;
+                    case ( 80 ) : decorate ( 80 , button3 , 'e040fb' ); break;
+                    case ( 9999 ) : decorate ( 9999 , button4 , '00c853' ); break;
+                    default:
+                  }
                 }
-              }
-              console.log ( "User__plans_++_" + snapshot.exists() + '_-_' + incoming[0] );
-          } ).catch ( console.log )
-        ] )
-        setTimeout( ()=> {
-          root.current.style.top = '0vh';
-          root.current.style.opacity = 1;
-          closeSnackbar ( key.current );
-          document.body.style.cursor = "default";
-          // eslint-disable-next-line
-          done=true;//rest of the page works from here!
-        }, 10);
+                console.log ( "User__plans_++_" + snapshot.exists() + '_-_' + incoming[0] );
+            } ).catch ( console.log )
+          ] )
+          setTimeout( ()=> {
+            root.current.style.top = '0vh';
+            root.current.style.opacity = 1;
+            closeSnackbar ( key );
+            document.body.style.cursor = "default";
+            // eslint-disable-next-line
+            done=true;//rest of the page works from here!
+          }, 10);
+        }
+      } catch (e) {
+        console.log(e);
       }
     })();
   })
