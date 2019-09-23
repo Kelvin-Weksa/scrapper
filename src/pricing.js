@@ -44,9 +44,13 @@ const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),
     width: '90%',
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    opacity: 0,
+    position: 'relative',
+    top: '-7vh'
   },
   paper:{
-    background : `linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) )` ,
+    //background : `linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) )` ,
     backgroundSize: 'cover',
   },
   grow: {
@@ -270,6 +274,8 @@ function PaperSheet ( props ) {
   let button4 =  React.createRef ( );
   let selected = React.useRef ( [ ] );
 
+  let root = React.createRef();
+
   React.useEffect ( ()=>{
     let user = Firebase.auth().currentUser;
     if ( user ){
@@ -284,7 +290,11 @@ function PaperSheet ( props ) {
           console.log ( "User__permissions_++_" + snapshot.exists() + '__' + incoming.length )
       })
     }
-  }, [selected])
+    setTimeout( ()=> {
+      root.current.style.top = '0vh';
+      root.current.style.opacity = 1;
+    }, 10);
+  }, [selected,root])
 
   function choose ( num , ref ){
     button1.current.style.border= `none`;
@@ -309,35 +319,32 @@ function PaperSheet ( props ) {
 
   return (
     <div className={classes.paper}>
-      <AppBar className={classes.appBar}>
-        <Toolbar>
-          <div className={classes.grow} />
-          <Tooltip title="Dashboard">
-            <IconButton edge="start" aria-label="close">
-              <DashboardIcon onClick={()=>props.history.push( '/dashboard' )} />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Account">
-            <IconButton onClick={()=>props.history.push ( '/account' )}>
-              <Badge badgeContent={1} color="secondary">
-                <AccountCircle />
-              </Badge>
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Pricing">
-            <IconButton color="secondary">
-              <AddShoppingCartIcon onClick={()=>props.history.push( '/pricing' )} />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="LogOut">
+      <Toolbar>
+        <div className={classes.grow} />
+        <Tooltip title="Dashboard">
+          <IconButton edge="start" aria-label="close">
+            <DashboardIcon onClick={()=>props.history.push( '/dashboard' )} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Account">
+          <IconButton onClick={()=>props.history.push ( '/account' )}>
+            <Badge badgeContent={1} color="secondary">
+              <AccountCircle />
+            </Badge>
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Pricing">
+          <IconButton color="secondary">
+            <AddShoppingCartIcon onClick={()=>props.history.push( '/pricing' )} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="LogOut">
             <IconButton onClick={()=>props.history.push( '/' )}>
               <ExitToAppOutlinedIcon/>
             </IconButton>
-          </Tooltip>
-        </Toolbar>
-      </AppBar>
-      <div className={classes.root}>
-        <Toolbar/>
+        </Tooltip>
+      </Toolbar>
+      <div className={classes.root} ref={root}>
         <Grid container spacing={3} style={{justifyContent:'space-evenly',alignItems:'center',height:'100vh'}}>
           <SimpleCard
             onClick={()=>choose(10,button1)}

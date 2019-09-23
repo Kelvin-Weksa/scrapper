@@ -97,7 +97,7 @@ function PaperSheet ( props ) {
   const classes = useStyles();
   let root = React.createRef();
   let card = React.createRef ( );
-  //let card2 = React.createRef ( );
+  
   React.useEffect ( ( ) => {
     setTimeout( ()=> {
       root.current.style.top = '0vh';
@@ -107,12 +107,10 @@ function PaperSheet ( props ) {
 
   function handleFocus (){
     setTimeout( card.current.style.boxShadow = '0 0 11px' , 0 );
-    //setTimeout( card2.current.style.boxShadow = '0 0 11px' , 0 );
   }
 
   function handleBlur (){
     setTimeout( card.current.style.boxShadow = 'none' , 0 );
-    //setTimeout( card2.current.style.boxShadow = 'none' , 0 );
   }
 
   return (
