@@ -44,10 +44,6 @@ const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),
     width: '90%',
-    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
-    opacity: 0,
-    position: 'relative',
-    top: '-7vh'
   },
   paper:{
     //background : `linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) )` ,
@@ -69,6 +65,15 @@ const useStyles = makeStyles(theme => ({
   resetContainer: {
     padding: theme.spacing(3),
   },
+  prices:{
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    opacity: 0,
+    position: 'relative',
+    top: '-7vh',
+    justifyContent:'space-evenly',
+    alignItems:'center',
+    height:'100vh'
+  }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -277,6 +282,10 @@ function PaperSheet ( props ) {
   let root = React.createRef();
 
   React.useEffect ( ()=>{
+    setTimeout( ()=> {
+      root.current.style.top = '0vh';
+      root.current.style.opacity = 1;
+    }, 10);
     let user = Firebase.auth().currentUser;
     if ( user ){
       Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
@@ -290,11 +299,8 @@ function PaperSheet ( props ) {
           console.log ( "User__permissions_++_" + snapshot.exists() + '__' + incoming.length )
       })
     }
-    setTimeout( ()=> {
-      root.current.style.top = '0vh';
-      root.current.style.opacity = 1;
-    }, 10);
-  }, [selected,root])
+
+  })
 
   function choose ( num , ref ){
     button1.current.style.border= `none`;
@@ -344,8 +350,8 @@ function PaperSheet ( props ) {
             </IconButton>
         </Tooltip>
       </Toolbar>
-      <div className={classes.root} ref={root}>
-        <Grid container spacing={3} style={{justifyContent:'space-evenly',alignItems:'center',height:'100vh'}}>
+      <div className={classes.root}>
+        <Grid container spacing={3} ref={root} className={classes.prices}>
           <SimpleCard
             onClick={()=>choose(10,button1)}
             ref={button1}
