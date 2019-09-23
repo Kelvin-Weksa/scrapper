@@ -487,7 +487,7 @@ function PaperSheet ( props ) {
           </Typography>
           <Grid container spacing={5} className={classes.prices}>
             <SimpleCard
-              onClick={debounce(()=>choose(10,button1,'448aff'),300)}
+              onClick={debounce(()=>choose(10,button1,'448aff'),1000)}
               ref={button1}
               icon={<PersonIcon/>}
               type={'10 Companies'}
@@ -497,7 +497,7 @@ function PaperSheet ( props ) {
               title={card_chosen.num === 10? 'Your current Plan' : ''}
             />
             <SimpleCard
-              onClick={debounce(()=>choose(50,button2,'6a1b9a'),300)}
+              onClick={debounce(()=>choose(50,button2,'6a1b9a'),1000)}
               ref={button2}
               icon={<PeopleIcon/>}
               type={'50 Companies'}
@@ -508,7 +508,7 @@ function PaperSheet ( props ) {
               title={card_chosen.num === 50? 'Your current Plan' : ''}
             />
             <SimpleCard
-              onClick={debounce(()=>choose(80,button3,'e040fb'),300)}
+              onClick={debounce(()=>choose(80,button3,'e040fb'),1000)}
               ref={button3}
               icon={<EmojiPeopleIcon/>}
               type={'80 Companies'}
@@ -518,7 +518,7 @@ function PaperSheet ( props ) {
               title={card_chosen.num === 80? 'Your current Plan' : ''}
             />
             <SimpleCard
-              onClick={debounce(()=>choose(9999,button4,'00c853'),300)}
+              onClick={debounce(()=>choose(9999,button4,'00c853'),1000)}
               ref={button4}
               icon={<BusinessCenterIcon color='white'/>}
               type={'Enterprise Package'}
