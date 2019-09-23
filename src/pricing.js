@@ -352,6 +352,7 @@ function PaperSheet ( props ) {
       </Toolbar>
       <div className={classes.root}>
         <Grid container spacing={3} ref={root} className={classes.prices}>
+          <div className={classes.grow} />
           <SimpleCard
             onClick={()=>choose(10,button1)}
             ref={button1}
