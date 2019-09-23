@@ -471,7 +471,7 @@ function PaperSheet ( props ) {
         </Tooltip>
         <Tooltip title="Pricing">
           <IconButton color="secondary">
-            <AddShoppingCartIcon onClick={()=>props.history.push( '/pricing' )} />
+            <AddShoppingCartIcon onClick={debounce(()=>props.history.push( '/pricing' ),1000)} />
           </IconButton>
         </Tooltip>
         <Tooltip title="LogOut">
