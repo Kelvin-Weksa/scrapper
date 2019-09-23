@@ -16,6 +16,18 @@ import Badge from '@material-ui/core/Badge';
 import CardMedia from '@material-ui/core/CardMedia';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import Typography from '@material-ui/core/Typography';
+import Input from './textInput';
+import SaveIcon from '@material-ui/icons/Save';
+
+function validateEmail(email) {// eslint-disable-next-line
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
+
+function validateName(name) {// eslint-disable-next-line
+  var re = /[^\w\s]/g;
+  return ! re.test(name);
+}
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,6 +46,12 @@ const useStyles = makeStyles(theme => ({
   button:{
     margin: 'auto',
     width: '100%',
+    height: '10vh',
+    boxShadow: `0 0 4px`,
+  },
+  buttonFire:{
+    margin: 'auto',
+    width: '35%',
     height: '10vh',
     boxShadow: `0 0 4px`,
   },
@@ -78,12 +96,24 @@ const useStyles = makeStyles(theme => ({
 function PaperSheet ( props ) {
   const classes = useStyles();
   let root = React.createRef();
+  let card = React.createRef ( );
+  //let card2 = React.createRef ( );
   React.useEffect ( ( ) => {
     setTimeout( ()=> {
       root.current.style.top = '0vh';
       root.current.style.opacity = 1;
     }, 10);
   }, [root])
+
+  function handleFocus (){
+    setTimeout( card.current.style.boxShadow = '0 0 11px' , 0 );
+    //setTimeout( card2.current.style.boxShadow = '0 0 11px' , 0 );
+  }
+
+  function handleBlur (){
+    setTimeout( card.current.style.boxShadow = 'none' , 0 );
+    //setTimeout( card2.current.style.boxShadow = 'none' , 0 );
+  }
 
   return (
     <div>
@@ -115,19 +145,57 @@ function PaperSheet ( props ) {
     <div className={classes.root} ref={root}>
       <Grid container spacing={3} style={{justifyContent:'flex-end'}}>
         <Grid item xs={8}>
-          <Paper className={classes.outer}>
+          <Paper className={classes.outer} ref={card}>
             <Paper className={classes.inner}>
               <Typography className={classes.typography}>
                 Edit Profile
               </Typography>
             </Paper>
             <Grid container spacing={3}>
-              <Grid item xs={6}>
-
+              <Grid item xs={6} style={{display:'flex',alignItems:'flex-end', flexDirection:'column'}}>
+                <Input
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  label="first name"
+                  validate={validateName}
+                />
+                <Input
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  label="email adress"
+                  validate={validateEmail}
+                />
+                <Input
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  label="company"
+                  validate={validateName}
+                />
               </Grid>
-              <Grid item xs={6}>
-                
+              <Grid item xs={6} style={{display:'flex',alignItems:'flex-start', flexDirection:'column'}}>
+                <Input
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  label="last name"
+                  validate={validateName}
+                />
+                <Input
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  label="phoneNumber"
+                  validate={ letter => !isNaN ( letter ) }
+                />
+                <Input
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  label="job title"
+                  validate={validateName}
+                />
               </Grid>
+              <Button variant="contained" color="secondary" className={classes.buttonFire} onClick={()=>{}}>
+                save details
+                <SaveIcon className={classes.rightIcon} />
+              </Button>
             </Grid>
           </Paper>
         </Grid>
