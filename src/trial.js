@@ -1,73 +1,94 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
+import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemText from '@material-ui/core/ListItemText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
+import PersonIcon from '@material-ui/icons/Person';
+import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
-import Slide from '@material-ui/core/Slide';
+import { blue } from '@material-ui/core/colors';
 
-const useStyles = makeStyles(theme => ({
-  appBar: {
-    position: 'relative',
+const emails = ['username@gmail.com', 'user02@gmail.com'];
+const useStyles = makeStyles({
+  avatar: {
+    backgroundColor: blue[100],
+    color: blue[600],
   },
-  title: {
-    marginLeft: theme.spacing(2),
-    flex: 1,
-  },
-}));
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function FullScreenDialog() {
+function SimpleDialog(props) {
   const classes = useStyles();
+  const { onClose, selectedValue, open } = props;
+
+  const handleClose = () => {
+    onClose(selectedValue);
+  };
+
+  const handleListItemClick = value => {
+    onClose(value);
+  };
+
+  return (
+    <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+      <DialogTitle id="simple-dialog-title">Set backup account</DialogTitle>
+      <List>
+        {emails.map(email => (
+          <ListItem button onClick={() => handleListItemClick(email)} key={email}>
+            <ListItemAvatar>
+              <Avatar className={classes.avatar}>
+                <PersonIcon />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText primary={email} />
+          </ListItem>
+        ))}
+
+        <ListItem button onClick={() => handleListItemClick('addAccount')}>
+          <ListItemAvatar>
+            <Avatar>
+              <AddIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText primary="add account" />
+        </ListItem>
+      </List>
+    </Dialog>
+  );
+}
+
+SimpleDialog.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  selectedValue: PropTypes.string.isRequired,
+};
+
+export default function SimpleDialogDemo() {
   const [open, setOpen] = React.useState(false);
+  const [selectedValue, setSelectedValue] = React.useState(emails[1]);
 
-  function handleClickOpen() {
+  const handleClickOpen = () => {
     setOpen(true);
-  }
+  };
 
-  function handleClose() {
+  const handleClose = value => {
     setOpen(false);
-  }
+    setSelectedValue(value);
+  };
 
   return (
     <div>
+      <Typography variant="subtitle1">Selected: {selectedValue}</Typography>
+      <br />
       <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Open full-screen dialog
+        Open simple dialog
       </Button>
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-        <AppBar className={classes.appBar}>
-          <Toolbar>
-            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-              <CloseIcon />
-            </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              Sound
-            </Typography>
-            <Button color="inherit" onClick={handleClose}>
-              save
-            </Button>
-          </Toolbar>
-        </AppBar>
-        <List>
-          <ListItem button>
-            <ListItemText primary="Phone ringtone" secondary="Titania" />
-          </ListItem>
-          <Divider />
-          <ListItem button>
-            <ListItemText primary="Default notification ringtone" secondary="Tethys" />
-          </ListItem>
-        </List>
-      </Dialog>
+      <SimpleDialog selectedValue={selectedValue} open={open} onClose={handleClose} />
     </div>
   );
 }

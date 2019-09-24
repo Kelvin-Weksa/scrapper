@@ -51,24 +51,27 @@ const useStyles = makeStyles( theme => ({
   },
 }));
 
-
 export default function Input( props ){
   const classes = useStyles ( );
-
   const [input, setinput] = React.useState({
     val:'',
     error:false,
     valid:false
   });
 
-  function handleEmailChange_log (event) {
-    if ( event.target.value ){
-      let error = ! props.validate( event.target.value );
-      setinput ( {...input , val:event.target.value , error:error , valid:!error} );
-    }else {
-      setinput ( {...input , val:event.target.value , error:false , valid:false} );
-    }
+  React.useEffect(() => {
+    change_log ( props.value )
+    return () => {
+    };
+  });
 
+  function change_log (event) {
+    if ( event ){
+      let error = ! props.validate( event );
+      setinput ( {...input , val:event , error:error , valid:!error} );
+    }else {
+      setinput ( {...input , val:event, error:false , valid:false} );
+    }
   }
 
   return(
@@ -85,7 +88,6 @@ export default function Input( props ){
       id="mui-theme-provider-outlined-input"
       fullWidth={true}
       style={{width:'90%',paddingTop:'12px',paddingBottom:'12px'}}
-      onChange={handleEmailChange_log}
       {...props}
     />
   )

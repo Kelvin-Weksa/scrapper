@@ -378,16 +378,16 @@ function PaperSheet ( props ) {
   }
 
   React.useEffect ( ()=>{
+    let key = enqueueSnackbar (
+      "loading..." , {
+        variant : "warning"  ,
+        persist: true,
+      }
+    );
     (async ()=> {
       let user = Firebase.auth().currentUser;
       if ( user ){
         document.body.style.cursor = "wait";
-        let key = enqueueSnackbar (
-          "loading..." , {
-            variant : "warning"  ,
-            persist: true,
-          }
-        );
         await Promise.all( [
           new Promise ( async (resolve, reject)=> {
             setTimeout ( function () {
@@ -431,13 +431,14 @@ function PaperSheet ( props ) {
           } )
         ] )
           .catch ( console.log )
-        setTimeout( ()=> {
-          closeSnackbar ( key );
-          document.body.style.cursor = "default";
-          setDisabled ( false )
-        }, 10);
+        closeSnackbar ( key );
+        document.body.style.cursor = "default";
+        setDisabled ( false )
       }
     })();
+    return ()=>{
+      closeSnackbar ( key );
+    }
   })
 
   function decorate ( num , ref , color){

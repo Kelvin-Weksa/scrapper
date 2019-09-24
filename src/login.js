@@ -31,7 +31,7 @@ function strongPass ( pwd ){
   array[0] = /[A-Z]/.test ( pwd );
   array[1] = /[a-z]/.test ( pwd );
   array[2] = /\d/.test ( pwd );
-  array[3] = /[!_.-]/.test ( pwd );
+  array[3] = /[^\w\s]/.test ( pwd );
   array[4] = pwd.length > 5;
   let sum = 0;
   for ( let i=0; i<array.length; i++) {
