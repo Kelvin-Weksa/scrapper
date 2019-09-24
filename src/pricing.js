@@ -33,7 +33,6 @@ import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { withSnackbar , useSnackbar } from 'notistack';
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
-//import CardMedia from '@material-ui/core/CardMedia';
 
 function debounce( func, wait, immediate) {
   // 'private' variable for instance
@@ -365,71 +364,78 @@ function PaperSheet ( props ) {
   let selected = React.useRef ( [ ] );
   let root = React.createRef ( );
   const [open, setOpen] = React.useState(false);
-  let done = false
+  const [disabled, setDisabled] = React.useState(true);
   const { enqueueSnackbar , closeSnackbar } = useSnackbar();
 
   function handleClickOpen() {
+    setDisabled ( true )
     setOpen(true);
   }
 
   function handleClose() {
+    setDisabled ( true )
     setOpen(false);
   }
 
   React.useEffect ( ()=>{
     (async ()=> {
       let user = Firebase.auth().currentUser;
-      try {
-        if ( user ){
-          let key =
-          enqueueSnackbar (
-            "loading..." , {
-              variant : "warning"  ,
-              persist: true,
-            }
-          );
-          document.body.style.cursor = "wait";
-          await Promise.all( [
-            Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
-              .once ( 'value').then ( snapshot=>{
-                let incoming = [ ];
-                snapshot.forEach ( function ( childSnapshot) {
-                  incoming.push ( childSnapshot.val ( ).replace ( /\s/g, '_') );
-                  let set = new Set ( incoming );
-                  selected.current = Array.from ( set );
-                });
-                console.log ( "User__permissions_++_" + snapshot.exists() + '__' + incoming.length );
-            } ).catch ( console.log )
-            ,
-            Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
-              .once ( 'value').then ( snapshot=>{
-                let incoming = [];
-                snapshot.forEach ( function ( childSnapshot) {
-                  incoming.push ( childSnapshot.val ( ) );
-                });
-                if ( incoming.length === 1 ){
-                  switch ( incoming[ 0 ] ){
-                    case ( 10 ) : decorate ( 10 , button1 , '448aff' ); break;
-                    case ( 50 ) : decorate ( 50 , button2 , '6a1b9a' ); break;
-                    case ( 80 ) : decorate ( 80 , button3 , 'e040fb' ); break;
-                    case ( 9999 ) : decorate ( 9999 , button4 , '00c853' ); break;
-                    default:
-                  }
+      if ( user ){
+        document.body.style.cursor = "wait";
+        let key = enqueueSnackbar (
+          "loading..." , {
+            variant : "warning"  ,
+            persist: true,
+          }
+        );
+        await Promise.all( [
+          new Promise ( async (resolve, reject)=> {
+            setTimeout ( function () {
+                try {
+                  root.current.style.top = '0vh';
+                  root.current.style.opacity = 1;
+                  return resolve ( )
+                } catch (e) {
+                  return reject ( e )
                 }
-                console.log ( "User__plans_++_" + snapshot.exists() + '_-_' + incoming[0] );
-            } ).catch ( console.log )
-          ] )
-          setTimeout( ()=> {
-            root.current.style.top = '0vh';
-            root.current.style.opacity = 1;
-            closeSnackbar ( key );
-            document.body.style.cursor = "default";
-            // eslint-disable-next-line
-            done=true;//rest of the page works from here!
-          }, 10);
-        }
-      } catch (e) {
-        console.log(e);
+            }, 10);
+          })
+          ,
+          Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
+            .once ( 'value').then ( snapshot=>{
+              let incoming = [ ];
+              snapshot.forEach ( function ( childSnapshot) {
+                incoming.push ( childSnapshot.val ( ).replace ( /\s/g, '_') );
+                let set = new Set ( incoming );
+                selected.current = Array.from ( set );
+              });
+              console.log ( "User__permissions_++_" + snapshot.exists() + '__' + incoming.length );
+          } )
+          ,
+          Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
+            .once ( 'value').then ( snapshot=>{
+              let incoming = [];
+              snapshot.forEach ( function ( childSnapshot) {
+                incoming.push ( childSnapshot.val ( ) );
+              });
+              if ( incoming.length === 1 ){
+                switch ( incoming[ 0 ] ){
+                  case ( 10 ) : decorate ( 10 , button1 , '448aff' ); break;
+                  case ( 50 ) : decorate ( 50 , button2 , '6a1b9a' ); break;
+                  case ( 80 ) : decorate ( 80 , button3 , 'e040fb' ); break;
+                  case ( 9999 ) : decorate ( 9999 , button4 , '00c853' ); break;
+                  default:
+                }
+              }
+              console.log ( "User__plans_++_" + snapshot.exists() + '_-_' + incoming[0] );
+          } )
+        ] )
+          .catch ( console.log )
+        setTimeout( ()=> {
+          closeSnackbar ( key );
+          document.body.style.cursor = "default";
+          setDisabled ( false )
+        }, 10);
       }
     })();
   })
@@ -444,13 +450,9 @@ function PaperSheet ( props ) {
   }
 
   function choose ( num , ref, color ){
-    if ( done ){
-      card_chosen.num = num;
-      decorate ( num , ref, color);
-      handleClickOpen ( );
-    }else {
-      console.log ( 'averted' );
-    }
+    card_chosen.num = num;
+    decorate ( num , ref, color);
+    handleClickOpen ( );
   }
 
   return (
@@ -487,7 +489,7 @@ function PaperSheet ( props ) {
           </Typography>
           <Grid container spacing={5} className={classes.prices}>
             <SimpleCard
-              onClick={debounce(()=>choose(10,button1,'448aff'),1000)}
+              onClick={debounce(()=>choose(10,button1,'448aff'),300)}
               ref={button1}
               icon={<PersonIcon/>}
               type={'10 Companies'}
@@ -495,9 +497,10 @@ function PaperSheet ( props ) {
               user={'Max 1 User'}
               shade={'#448aff'}
               title={card_chosen.num === 10? 'Your current Plan' : ''}
+              disabled={disabled}
             />
             <SimpleCard
-              onClick={debounce(()=>choose(50,button2,'6a1b9a'),1000)}
+              onClick={debounce(()=>choose(50,button2,'6a1b9a'),300)}
               ref={button2}
               icon={<PeopleIcon/>}
               type={'50 Companies'}
@@ -506,9 +509,10 @@ function PaperSheet ( props ) {
               shade={'#6a1b9a'}
               tooltipOpen={false}
               title={card_chosen.num === 50? 'Your current Plan' : ''}
+              disabled={disabled}
             />
             <SimpleCard
-              onClick={debounce(()=>choose(80,button3,'e040fb'),1000)}
+              onClick={debounce(()=>choose(80,button3,'e040fb'),300)}
               ref={button3}
               icon={<EmojiPeopleIcon/>}
               type={'80 Companies'}
@@ -516,9 +520,10 @@ function PaperSheet ( props ) {
               user={'Max 15 Users'}
               shade={'#e040fb'}
               title={card_chosen.num === 80? 'Your current Plan' : ''}
+              disabled={disabled}
             />
             <SimpleCard
-              onClick={debounce(()=>choose(9999,button4,'00c853'),1000)}
+              onClick={debounce(()=>choose(9999,button4,'00c853'),300)}
               ref={button4}
               icon={<BusinessCenterIcon color='white'/>}
               type={'Enterprise Package'}
@@ -526,6 +531,7 @@ function PaperSheet ( props ) {
               user={'Max 1 Company'}
               shade={'#00c853'}
               title={card_chosen.num === 9999? 'Your current Plan' : ''}
+              disabled={disabled}
             />
           </Grid>
         </div>

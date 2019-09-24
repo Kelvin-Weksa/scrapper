@@ -97,10 +97,10 @@ function PaperSheet ( props ) {
   const classes = useStyles();
   let root = React.createRef();
   let card = React.createRef ( );
-  
+
   React.useEffect ( ( ) => {
     setTimeout( ()=> {
-      root.current.style.top = '0vh';
+      root.current.style.top = '5vh';
       root.current.style.opacity = 1;
     }, 10);
   }, [root])

@@ -59,7 +59,7 @@ export default React.forwardRef( function SimpleCard ( props , ref ) {
     <Grid item >
       <div className={classes.cover} ref={ref}>
       <Tooltip title={props.title} open={props.tooltipOpen}>
-        <Button  className={classes.rootButton} onClick={clicked}>
+        <Button  className={classes.rootButton} onClick={clicked} {...props}>
           <Card  className={classes.card} style={{backgroundColor:props.shade}}>
             <Card  className={classes.info}>
               <IconButton  className={classes.rightIcon}>
