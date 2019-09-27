@@ -1,19 +1,13 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import { withRouter , } from 'react-router-dom';
-import Tooltip from '@material-ui/core/Tooltip';
-import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import Button from '@material-ui/core/Button';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import Badge from '@material-ui/core/Badge';
 import CardMedia from '@material-ui/core/CardMedia';
-import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
 import Typography from '@material-ui/core/Typography';
 import Input from './textInput';
 import SaveIcon from '@material-ui/icons/Save';
@@ -30,6 +24,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import SectionDesktop from './sectionDesktop';
 
 function strongPass ( pwd ){
   let array = [ ];
@@ -143,12 +138,15 @@ const useStyles = makeStyles(theme => ({
   },
   inner:{
     width: '90%',
-    height: '15vh',
+    height: theme.mixins.toolbar.minHeight*1.3,
     position: 'relative',
-    top: '-5vh',
+    top: -(theme.mixins.toolbar.minHeight*1.3/3),
     backgroundColor: theme.palette.primary.main,
     margin: 'auto',
     boxShadow: `0 0 4px`,
+    display: 'flex',
+    alignItems:'center',
+    justifyContent:'center'
   },
   outer_card: {
     position : "relative" ,
@@ -179,7 +177,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: blue[45],
     color: blue[600],
     display:'flex',
-    justifyContent:'center'
+    justifyContent:'center',
+    overflow:'visible',
   },
   billboard:{
     textAlign: 'center',
@@ -191,6 +190,7 @@ const useStyles = makeStyles(theme => ({
 
 function PaperSheet ( props ) {
   const classes = useStyles();
+  //const theme = useTheme ( );
   let root = React.createRef();
   let card = React.createRef ( );
   const [values, setValues] = React.useState({
@@ -527,28 +527,7 @@ function PaperSheet ( props ) {
     <div>
       <Toolbar>
         <div className={classes.grow} />
-        <Tooltip title="Dashboard">
-          <IconButton>
-            <DashboardIcon onClick={()=>props.history.push( '/dashboard' )} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Account">
-          <IconButton onClick={()=>props.history.push ( '/account' )} color="secondary">
-            <Badge badgeContent={1} color="secondary">
-              <AccountCircle />
-            </Badge>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Pricing">
-          <IconButton>
-            <AddShoppingCartIcon onClick={()=>props.history.push( '/pricing' )} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="LogOut">
-          <IconButton onClick={()=>props.history.push( '/' )}>
-            <ExitToAppOutlinedIcon/>
-          </IconButton>
-        </Tooltip>
+        <SectionDesktop/>
       </Toolbar>
     <div className={classes.root} ref={root}>
       <Grid container spacing={3} style={{justifyContent:'flex-end'}}>
@@ -560,7 +539,7 @@ function PaperSheet ( props ) {
               </Typography>
             </Paper>
             <Grid container spacing={3}>
-              <Grid item xs={6} style={{display:'flex',alignItems:'flex-end', flexDirection:'column'}}>
+              <Grid item xs={6} component='form' style={{display:'flex',alignItems:'flex-end', flexDirection:'column'}}>
                 <Input
                   onFocus={handleFocus}
                   onBlur={handleBlur}
@@ -586,6 +565,7 @@ function PaperSheet ( props ) {
                   value={values.company}
                 />
                 <Input
+                  autoComplete="on"
                   onPaste={disablePaste}
                   onFocus={handleFocus}
                   onBlur={handleBlur}
@@ -610,7 +590,7 @@ function PaperSheet ( props ) {
                   }}
                 />
               </Grid>
-              <Grid item xs={6} style={{display:'flex',alignItems:'flex-start', flexDirection:'column'}}>
+              <Grid item xs={6} component='form' style={{display:'flex',alignItems:'flex-start', flexDirection:'column'}}>
                 <Input
                   onFocus={handleFocus}
                   onBlur={handleBlur}
@@ -636,6 +616,7 @@ function PaperSheet ( props ) {
                   onChange={handleChange('job')}
                 />
                 <Input
+                  autoComplete="on"
                   onPaste={disablePaste}
                   onFocus={handleFocus}
                   onBlur={handleBlur}
@@ -717,14 +698,16 @@ function PaperSheet ( props ) {
             </ListItem>
           ))}
         </List>
-        <Input
-          onPaste={disablePaste}
-          label="password!"
-          validate={e => ! strongPass ( e )[ 1 ]}
-          onChange={handleChange('pass3')}
-          value={values.pass3}
-          type={values.showPassword3 ? 'text' : 'password'}
-          InputProps={{
+        <form>
+          <Input
+            autoComplete="on"
+            onPaste={disablePaste}
+            label="password!"
+            validate={e => ! strongPass ( e )[ 1 ]}
+            onChange={handleChange('pass3')}
+            value={values.pass3}
+            type={values.showPassword3 ? 'text' : 'password'}
+            InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
@@ -738,7 +721,8 @@ function PaperSheet ( props ) {
               </InputAdornment>
             ),
           }}
-        />
+          />
+        </form>
         <Button variant="contained" color="secondary" onClick={handleConfirm} style={{margin:'auto', width:'70%'}}>
           Confirm
           <DoneAllOutlinedIcon className={classes.rightIcon} />

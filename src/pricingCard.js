@@ -13,6 +13,8 @@ import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
 const useStyles = makeStyles(theme => ({
   card: {
     overflow: 'visible',
+    width : theme.mixins.toolbar.minHeight*4,
+    height: theme.mixins.toolbar.minHeight*3,
     transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
     "&:hover": {
       transform: `scale(1.1)` ,
@@ -22,23 +24,24 @@ const useStyles = makeStyles(theme => ({
   info: {
     display: 'flex' ,
     justifyContent: 'center' ,
-    width : theme.mixins.toolbar.minHeight * 0.9,
-    height: theme.mixins.toolbar.minHeight * 0.9,
+    width : theme.mixins.toolbar.minHeight,
+    height: theme.mixins.toolbar.minHeight,
     position: 'relative' ,
     top: '-4vh',
     left: '5vh',
-    border: `1px solid ${theme.palette.secondary.main}` ,
+    border: `1px solid ${theme.palette.primary.main}` ,
     borderRadius: '2px',
-    backgroundColor: theme.palette.secondary.main
+    backgroundColor: theme.palette.primary.main,
+    boxShadow: `0 0 11px ` ,
   },
   cover:{
-    boxShadow: `inset 0 0 11px ` ,
     borderRadius: '25px',
     display:'flex',
     justifyContent:'center',
     background : `#DCDCDC	` ,
     flexDirection:'column',
     transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    alignItems: 'center'
   },
   rootButton:{
     textAlign:'left',
@@ -57,10 +60,10 @@ export default React.forwardRef( function SimpleCard ( props , ref ) {
 
   return (
     <Grid item >
-      <div className={classes.cover} ref={ref}>
+      <div className={classes.cover}  style={{boxShadow: `inset -5px -5px 11px ${props.shade}` ,}}>
       <Tooltip title={props.title} open={props.tooltipOpen}>
         <Button  className={classes.rootButton} onClick={clicked} {...props}>
-          <Card  className={classes.card} style={{backgroundColor:props.shade}}>
+          <Card  className={classes.card} ref={ref}>
             <Card  className={classes.info}>
               <IconButton  className={classes.rightIcon}>
                 {props.icon}
@@ -82,21 +85,18 @@ export default React.forwardRef( function SimpleCard ( props , ref ) {
                 {props.user}
               </Typography>
               <hr/>
-              <Typography variant="caption" component="p" color="textSecondary">
-                <CheckCircleOutlinedIcon/>analytics Dashboard
-              </Typography>
-              <Typography variant="caption" component="p" color="textSecondary">
-                <CheckCircleOutlinedIcon/>email Alerts
-              </Typography>
-              <Typography variant="caption" component="p" color="textSecondary">
-                <CheckCircleOutlinedIcon/>social Media Activity
-              </Typography>
             </CardContent>
           </Card>
         </Button>
         </Tooltip>
         <Typography variant="caption" component="p" color="textSecondary">
-          <CheckCircleOutlinedIcon/>upgrade
+          <CheckCircleOutlinedIcon/>analytics Dashboard
+        </Typography>
+        <Typography variant="caption" component="p" color="textSecondary">
+          <CheckCircleOutlinedIcon/>email Alerts
+        </Typography>
+        <Typography variant="caption" component="p" color="textSecondary">
+          <CheckCircleOutlinedIcon/>social Media Activity
         </Typography>
       </div>
     </Grid>

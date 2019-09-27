@@ -5,13 +5,8 @@ import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import { withRouter , } from 'react-router-dom';
-import Tooltip from '@material-ui/core/Tooltip';
-import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import Button from '@material-ui/core/Button';
-import Badge from '@material-ui/core/Badge';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import SimpleCard from './pricingCard';
 import Slide from '@material-ui/core/Slide';
 import Dialog from '@material-ui/core/Dialog';
@@ -32,7 +27,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { withSnackbar , useSnackbar } from 'notistack';
-import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
+import SectionDesktop from './sectionDesktop';
 
 function debounce( func, wait, immediate) {
   // 'private' variable for instance
@@ -113,7 +108,9 @@ const useStyles = makeStyles(theme => ({
   prices:{
     justifyContent:'flex-end',
     alignItems:'center',
-    height:'100vh'
+    height:'100vh',
+    //alignContent: 'space-around',
+    justify:'flex-end',
   },
   transitionGroup:{
     transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
@@ -365,6 +362,7 @@ function PaperSheet ( props ) {
   let root = React.createRef ( );
   const [open, setOpen] = React.useState(false);
   const [disabled, setDisabled] = React.useState(true);
+  const [plan, setPlan] = React.useState(0);
   const { enqueueSnackbar , closeSnackbar } = useSnackbar();
 
   function handleClickOpen() {
@@ -419,6 +417,7 @@ function PaperSheet ( props ) {
                 incoming.push ( childSnapshot.val ( ) );
               });
               if ( incoming.length === 1 ){
+                setPlan ( incoming[ 0 ] )
                 switch ( incoming[ 0 ] ){
                   case ( 10 ) : decorate ( 10 , button1 , '448aff' ); break;
                   case ( 50 ) : decorate ( 50 , button2 , '6a1b9a' ); break;
@@ -442,12 +441,12 @@ function PaperSheet ( props ) {
   })
 
   function decorate ( num , ref , color){
-    button1.current.style.border= `none`
-    button2.current.style.border= `none`
-    button3.current.style.border= `none`
-    button4.current.style.border= `none`
-    console.log(card_chosen);
-    ref.current.style.border= `4px solid ${'#' + color}`
+    button1.current.style.boxShadow= `none`
+    button2.current.style.boxShadow= `none`
+    button3.current.style.boxShadow= `none`
+    button4.current.style.boxShadow= `none`
+    ref.current.style.boxShadow= `-5px -5px 5px ${'#' + color}`
+
   }
 
   function choose ( num , ref, color ){
@@ -460,28 +459,7 @@ function PaperSheet ( props ) {
     <div className={classes.paper}>
       <Toolbar>
         <div className={classes.grow} />
-        <Tooltip title="Dashboard">
-          <IconButton edge="start" aria-label="close">
-            <DashboardIcon onClick={()=>props.history.push( '/dashboard' )} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Account">
-          <IconButton onClick={()=>props.history.push ( '/account' )}>
-            <Badge badgeContent={1} color="secondary">
-              <AccountCircle />
-            </Badge>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Pricing">
-          <IconButton color="secondary">
-            <AddShoppingCartIcon onClick={debounce(()=>props.history.push( '/pricing' ),1000)} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="LogOut">
-            <IconButton onClick={()=>props.history.push( '/' )}>
-              <ExitToAppOutlinedIcon/>
-            </IconButton>
-        </Tooltip>
+        <SectionDesktop/>
       </Toolbar>
       <div className={classes.root}>
         <div className={classes.transitionGroup} ref={root}>
@@ -497,7 +475,7 @@ function PaperSheet ( props ) {
               value={5}
               user={'Max 1 User'}
               shade={'#448aff'}
-              title={card_chosen.num === 10? 'Your current Plan' : ''}
+              title={plan === 10? 'Your current Plan' : ''}
               disabled={disabled}
             />
             <SimpleCard
@@ -508,8 +486,7 @@ function PaperSheet ( props ) {
               value={50}
               user={'Max 5 Users'}
               shade={'#6a1b9a'}
-              tooltipOpen={false}
-              title={card_chosen.num === 50? 'Your current Plan' : ''}
+              title={plan === 50? 'Your current Plan' : ''}
               disabled={disabled}
             />
             <SimpleCard
@@ -520,7 +497,7 @@ function PaperSheet ( props ) {
               value={150}
               user={'Max 15 Users'}
               shade={'#e040fb'}
-              title={card_chosen.num === 80? 'Your current Plan' : ''}
+              title={plan === 80? 'Your current Plan' : ''}
               disabled={disabled}
             />
             <SimpleCard
@@ -531,7 +508,7 @@ function PaperSheet ( props ) {
               value={500}
               user={'Max 1 Company'}
               shade={'#00c853'}
-              title={card_chosen.num === 9999? 'Your current Plan' : ''}
+              title={plan === 9999? 'Your current Plan' : ''}
               disabled={disabled}
             />
           </Grid>

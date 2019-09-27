@@ -75,20 +75,18 @@ export default function Input( props ){
   }
 
   return(
-    <TextField
-      required
-      className={clsx({
-        [classes.inputError]: input.error,
-        [classes.input]: !input.error,
-        [classes.inputValid]: input.valid,
-      })}
-      error={input.error}
-      variant="outlined"
-      type="email"
-      id="mui-theme-provider-outlined-input"
-      fullWidth={true}
-      style={{width:'90%',paddingTop:'12px',paddingBottom:'12px'}}
-      {...props}
-    />
+      <TextField
+        required
+        className={clsx({
+          [classes.inputError]: input.error,
+          [classes.input]: !input.error,
+          [classes.inputValid]: input.valid,
+        })}
+        error={input.error}
+        variant="outlined"
+        fullWidth={true}
+        style={{width:'90%',paddingTop:'12px',paddingBottom:'12px'}}
+        {...props}
+      />
   )
 }

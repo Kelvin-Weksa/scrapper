@@ -561,44 +561,45 @@ function SimpleCard ( props ) {
                 label={email_log.error ? "Invalid Email" : "Your Email"}
                 variant="outlined"
                 type="email"
-                id="mui-theme-provider-outlined-input"
                 fullWidth={true}
                 style={{paddingTop:'12px',paddingBottom:'12px'}}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 onChange={handleEmailChange_log}
               />
-              <TextField
-                className={clsx({
-                  [classes.inputError]: pass3.error,
-                  [classes.input]: !pass3.error,
-                  [classes.inputValid]: pass3.valid,
-                })}
-                required
-                label="Password"
-                variant="outlined"
-                id="mui-theme-provider-outlined-input"
-                fullWidth={true}
-                type={visiblePass.showPassword3 ? 'text' : 'password'}
-                style={{paddingTop:'12px'}}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                onChange={handlePass3}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        edge="end"
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword3}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                        {visiblePass.showPassword3 ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
+              <form>
+                <TextField
+                  autoComplete="on"
+                  className={clsx({
+                    [classes.inputError]: pass3.error,
+                    [classes.input]: !pass3.error,
+                    [classes.inputValid]: pass3.valid,
+                  })}
+                  required
+                  label="Password"
+                  variant="outlined"
+                  fullWidth={true}
+                  type={visiblePass.showPassword3 ? 'text' : 'password'}
+                  style={{paddingTop:'12px'}}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  onChange={handlePass3}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          edge="end"
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword3}
+                          onMouseDown={handleMouseDownPassword}
+                        >
+                          {visiblePass.showPassword3 ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </form>
             </CardContent>
             <CardActions >
               <Button color='secondary' size="small" onClick={handleLogin} style={{margin:'0 auto'}}>
@@ -638,7 +639,6 @@ function SimpleCard ( props ) {
                     error={fName.error}
                     label={fName.error ? "First Name" : "First Name"}
                     variant="outlined"
-                    id="mui-theme-provider-outlined-input"
                     style={{padding:'2px'}}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
@@ -654,7 +654,6 @@ function SimpleCard ( props ) {
                     error={sName.error}
                     label="Second Name"
                     variant="outlined"
-                    id="mui-theme-provider-outlined-input"
                     style={{padding:'2px'}}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
@@ -670,77 +669,78 @@ function SimpleCard ( props ) {
                     error={email_reg.error}
                     label= {email_reg.error ? "Invalid Email" : "Enter Email" }
                     variant="outlined"
-                    id="mui-theme-provider-outlined-input"
                     type="email"
                     style={{padding:'2px'}}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     onChange={handleEmailChange_reg}
                   />
-                  <TextField
-                    className={clsx({
-                      [classes.inputError]: pass.error,
-                      [classes.input]: !pass.error,
-                      [classes.inputValid]: pass.valid,
-                    })}
-                    onPaste={disablePaste}
-                    required
-                    error={pass.error}
-                    label={pass.label}
-                    variant="outlined"
-                    id="mui-theme-provider-outlined-input"
-                    type={visiblePass.showPassword0 ? 'text' : 'password'}
-                    style={{padding:'2px'}}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    onChange={handlePass}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            edge="end"
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword0}
-                            onMouseDown={handleMouseDownPassword}
-                          >
-                            {visiblePass.showPassword0 ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <TextField
-                    onPaste={disablePaste}
-                    className={clsx({
-                      [classes.inputError]: pass2.error,
-                      [classes.input]: !pass2.error,
-                      [classes.inputValid]: pass2.valid,
-                    })}
-                    required
-                    error={pass2.error}
-                    label={pass2.error ? "Doesn't match!" : "Confirm Password"}
-                    variant="outlined"
-                    id="mui-theme-provider-outlined-input"
-                    type={visiblePass.showPassword ? 'text' : 'password'}
-                    style={{padding:'2px'}}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    onChange={handlePass2}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            edge="end"
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                          >
-                            {visiblePass.showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+                  <form>
+                    <TextField
+                      autoComplete="on"
+                      className={clsx({
+                        [classes.inputError]: pass.error,
+                        [classes.input]: !pass.error,
+                        [classes.inputValid]: pass.valid,
+                      })}
+                      onPaste={disablePaste}
+                      required
+                      error={pass.error}
+                      label={pass.label}
+                      variant="outlined"
+                      type={visiblePass.showPassword0 ? 'text' : 'password'}
+                      style={{padding:'2px'}}
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      onChange={handlePass}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              edge="end"
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword0}
+                              onMouseDown={handleMouseDownPassword}
+                            >
+                              {visiblePass.showPassword0 ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    <TextField
+                      autoComplete="on"
+                      onPaste={disablePaste}
+                      className={clsx({
+                        [classes.inputError]: pass2.error,
+                        [classes.input]: !pass2.error,
+                        [classes.inputValid]: pass2.valid,
+                      })}
+                      required
+                      error={pass2.error}
+                      label={pass2.error ? "Doesn't match!" : "Confirm Password"}
+                      variant="outlined"
+                      type={visiblePass.showPassword ? 'text' : 'password'}
+                      style={{padding:'2px'}}
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      onChange={handlePass2}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              edge="end"
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              >
+                              {visiblePass.showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </form>
                   <hr/>
                   <Typography style={{paddingLeft:'4px'}}>
                     billing details
@@ -748,7 +748,6 @@ function SimpleCard ( props ) {
                   <TextField
                     label="credit card"
                     variant="outlined"
-                    id="mui-theme-provider-outlined-input"
                     style={{padding:'2px'}}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
@@ -756,7 +755,6 @@ function SimpleCard ( props ) {
                   <TextField
                     label="pass number"
                     variant="outlined"
-                    id="mui-theme-provider-outlined-input"
                     style={{padding:'2px'}}
                     onFocus={handleFocus}
                     onBlur={handleBlur}

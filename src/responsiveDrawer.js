@@ -15,7 +15,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import clsx from 'clsx';
-import Listing from './list'
+//import Listing from './list'
 import IconBreadcrumbs from './breadCrumb'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
@@ -35,10 +35,9 @@ import Scroller from './scrollMain'
 import Firebase from './firebase'
 import { withRouter } from 'react-router-dom'
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
-import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import Paper from '@material-ui/core/Paper';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
+import SectionDesktop from './sectionDesktop';
 
 const drawerWidth = 225;
 
@@ -271,7 +270,7 @@ function ResponsiveDrawer ( props ) {
     </Menu>
   );
 
-  let Listed = Listing.filter ( companyList => props.permitted.some ( permission => companyList.includes( permission ) ) )
+  let Listed = props.permitted;//Listing.filter ( companyList => props.permitted.some ( permission => companyList.includes( permission ) ) )
 
   const drawer = (
     <div>
@@ -338,30 +337,7 @@ function ResponsiveDrawer ( props ) {
             </Typography>
             <Divider orientation="vertical" color="secondary"/>
             <div className={classes.grow} />
-            <div className={classes.sectionDesktop}>
-              <Tooltip title="Dashboard">
-                <IconButton color="secondary">
-                  <DashboardIcon onClick={()=>props.history.push( '/dashboard' )} />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Account">
-                <IconButton onClick={()=>props.history.push ( '/account' )}>
-                  <Badge badgeContent={1} color="secondary">
-                    <AccountCircle />
-                  </Badge>
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Pricing">
-                <IconButton>
-                  <AddShoppingCartIcon onClick={()=>props.history.push( '/pricing' )} />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="LogOut">
-                <IconButton onClick={handleLogout}>
-                  <ExitToAppOutlinedIcon/>
-                </IconButton>
-              </Tooltip>
-            </div>
+            <SectionDesktop />
             <div className={classes.sectionMobile}>
               <IconButton
                 aria-label="show more"

@@ -10,9 +10,11 @@ import PrivateRoute from './privateRoute';
 import Loader from './loader';
 import Account from './account';
 import Pricing from './pricing';
+import Admin from './admin';
 
 ReactDOM.render(
-  <SnackbarProvider maxSnack={2} preventDuplicate anchorOrigin={{
+  <SnackbarProvider maxSnack={2} preventDuplicate
+    anchorOrigin={{
         vertical: 'bottom',
         horizontal: 'center',
     }}>
@@ -22,6 +24,7 @@ ReactDOM.render(
         <PrivateRoute exact path="/pricing" component={Pricing} />
         <PrivateRoute exact path="/account" component={Account}/>
         <PrivateRoute exact path="/dashboard" component={App}/>
+        <PrivateRoute exact path="/admin" component={Admin}/>
         <Route exact path="/" component={LoginPage} />
       </Switch>
     </BrowserRouter>
