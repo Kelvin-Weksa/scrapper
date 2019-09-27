@@ -106,11 +106,14 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
   prices:{
+    display: 'flex',
+    flexFlow: 'row wrap',
     justifyContent:'flex-end',
-    alignItems:'center',
-    height:'100vh',
-    //alignContent: 'space-around',
-    justify:'flex-end',
+    alignItems:'flex-end',
+    alignContent: 'flex-end',
+    width:'100vw',
+    position: 'relative',
+    top: '7vh',
   },
   transitionGroup:{
     transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
