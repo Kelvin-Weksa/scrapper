@@ -241,20 +241,23 @@ function PaperSheet ( props ) {
             } catch (e) {
               return reject ( e )
             }
+
           }, 10);
         }).catch ( console.log );
 
         if (!saved.in) {
           Firebase.database().ref  ( "userData/" + Firebase.auth().currentUser.uid.toString ( )  )
             .once ( 'value' , snapshot=>{
-              var incoming ;
-              console.log ( "profile data__exists__" + snapshot.exists() )
-              snapshot.forEach ( function ( childSnapshot) {
-                incoming = { ...incoming , [childSnapshot.key]: childSnapshot.val ( ) }
-              });
-              incoming = { ...incoming , in: true }
-              setSaved ( {...saved , ...incoming} );
-              setValues({ ...values , ...incoming ,})
+              setTimeout( ()=> {
+                var incoming ;
+                console.log ( "profile data__exists__" + snapshot.exists() )
+                snapshot.forEach ( function ( childSnapshot) {
+                  incoming = { ...incoming , [childSnapshot.key]: childSnapshot.val ( ) }
+                });
+                incoming = { ...incoming , in: true }
+                setSaved ( {...saved , ...incoming} );
+                setValues({ ...values , ...incoming ,})
+              }, 1000);
             } ).catch ( console.log );
         }
 
