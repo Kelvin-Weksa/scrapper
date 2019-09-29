@@ -114,7 +114,7 @@ export default function PaperSheet() {
       new Promise( async(resolve, reject)=> {
         setTimeout( ()=> {
           try {
-            root.current.style.top = '5vh';
+            root.current.style.top = '0vh';
             root.current.style.opacity = 1;
           } catch (e) {
             return reject ( e )
