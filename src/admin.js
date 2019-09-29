@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles,} from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import SectionDesktop from './sectionDesktop';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -14,6 +14,8 @@ import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import red from '@material-ui/core/colors/red';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import DataUsageIcon from '@material-ui/icons/DataUsage';
+import Graph from './barchart';
+import Doughnut from './doughnutchart';
 
 const useStyles = makeStyles(theme => ({
   paper1: {
@@ -22,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
     "&:hover": {
       transform: `scale(1.1)` ,
-      boxShadow: `0 0 11px ` ,
+      boxShadow: `0 0 11px ${theme.palette.secondary.main}` ,
     },
     minWidth: "50%",
   },
@@ -50,7 +52,8 @@ const useStyles = makeStyles(theme => ({
     position:'relative',
     top:theme.mixins.toolbar.minHeight/2,
     display:'flex',
-    flexFlow:'row wrap'
+    flexFlow:'row wrap',
+    justifyContent:"space-evenly",
   }
 }));
 
@@ -76,16 +79,16 @@ function SmallCard (props){
           </div>
         </span>
         <hr/>
-        <div style={{display:'flex',alignItems:'baseline'}}>
+        <div style={{display:'flex',alignItems:'baseline',justifyContent:'space-evenly'}}>
           {props.direction ?
             (<Typography variant="subtitle2"  style={{ display:'flex',color:green[500]}}>
               <ArrowUpwardIcon/><div style={{position:'relative',top:'2px'}}>{props.percent}</div>
             </Typography>) :
-          (<Typography variant="subtitle2"  style={{ display:'flex',color:red[500]}}>
-            <ArrowDownwardIcon/><div style={{position:'relative',top:'2px'}}>{props.percent}</div>
-          </Typography>)}
-          <div style={{flex:"1 0 auto"}}/>
-          <Typography variant="caption" style={{position:'relative',top:'-5px',flex:'1 0 auto'}}>
+            (<Typography variant="subtitle2"  style={{ display:'flex',color:red[500]}}>
+              <ArrowDownwardIcon/><div style={{position:'relative',top:'2px'}}>{props.percent}</div>
+            </Typography>)
+          }
+          <Typography variant="caption" style={{position:'relative',top:'-5px',flex:'0 0 auto'}}>
            {props.duration ? `${props.duration}` : `since last month`}
           </Typography>
         </div>
@@ -96,7 +99,7 @@ function SmallCard (props){
 
 export default function PaperSheet() {
   const classes = useStyles();
-  //const theme = useTheme();
+  const theme = useTheme();
   return (
     <div>
       <Toolbar>
@@ -104,21 +107,21 @@ export default function PaperSheet() {
         <SectionDesktop/>
       </Toolbar>
       <Grid container spacing={2} className={classes.container}>
-        <SmallCard xs={12} sm={6}  lg={3}
+        <SmallCard xs={12} sm={6} lg={3}
           icon={<PeopleIcon/>}
           title={"Registered Users"}
           content={"250"}
           percent={"0.5%"}
           direction={true}
         />
-        <SmallCard xs={12} sm={6}  lg={3}
+        <SmallCard xs={12} sm={6} lg={3}
           icon={<MonetizationOnIcon/>}
           title={"Revenue"}
           content={"$15,000"}
           percent={"8%"}
           direction={true}
         />
-        <SmallCard xs={12} sm={6}  lg={3}
+        <SmallCard xs={12} sm={6} lg={3}
           icon={<EmojiPeopleIcon/>}
           title={"Active Users"}
           content={"50"}
@@ -126,13 +129,26 @@ export default function PaperSheet() {
           direction={false}
           duration={'since last week'}
         />
-        <SmallCard xs={12} sm={6}  lg={3}
+        <SmallCard xs={12} sm={6} lg={3}
           icon={<DataUsageIcon/>}
           title={"Downloaded App Data"}
           content={"603MB"}
           percent={"17%"}
           direction={true}
         />
+      </Grid>
+      <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
+      <Grid container spacing={2} className={classes.container}>
+        <Grid item xs={5} style={{}}>
+          <Paper className={classes.paper1}>
+            <Graph/>
+          </Paper>
+        </Grid>
+        <Grid item xs={5}>
+          <Paper className={classes.paper1}>
+            <Doughnut/>
+          </Paper>
+        </Grid>
       </Grid>
     </div>
   );
