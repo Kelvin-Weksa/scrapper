@@ -18,6 +18,13 @@ import Graph from './barchart';
 import Doughnut from './doughnutchart';
 
 const useStyles = makeStyles(theme => ({
+  root:{
+    padding: theme.spacing(3, 2),
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    opacity: 0,
+    position: 'relative',
+    top: '-7vh'
+  },
   paper1: {
     padding: theme.spacing(1.5, 1),
     //overflow: 'visible',
@@ -100,56 +107,76 @@ function SmallCard (props){
 export default function PaperSheet() {
   const classes = useStyles();
   const theme = useTheme();
+  let root = React.createRef();
+
+  React.useEffect ( () => {
+    (()=> {
+      new Promise( async(resolve, reject)=> {
+        setTimeout( ()=> {
+          try {
+            root.current.style.top = '5vh';
+            root.current.style.opacity = 1;
+          } catch (e) {
+            return reject ( e )
+          }
+
+        }, 10);
+      }).catch ( console.log );
+    })();
+  } )
+
   return (
     <div>
       <Toolbar>
         <div className={classes.grow} />
         <SectionDesktop/>
       </Toolbar>
-      <Grid container spacing={2} className={classes.container}>
-        <SmallCard xs={12} sm={6} lg={3}
-          icon={<PeopleIcon/>}
-          title={"Registered Users"}
-          content={"250"}
-          percent={"0.5%"}
-          direction={true}
-        />
-        <SmallCard xs={12} sm={6} lg={3}
-          icon={<MonetizationOnIcon/>}
-          title={"Revenue"}
-          content={"$15,000"}
-          percent={"8%"}
-          direction={true}
-        />
-        <SmallCard xs={12} sm={6} lg={3}
-          icon={<EmojiPeopleIcon/>}
-          title={"Active Users"}
-          content={"50"}
-          percent={"-10%"}
-          direction={false}
-          duration={'since last week'}
-        />
-        <SmallCard xs={12} sm={6} lg={3}
-          icon={<DataUsageIcon/>}
-          title={"Downloaded App Data"}
-          content={"603MB"}
-          percent={"17%"}
-          direction={true}
-        />
-      </Grid>
-      <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
-      <Grid container spacing={2} className={classes.container}>
-        <Grid item xs={5} style={{}}>
-          <Paper className={classes.paper1}>
-            <Graph/>
-          </Paper>
+      <div className={classes.root} ref={root}>
+        <Grid container spacing={2} className={classes.container}>
+          <SmallCard xs={12} sm={6} lg={3}
+            icon={<PeopleIcon/>}
+            title={"Registered Users"}
+            content={"250"}
+            percent={"0.5%"}
+            direction={true}
+          />
+          <SmallCard xs={12} sm={6} lg={3}
+            icon={<MonetizationOnIcon/>}
+            title={"Revenue"}
+            content={"$15,000"}
+            percent={"8%"}
+            direction={true}
+          />
+          <SmallCard xs={12} sm={6} lg={3}
+            icon={<EmojiPeopleIcon/>}
+            title={"Active Users"}
+            content={"50"}
+            percent={"-10%"}
+            direction={false}
+            duration={'since last week'}
+          />
+          <SmallCard xs={12} sm={6} lg={3}
+            icon={<DataUsageIcon/>}
+            title={"Downloaded App Data"}
+            content={"603MB"}
+            percent={"17%"}
+            direction={true}
+          />
         </Grid>
-        <Grid item xs={5}>
-          <Paper className={classes.paper1}>
-            <Doughnut/>
-          </Paper>
+        <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
+        <Grid container spacing={2} className={classes.container}>
+          <Grid item xs={5} style={{}}>
+            <Paper className={classes.paper1}>
+              <Graph/>
+            </Paper>
+          </Grid>
+          <Grid item xs={5}>
+            <Paper className={classes.paper1}>
+              <Doughnut/>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
+      </div>
     </div>
   );
 }
