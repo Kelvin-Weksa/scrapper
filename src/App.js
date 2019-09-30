@@ -48,13 +48,13 @@ class App extends Component {
           Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
             .once ( 'value').then ( snapshot=>{
               if (snapshot.exists()) {
-                let plan = [];
+                let plan = {};
                 snapshot.forEach ( function ( childSnapshot) {
-                  plan.push ( childSnapshot.val ( ) );
+                  plan[childSnapshot.key] = childSnapshot.val ( ) ;
                 });
-                if ( plan.length === 1 ){
+                if ( plan.num ){
                   let Listed = Listing;
-                  if (plan[0] !== 9999) {
+                  if (plan.num !== 9999) {
                     Listed = Listing.filter ( companyList => incoming
                       .some ( permission => companyList.includes( permission ) ) )
                   }
@@ -64,8 +64,12 @@ class App extends Component {
                     let Land = Listed[ 0 ];
                     this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
                   }
+                  console.log ( "DashboardUser__plans_++_" + snapshot.exists() + '_-_' + JSON.stringify ( plan ) );
+                }else{
+                  console.log('subscription expred!');
+                  this.setState ( {...this.state , permissionsLoaded: true} );
                 }
-                console.log ( "DashboardUser__plans_++_" + snapshot.exists() + '_-_' + plan[0] );
+
               }else {
                 console.log('new user!');
                 this.setState ( {...this.state , permissionsLoaded: true} );

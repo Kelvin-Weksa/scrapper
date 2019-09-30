@@ -1,5 +1,5 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
+//import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -10,15 +10,24 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 
-const options = ['3 Days', '7 days', '30 days'];
+const options = ['3 day Subscription', '7 day Subscription', '30 day Subscription'];
 
-export default function SplitButton() {
+export default function SplitButton ( props ) {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   const handleClick = () => {
-    alert(`You clicked ${options[selectedIndex]}`);
+    if (props.selector) {
+      if (selectedIndex === 0) {
+        props.selector( 3 )
+      }else if (selectedIndex === 1 ) {
+        props.selector( 7 )
+      }else if (selectedIndex === 2) {
+          props.selector( 30 )
+      }
+    }
+    //alert(`You clicked ${options[selectedIndex]}`);
   };
 
   const handleMenuItemClick = (event, index) => {
@@ -39,12 +48,12 @@ export default function SplitButton() {
   };
 
   return (
-    <Grid container>
-      <Grid item xs={12} align="center">
+       <React.Fragment>
         <ButtonGroup variant="contained" color="primary" ref={anchorRef} aria-label="split button">
           <Button onClick={handleClick}>{options[selectedIndex]}</Button>
           <Button
             color="primary"
+            variant="contained"
             size="small"
             aria-owns={open ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
@@ -67,7 +76,6 @@ export default function SplitButton() {
                     {options.map((option, index) => (
                       <MenuItem
                         key={option}
-                        disabled={index === 2}
                         selected={index === selectedIndex}
                         onClick={event => handleMenuItemClick(event, index)}
                       >
@@ -80,7 +88,6 @@ export default function SplitButton() {
             </Grow>
           )}
         </Popper>
-      </Grid>
-    </Grid>
+      </React.Fragment>
   );
 }

@@ -22,6 +22,30 @@ function AuthedUser ( props ) {
             variant : "info"  ,
             autoHideDuration: 2500,
         });
+        Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
+          .once ( 'value').then ( snapshot=>{
+            if (snapshot.exists ()) {
+              let incoming = {};
+              snapshot.forEach ( function ( childSnapshot) {
+                incoming[childSnapshot.key] = childSnapshot.val();
+              });
+              if (incoming.endDate === 0) {
+                enqueueSnackbar (
+                  "renew your subscription" , {
+                    variant : "info"  ,
+                    autoHideDuration: 4500,
+                  }
+                );
+              }
+            }else{
+              enqueueSnackbar (
+                "begin your trial" , {
+                  variant : "info"  ,
+                  autoHideDuration: 4500,
+                }
+              );
+            }
+        } )
       }else {
         setRedirect ( true )
         setUser ( user )

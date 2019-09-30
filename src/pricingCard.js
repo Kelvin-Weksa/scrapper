@@ -10,6 +10,15 @@ import IconButton from '@material-ui/core/IconButton';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
 
+function msToTime ( duration ) {
+    var minutes = parseInt ( ( duration / ( 1000 * 60 ) ) % 60 )
+        , hours = parseInt ( ( duration / ( 1000 * 60 * 60 ) ) % 24 );
+
+    hours =  ( hours < 10 ) ? "0" + hours : hours;
+    minutes = ( minutes < 10 ) ? "0" + minutes : minutes;
+    return hours + ":hrs " + minutes + ": mins";
+}
+
 const useStyles = makeStyles(theme => ({
   card: {
     overflow: 'visible',
@@ -69,26 +78,37 @@ export default React.forwardRef( function SimpleCard ( props , ref ) {
                 {props.icon}
               </IconButton>
             </Card>
-            <CardContent style={{position:'relative',top:'-3vh'}}>
-              <Typography variant='subtitle2'>
-                {props.type}
-              </Typography>
-              <div style={{display:"inline-block"}}>
-                <Typography variant="h4" component="h2" style={{float:'left',padding:0}}>
-                  <AttachMoneyIcon/>{props.value}
+            <div style={{display:'flex',flexFlow:'column no-wrap'}}>
+              <CardContent style={{position:'relative',top:'-3vh'}}>
+                <Typography variant='subtitle2'>
+                  {props.type}
                 </Typography>
-                <Typography variant="overline" style={{float:'left'}}>
-                  Month
+                <div style={{display:"inline-block"}}>
+                  <Typography variant="h4" component="h2" style={{float:'left',padding:0}}>
+                    <AttachMoneyIcon/>{props.value}
+                  </Typography>
+                  <Typography variant="overline" style={{float:'left'}}>
+                    Month
+                  </Typography>
+                </div>
+                <Typography color="textSecondary">
+                  {props.user}
                 </Typography>
-              </div>
-              <Typography color="textSecondary">
-                {props.user}
-              </Typography>
-              <hr/>
-            </CardContent>
+                <hr/>
+              </CardContent>
+            </div>
           </Card>
         </Button>
         </Tooltip>
+        <Typography variant='subtitle2' color="secondary" style={{position:'relative',top:'-5vh'}}>
+          {props.expiry ? `expiring on :` : ``}
+        </Typography>
+        <Typography variant='subtitle2' color="secondary" style={{position:'relative',top:'-5vh'}}>
+          {props.expiry ? `${props.expiry.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
+        </Typography>
+        <Typography variant='subtitle1' color="primary" style={{position:'relative',top:'-5vh'}}>
+          {props.expiry ? Math.round((props.expiry - new Date())/86400000) > 1 ? `${Math.round((props.expiry - new Date())/86400000)} days remaining` : `${msToTime((props.expiry - new Date())%86400000)} remaining` : ``}
+        </Typography>
         <Typography variant="caption" component="p" color="textSecondary">
           <CheckCircleOutlinedIcon/>analytics Dashboard
         </Typography>

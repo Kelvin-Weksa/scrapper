@@ -257,7 +257,7 @@ function PaperSheet ( props ) {
                 incoming = { ...incoming , in: true }
                 setSaved ( {...saved , ...incoming} );
                 setValues({ ...values , ...incoming ,})
-              }, 1000);
+              }, 1500);
             } ).catch ( console.log );
         }
 

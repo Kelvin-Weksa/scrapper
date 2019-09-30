@@ -28,6 +28,7 @@ import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { withSnackbar , useSnackbar } from 'notistack';
 import SectionDesktop from './sectionDesktop';
+import TimePeriod from './finishChoosing'
 
 function debounce( func, wait, immediate) {
   // 'private' variable for instance
@@ -74,6 +75,7 @@ function debounce( func, wait, immediate) {
 
 var card_chosen = {
   num: 0,
+  endDate:0,
 };
 
 function getSteps ( ){
@@ -219,12 +221,15 @@ function CheckOut ( props ){
     <div>
       <Box fontWeight="fontWeightBold" style={{paddingLeft:'4px'}}>
         {`You have chosen to follow the ${card_chosen.num === 9999 ? 'ALL the' : 'The following'} Companies`}:
-        <Grid container spacing={1}>
-          {props.selected.map ( (item) =>
-            <Grid item xs={3} wrap="nowrap">
-              <Typography color='secondary'>{item.replace ( /_/g, ' ')}</Typography>
-            </Grid>)}
-        </Grid>
+        {card_chosen.num !== 9999 ?
+          (<Grid container spacing={1}>
+            {props.selected.map ( (item) =>
+              <Grid item xs={3} wrap="nowrap">
+                <Typography color='secondary'>{item.replace ( /_/g, ' ')}</Typography>
+              </Grid>)}
+          </Grid>) :
+          (null)
+        }
       </Box>
       <Box fontWeight="fontWeightBold" style={{paddingLeft:'4px'}}>
         billing details
@@ -266,7 +271,8 @@ function VerticalLinearStepper ( props ){
   function handleNext ( finish ) {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
     if ( finish ){
-      alert("checking out")
+      alert("checking out on " + new Date ( ).toString().split(' ').slice ( 0 , 5 ).join(' ')
+      + ` You have Subscribed for ${card_chosen.period} days`)
       Firebase.database().ref ( "Plans/" + Firebase.auth().currentUser.uid.toString ( ) )
         .set ( card_chosen ,  ( error )=> {
           if ( error ) {
@@ -327,15 +333,29 @@ function VerticalLinearStepper ( props ){
                   >
                     Back
                   </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={()=>{handleNext(activeStep === steps.length - 1)}}
-                    className={classes.button}
-                    disabled={!nexty}
-                  >
-                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                  </Button>
+                  {activeStep !== steps.length - 1 ?
+                    (<Button
+                      variant="contained"
+                      color="primary"
+                      onClick={()=>{handleNext(activeStep === steps.length - 1)}}
+                      className={classes.button}
+                      disabled={!nexty}
+                    >
+                      {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                    </Button>) :
+                    (<TimePeriod
+                      className={classes.button}
+                      disabled={!nexty}
+                      selector={(selected)=>{
+                          if (selected) {
+                            card_chosen.period = selected;
+                            card_chosen.endDate = new Date().getTime() + selected * 1000 * 60 * 60 * 24; //86400000
+                            handleNext(activeStep === steps.length - 1)
+                          }
+                        }
+                      }
+                    />)
+                  }
                 </div>
               </div>
             </StepContent>
@@ -362,10 +382,15 @@ function PaperSheet ( props ) {
   let button3 =  React.createRef ( );
   let button4 =  React.createRef ( );
   let selected = React.useRef ( [ ] );
+  let clicked = React.useRef (0);
   let root = React.createRef ( );
   const [open, setOpen] = React.useState(false);
   const [disabled, setDisabled] = React.useState(true);
-  const [plan, setPlan] = React.useState(0);
+  const [plan, setPlan] = React.useState({
+    num:0,
+    period:0
+  });
+
   const { enqueueSnackbar , closeSnackbar } = useSnackbar();
 
   function handleClickOpen() {
@@ -387,7 +412,7 @@ function PaperSheet ( props ) {
     );
     (async ()=> {
       let user = Firebase.auth().currentUser;
-      if ( user ){
+      if ( disabled && user){
         document.body.style.cursor = "wait";
         await Promise.all( [
           new Promise ( async (resolve, reject)=> {
@@ -415,21 +440,40 @@ function PaperSheet ( props ) {
           ,
           Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
             .once ( 'value').then ( snapshot=>{
-              let incoming = [];
-              snapshot.forEach ( function ( childSnapshot) {
-                incoming.push ( childSnapshot.val ( ) );
-              });
-              if ( incoming.length === 1 ){
-                setPlan ( incoming[ 0 ] )
-                switch ( incoming[ 0 ] ){
-                  case ( 10 ) : decorate ( 10 , button1 , '448aff' ); break;
-                  case ( 50 ) : decorate ( 50 , button2 , '6a1b9a' ); break;
-                  case ( 80 ) : decorate ( 80 , button3 , 'e040fb' ); break;
-                  case ( 9999 ) : decorate ( 9999 , button4 , '00c853' ); break;
-                  default:
+              if (snapshot.exists ()) {
+                let incoming = {};
+                snapshot.forEach ( function ( childSnapshot) {
+                  incoming[childSnapshot.key] = childSnapshot.val();
+                });
+                if (parseInt(new Date() - incoming.endDate) > 0 && incoming.endDate !== 0 ) {
+                  Firebase.database().ref ( "Plans/" + Firebase.auth().currentUser.uid.toString ( ) )
+                    .set ( {num:0,endDate:0} ,  ( error )=> {
+                      if ( error ) {
+                        console.log ( error )
+                        alert ( 'failed to update plan to FireBase!' );
+                      } else { // eslint-disable-next-line
+                        console.log ( 'FireBase updated' + "__" + Firebase.auth().currentUser.displayName )
+                        enqueueSnackbar (
+                          "Your trial has expired!" , {
+                            variant : "info"  ,
+                            autoHideDuration: 3500,
+                          }
+                        );
+                      }
+                  } );
+                  alert ( `Your trial has expired!` )
+                }else if ( incoming.endDate !== plan.endDate || incoming.num !== plan.num ){
+                  switch ( incoming.num ){
+                    case ( 10 ) : decorate ( 10 , button1 , '448aff' ); break;
+                    case ( 50 ) : decorate ( 50 , button2 , '6a1b9a' ); break;
+                    case ( 80 ) : decorate ( 80 , button3 , 'e040fb' ); break;
+                    case ( 9999 ) : decorate ( 9999 , button4 , '00c853' ); break;
+                    default:
+                  }
+                  console.log ( "User__plans_++_" + snapshot.exists() + '_-_' + JSON.stringify ( incoming ) );
+                  setPlan ( incoming );
                 }
               }
-              console.log ( "User__plans_++_" + snapshot.exists() + '_-_' + incoming[0] );
           } )
         ] )
           .catch ( console.log )
@@ -454,6 +498,7 @@ function PaperSheet ( props ) {
 
   function choose ( num , ref, color ){
     card_chosen.num = num;
+    closeSnackbar ( clicked.current );
     decorate ( num , ref, color);
     handleClickOpen ( );
   }
@@ -478,7 +523,8 @@ function PaperSheet ( props ) {
               value={5}
               user={'Max 1 User'}
               shade={'#448aff'}
-              title={plan === 10? 'Your current Plan' : ''}
+              title={plan.num === 10? 'Your current Plan' : ''}
+              expiry={plan.num === 10? new Date ( plan.endDate ) : ''}
               disabled={disabled}
             />
             <SimpleCard
@@ -489,7 +535,8 @@ function PaperSheet ( props ) {
               value={50}
               user={'Max 5 Users'}
               shade={'#6a1b9a'}
-              title={plan === 50? 'Your current Plan' : ''}
+              title={plan.num === 50? 'Your current Plan' : ''}
+              expiry={plan.num === 50? new Date ( plan.endDate ) : ''}
               disabled={disabled}
             />
             <SimpleCard
@@ -500,7 +547,8 @@ function PaperSheet ( props ) {
               value={150}
               user={'Max 15 Users'}
               shade={'#e040fb'}
-              title={plan === 80? 'Your current Plan' : ''}
+              title={plan.num === 80? 'Your current Plan' : ''}
+              expiry={plan.num === 80? new Date ( plan.endDate ) : ''}
               disabled={disabled}
             />
             <SimpleCard
@@ -511,7 +559,8 @@ function PaperSheet ( props ) {
               value={500}
               user={'Max 1 Company'}
               shade={'#00c853'}
-              title={plan === 9999? 'Your current Plan' : ''}
+              title={plan.num === 9999? 'Your current Plan' : ''}
+              expiry={plan.num === 9999? new Date ( plan.endDate ) : ''}
               disabled={disabled}
             />
           </Grid>
