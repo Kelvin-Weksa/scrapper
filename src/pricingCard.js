@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import { makeStyles , } from '@material-ui/core/styles';
+import { makeStyles , useTheme } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
 import CardContent from '@material-ui/core/CardContent';
@@ -57,22 +57,54 @@ const useStyles = makeStyles(theme => ({
     position:'relative',
     left:'-5vh',
     top:'-5vh',
-  }
+  },
+  transitionGroup:{
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    //opacity: 0.5,
+    position: 'relative',
+    //top: '-4vh',
+  },
 }));
 
 export default React.forwardRef( function SimpleCard ( props , ref ) {
+  let root = React.createRef ( );
   const classes = useStyles();
+  const theme = useTheme();
+
+  React.useEffect ( () => {
+    (async ()=> {
+      await Promise.all( [
+        new Promise ( async (resolve, reject)=> {
+          setTimeout ( function () {
+              try {
+                if (root.current) {
+                  //root.current.style.top = '0vh';
+                  //root.current.style.opacity = 1;
+                }
+                return resolve ( )
+              } catch (e) {
+                return reject ( e )
+              }
+            }, 10);
+          }),
+        ] ).catch(console.log)
+    })();
+  },[root,props] )
 
   function clicked ( ){
     props.onClick ( )
   }
 
   return (
-    <Grid item >
+    <Grid item ref={root} className={classes.transitionGroup}>
       <div className={classes.cover}  style={{boxShadow: `inset -5px -5px 11px ${props.shade}` ,}}>
       <Tooltip title={props.title} open={props.tooltipOpen}>
-        <Button  className={classes.rootButton} onClick={clicked} {...props}>
-          <Card  className={classes.card} ref={ref}>
+        <Button className={classes.rootButton} onClick={clicked} {...props}>
+          <Card
+            className={classes.card} ref={ref}
+            style={{boxShadow: props.border ?
+              `-5px -5px 5px ${!props.expired ? props.shade : theme.palette.secondary.main}` :
+              `none`}}>
             <Card  className={classes.info}>
               <IconButton  className={classes.rightIcon}>
                 {props.icon}
@@ -100,15 +132,36 @@ export default React.forwardRef( function SimpleCard ( props , ref ) {
           </Card>
         </Button>
         </Tooltip>
-        <Typography variant='subtitle2' color="secondary" style={{position:'relative',top:'-5vh'}}>
-          {props.expiry ? `expiring on :` : ``}
-        </Typography>
-        <Typography variant='subtitle2' color="secondary" style={{position:'relative',top:'-5vh'}}>
-          {props.expiry ? `${props.expiry.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
-        </Typography>
-        <Typography variant='subtitle1' color="primary" style={{position:'relative',top:'-5vh'}}>
-          {props.expiry ? Math.round((props.expiry - new Date())/86400000) > 1 ? `${Math.round((props.expiry - new Date())/86400000)} days remaining` : `${msToTime((props.expiry - new Date())%86400000)} remaining` : ``}
-        </Typography>
+        <div>
+          {(props.expiry - new Date() > 0) ?
+            (
+              <React.Fragment>
+                <Typography variant='subtitle2' color="secondary" style={{position:'relative',top:'-5vh'}}>
+                  {props.expiry ? `expiring on :` : ``}
+                </Typography>
+                <Typography variant='subtitle2' color="secondary" style={{position:'relative',top:'-5vh'}}>
+                  {props.expiry ? `${props.expiry.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
+                </Typography>
+                <Typography variant='subtitle1' color="primary" style={{position:'relative',top:'-5vh'}}>
+                  {props.expiry ? Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000)) >= 1 ?
+                    `${Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000))} days remaining`
+                    :
+                    `${msToTime((props.expiry - new Date())%(24 * 60 * 60 * 1000))} remaining` : ``}
+                </Typography>
+              </React.Fragment>
+            ) :
+            (
+              <React.Fragment>
+                <Typography variant='subtitle2' color="secondary" style={{position:'relative',top:'-5vh'}}>
+                  {props.expiry ? `EXPIRED on:` : ``}
+                </Typography>
+                <Typography variant='subtitle2' color="secondary" style={{position:'relative',top:'-5vh'}}>
+                  {props.expiry ? `${props.expiry.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
+                </Typography>
+              </React.Fragment>
+            )
+          }
+        </div>
         <Typography variant="caption" component="p" color="textSecondary">
           <CheckCircleOutlinedIcon/>analytics Dashboard
         </Typography>

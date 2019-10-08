@@ -4,7 +4,7 @@ import Listing from './list'
 import Drawer from './responsiveDrawer'
 import Firebase from './firebase'
 import { withSnackbar } from 'notistack';
-//import './App.css';
+//import './App.css'
 
 const io = require ( 'socket.io-client' );
 const socket = io ( );
@@ -38,43 +38,40 @@ class App extends Component {
   componentDidMount = ( )=> {
     let user = Firebase.auth().currentUser;
     if ( user ){
-      Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
-        .once ( 'value' , snapshot=>{
-          let incoming = [ ];
-          console.log ( "User__permissions__" + snapshot.exists() )
-          snapshot.forEach ( function ( childSnapshot) {
-            incoming.push ( childSnapshot.val ( ) );
-          });
-          Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
-            .once ( 'value').then ( snapshot=>{
-              if (snapshot.exists()) {
-                let plan = {};
-                snapshot.forEach ( function ( childSnapshot) {
-                  plan[childSnapshot.key] = childSnapshot.val ( ) ;
-                });
-                if ( plan.num ){
-                  let Listed = Listing;
-                  if (plan.num !== 9999) {
-                    Listed = Listing.filter ( companyList => incoming
-                      .some ( permission => companyList.includes( permission ) ) )
-                  }
-                  this.setState ( {...this.state , permitted: Listed , permissionsLoaded: true} );
-
-                  if ( Listed.length ){
-                    let Land = Listed[ 0 ];
-                    this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
-                  }
-                  console.log ( "DashboardUser__plans_++_" + snapshot.exists() + '_-_' + JSON.stringify ( plan ) );
-                }else{
-                  console.log('subscription expred!');
-                  this.setState ( {...this.state , permissionsLoaded: true} );
+      Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
+        .once ( 'value').then ( snapshot=>{
+          if (snapshot.exists()) {
+            let plan = [];
+            snapshot.forEach ( function ( childSnapshot) {
+              plan.push(childSnapshot.val());
+            });
+            if ( plan.length ){
+              let set = new Set ();
+              plan.forEach((item) => {
+                item.following.forEach((following) => {
+                  set.add(following);
+                })
+              })
+              let Listed = Listing.filter ( companyList => Array.from(set)
+                .some ( permission => companyList.includes( permission ) ) );
+              if (plan.some(item=>item.num===9999)) {
+                Listed = Listing;
+              }
+              this.setState ( {...this.state , permitted: Listed , permissionsLoaded: true} );
+                if ( Listed.length ){
+                  let Land = Listed[ 0 ];
+                  this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
                 }
-
-              }else {
-                console.log('new user!');
+                console.log ( "DashboardUser__plans_++_" + snapshot.exists() + '_-_' + JSON.stringify ( plan ) );
+              }else{
+                console.log('subscriptions expred!');
                 this.setState ( {...this.state , permissionsLoaded: true} );
               }
-          } )
+
+            }else {
+              console.log('new user!');
+              this.setState ( {...this.state , permissionsLoaded: true} );
+            }
         } )
     }
 
@@ -192,7 +189,7 @@ class App extends Component {
       );
     }else{
       return (
-        <div style={{backgroundColor:"#D3D3D3"}}>
+        <div style={{backgroundColor:"#D3D3D3",}}>
           <Drawer
             sitePage={this.state.sitePage}
             refresh={this.state.refresh}

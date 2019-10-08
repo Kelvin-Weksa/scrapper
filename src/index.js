@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter , Switch , Route } from "react-router-dom";
@@ -11,6 +10,7 @@ import Loader from './loader';
 import Account from './account';
 import Pricing from './pricing';
 import Admin from './admin';
+import './index.css';
 
 ReactDOM.render(
   <SnackbarProvider maxSnack={2} preventDuplicate

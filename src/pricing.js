@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles , } from '@material-ui/core/styles';
+import { makeStyles , withStyles , useTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import AppBar from '@material-ui/core/AppBar';
@@ -28,55 +28,56 @@ import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { withSnackbar , useSnackbar } from 'notistack';
 import SectionDesktop from './sectionDesktop';
-import TimePeriod from './finishChoosing'
+import TimePeriod from './finishChoosing';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import TableHead from '@material-ui/core/TableHead';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import {useScrollPosition} from './use-scroll-position'
+import clsx from 'clsx';
+
+const StyledTableCell = withStyles(theme => ({
+  head: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.common.white,
+  },
+}))(TableCell);
+
+const StyledTableRow = withStyles(theme => ({
+  root: {
+    '&:nth-of-type(even)': {
+      backgroundColor: theme.palette.background.default,
+    },
+  },
+}))(TableRow);
 
 function debounce( func, wait, immediate) {
-  // 'private' variable for instance
-  // The returned function will be able to reference this due to closure.
-  // Each call to the returned function will share this common timer.
   var timeout;
-
-  // Calling debounce returns a new anonymous function
   return function() {
-    // reference the context and args for the setTimeout function
     var context = this,
       args = arguments;
-
-    // Should the function be called now? If immediate is true
-    //   and not already in a timeout then the answer is: Yes
     var callNow = immediate && !timeout;
-
-    // This is the basic debounce behaviour where you can call this
-    //   function several times, but it will only execute once
-    //   [before or after imposing a delay].
-    //   Each time the returned function is called, the timer starts over.
     clearTimeout(timeout);
-
-    // Set the new timeout
     timeout = setTimeout(function() {
-
-      // Inside the timeout function, clear the timeout variable
-      // which will let the next execution run when in 'immediate' mode
       timeout = null;
-
-      // Check if the function already ran with the immediate flag
       if (!immediate) {
-        // Call the original function with apply
-        // apply lets you define the 'this' object as well as the arguments
-        //    (both captured before setTimeout)
         func.apply(context, args);
       }
     }, wait);
-
-    // Immediate mode and no wait timer? Execute the function..
     if (callNow) func.apply(context, args);
   }
 }
 
-var card_chosen = {
-  num: 0,
-  endDate:0,
-};
+function msToTime ( duration ) {
+    var minutes = parseInt ( ( duration / ( 1000 * 60 ) ) % 60 )
+        , hours = parseInt ( ( duration / ( 1000 * 60 * 60 ) ) % 24 );
+
+    hours =  ( hours < 10 ) ? "0" + hours : hours;
+    minutes = ( minutes < 10 ) ? "0" + minutes : minutes;
+    return hours + ":hrs " + minutes + ": mins";
+}
 
 function getSteps ( ){
   return ['Select Companies', 'Check Out'];
@@ -85,7 +86,8 @@ function getSteps ( ){
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(3, 2),
-    width: '90%',
+    display: 'flex',
+    flexFlow: 'row wrap',
   },
   paper:{
     //background : `linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) )` ,
@@ -113,9 +115,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent:'flex-end',
     alignItems:'flex-end',
     alignContent: 'flex-end',
-    width:'100vw',
     position: 'relative',
-    top: '7vh',
   },
   transitionGroup:{
     transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
@@ -131,6 +131,16 @@ const useStyles = makeStyles(theme => ({
     width: 80,
     transform:'scale(0.6,0.8)'
   },
+  vl: {
+    borderLeft: `6px solid ${theme.palette.primary.main}`,
+    height: `4vh`,
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+  },
+  vll: {
+    borderLeft: `6px solid ${theme.palette.secondary.main}`,
+    height: `10vh`,
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+}
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -143,12 +153,12 @@ function ListCompanies ( props ){
   var st = {}
   Listing.forEach ( ( list ) => {
     st[ list[ 2 ].replace ( /\s/g, '_') ] =
-        (props.selected.includes( list[ 2 ].replace ( /\s/g, '_') ) || card_chosen.num === 9999  ) ? true : false;
+        (props.selected.includes( list[ 2 ].replace ( /\s/g, '_') ) || props.card_chosen.num === 9999  ) ? true : false;
   } )
   const [ state , setState ] = React.useState(st);
 
   React.useEffect ( ( ) => {
-    if ( ( ( card_chosen.num - props.selected.length )  === 0 ) || card_chosen.num === 9999 ){
+    if ( ( ( props.card_chosen.num - props.selected.length )  === 0 ) || props.card_chosen.num === 9999 ){
       props.continue ( true )
     }else if ( props.selected.length >= 10 ){
       props.continue ( true )
@@ -182,20 +192,20 @@ function ListCompanies ( props ){
   };
 
   const helperText = ( ) => {
-    if ( card_chosen.num - props.selected.length > 0 ){
-      let more = card_chosen.num - props.selected.length;
+    if ( props.card_chosen.num - props.selected.length > 0 ){
+      let more = props.card_chosen.num - props.selected.length;
       return `${props.selected.length < 10? `(${props.selected.length})  Select a minimum of 10 Companies!` : `(${more}) Companies remaining...`}`
-    }else if ( card_chosen.num - props.selected.length === 0 ) {
+    }else if ( props.card_chosen.num - props.selected.length === 0 ) {
       return `You have reached limit`
-    }else if ( card_chosen.num - props.selected.length < 0 ) {
-      return `In Excess , please Remove ${props.selected.length - card_chosen.num} Companies...`
+    }else if ( props.card_chosen.num - props.selected.length < 0 ) {
+      return `In Excess , please Remove ${props.selected.length - props.card_chosen.num} Companies...`
     }
   }
 
   return (
     <React.Fragment>
       <Typography>
-        {card_chosen.num === 9999 ? "ALL Companies Selected..." : helperText()  }
+        {props.card_chosen.num === 9999 ? "ALL Companies Selected..." : helperText()  }
       </Typography>
       <Grid container spacing={3} justify="center">
         {Listing.map ( ( list , index )=>(
@@ -210,7 +220,7 @@ function ListCompanies ( props ){
         ) )}
       </Grid>
       <Typography>
-        {card_chosen.num === 9999 ? "ALL Companies Selected..." : helperText() }
+        {props.card_chosen.num === 9999 ? "ALL Companies Selected..." : helperText() }
       </Typography>
     </React.Fragment>
   );
@@ -220,8 +230,8 @@ function CheckOut ( props ){
   return (
     <div>
       <Box fontWeight="fontWeightBold" style={{paddingLeft:'4px'}}>
-        {`You have chosen to follow the ${card_chosen.num === 9999 ? 'ALL the' : 'The following'} Companies`}:
-        {card_chosen.num !== 9999 ?
+        {`You have chosen to follow the ${props.card_chosen.num === 9999 ? 'ALL the' : 'The following'} Companies`}:
+        {props.card_chosen.num !== 9999 ?
           (<Grid container spacing={1}>
             {props.selected.map ( (item) =>
               <Grid item xs={3} wrap="nowrap">
@@ -250,12 +260,114 @@ function CheckOut ( props ){
   )
 }
 
-function getStepContent ( step , fn , selected ){
+function Recipt ( props ){
+  const theme = useTheme ();
+  return (
+    <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
+      <Paper style={{paddingLeft:'5%',paddingRight:'5%',paddingTop:'5%',position:'relative',top:'2vh'}}>
+        <div style={{display:'flex',flexFlow:'column wrap'}}>
+          <Typography variant='h4' style={{alignSelf:'center'}}>
+            INVOICE
+          </Typography>
+          <div style={{display:'flex',justifyContent:'space-between'}}>
+            <div>
+              <Typography variant='h6'>
+                {Firebase.auth().currentUser.displayName}
+              </Typography>
+              <Typography variant='h6'>
+                {Firebase.auth().currentUser.email}
+              </Typography>
+            </div>
+            <div>
+              <Table>
+                <TableBody>
+                  <StyledTableRow>
+                    <StyledTableCell align="center">from</StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography variant='subtitle2' color="primary">
+                        {props.start ? `${props.start.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
+                      </Typography>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                  <StyledTableRow>
+                    <StyledTableCell align="center">to</StyledTableCell>
+                    <StyledTableCell align="center">
+                      <Typography variant='subtitle2' color="primary">
+                        {props.expiry ? `${props.expiry.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
+                      </Typography>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        </div>
+        <Table >
+          <TableHead>
+            <TableRow>
+              <StyledTableCell align="left">
+                <Typography>
+                  {`You are following ${props.card_chosen.num === 9999 ? 'ALL the' : 'these'} Companies`}
+                </Typography>
+              </StyledTableCell>
+              <StyledTableCell align="right">Damages</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <StyledTableRow>
+              <StyledTableCell component="th" scope="row" >
+                {props.card_chosen.num !== 9999 ?
+                  (<Grid container spacing={1}>
+                    {props.selected.map ( (item) =>
+                      <Grid item xs={4}>
+                        <Typography color='secondary' >{item.replace ( /_/g, ' ')}</Typography>
+                      </Grid>)}
+                    </Grid>) :
+                  (null)
+                }
+              </StyledTableCell>
+              <StyledTableCell align="center" style={{backgroundColor: theme.palette.background.default,}}>
+                <div style={{display:"inline-block"}}>
+                  <Typography variant="h4" component="h2" style={{float:'left',padding:0}}>
+                    <AttachMoneyIcon/>{props.value}
+                  </Typography>
+                  <Typography variant="overline" style={{float:'left'}}>
+                    Month
+                  </Typography>
+                </div>
+              </StyledTableCell>
+            </StyledTableRow>
+          </TableBody>
+        </Table>
+        <div style={{display:'flex',flexFlow:'column wrap',alignItems:'center'}}>
+          {(props.expiry - new Date()) > 0 ?
+            (
+              <Typography variant='subtitle1' color="primary">
+                {props.expiry ? Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000)) >= 1 ?
+                  `${Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000))} days remaining`
+                  :
+                  `${msToTime((props.expiry - new Date())%(24 * 60 * 60 * 1000))} remaining` : ``}
+              </Typography>
+            )
+            :
+            (
+              <Typography variant='subtitle2' color="secondary">
+                EXPIRED
+              </Typography>
+            )
+          }
+        </div>
+      </Paper>
+    </div>
+  )
+}
+
+function getStepContent ( step , fn , selected , card_chosen ){
   switch (step) {
     case 0:
-      return <ListCompanies continue={fn} selected={selected}/>;
+      return <ListCompanies continue={fn} selected={selected} card_chosen={card_chosen}/>;
     case 1:
-      return <CheckOut continue={fn} selected={selected}/>;
+      return <CheckOut continue={fn} selected={selected} card_chosen={card_chosen}/>;
     default:
       return 'Unknown step';
   }
@@ -272,9 +384,11 @@ function VerticalLinearStepper ( props ){
     setActiveStep(prevActiveStep => prevActiveStep + 1);
     if ( finish ){
       alert("checking out on " + new Date ( ).toString().split(' ').slice ( 0 , 5 ).join(' ')
-      + ` You have Subscribed for ${card_chosen.period} days`)
+      + ` You have Subscribed for ${props.card_chosen.period} days`)
+      let following = props.selected.map ( item => item.replace ( /_/g, ' ') );
+      props.card_chosen.following = following;
       Firebase.database().ref ( "Plans/" + Firebase.auth().currentUser.uid.toString ( ) )
-        .set ( card_chosen ,  ( error )=> {
+        .set ( [ ...props.plan.filter ( item=>item.num!==0 ) , props.card_chosen ] ,  ( error )=> {
           if ( error ) {
             console.log ( error )
             alert ( 'failed to update plan to FireBase!' );
@@ -288,8 +402,9 @@ function VerticalLinearStepper ( props ){
             );
           }
       } );
+
       Firebase.database().ref ( "Users/" + Firebase.auth().currentUser.uid.toString ( ) )
-        .set ( props.selected.map ( item => item.replace ( /_/g, ' ') ) ,  ( error )=> {
+        .set ( following ,  ( error )=> {
           if ( error ) {
             console.log ( error )
             alert ( 'failed to update companies to FireBase!' );
@@ -323,7 +438,7 @@ function VerticalLinearStepper ( props ){
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
             <StepContent>
-              <Typography>{getStepContent( index , setNext , props.selected)}</Typography>
+              <Typography>{getStepContent( index , setNext , props.selected , props.card_chosen)}</Typography>
               <div className={classes.actionsContainer}>
                 <div>
                   <Button
@@ -348,8 +463,8 @@ function VerticalLinearStepper ( props ){
                       disabled={!nexty}
                       selector={(selected)=>{
                           if (selected) {
-                            card_chosen.period = selected;
-                            card_chosen.endDate = new Date().getTime() + selected * 1000 * 60 * 60 * 24; //86400000
+                            props.card_chosen.period = selected;
+                            props.card_chosen.endDate = new Date().getTime() + selected * 1000 * 60 * 60 * 24;
                             handleNext(activeStep === steps.length - 1)
                           }
                         }
@@ -376,20 +491,34 @@ function VerticalLinearStepper ( props ){
 
 function PaperSheet ( props ) {
   const classes = useStyles();
-  //const theme = useTheme ( );
-  let button1 =  React.createRef ( );
-  let button2 =  React.createRef ( );
-  let button3 =  React.createRef ( );
-  let button4 =  React.createRef ( );
+  const theme = useTheme ( );
   let selected = React.useRef ( [ ] );
-  let clicked = React.useRef (0);
-  let root = React.createRef ( );
+  let recipt = React.useRef ({
+    index:null,
+    expired:false,
+    value:0,
+  });
+  let root  = React.createRef();
+  let row1 = React.createRef();
+  let row2 = React.createRef();
+  let row3 = React.createRef();
+  let guide = React.createRef();
+  let key = React.createRef(0);
   const [open, setOpen] = React.useState(false);
   const [disabled, setDisabled] = React.useState(true);
-  const [plan, setPlan] = React.useState({
+  const [plan, setPlan] = React.useState([{
     num:0,
-    period:0
+    period:0,
+    endDate:0,
+  },]);
+  const [expiredplan, setExpiredPlan] = React.useState([]);
+  const [card_chosen, set_card_chosen] = React.useState ({
+    num: 0,
+    endDate:0,
+    period:0,
+    following:[],
   });
+  const [row, setRow] = React.useState ([false,true,true])
 
   const { enqueueSnackbar , closeSnackbar } = useSnackbar();
 
@@ -404,7 +533,7 @@ function PaperSheet ( props ) {
   }
 
   React.useEffect ( ()=>{
-    let key = enqueueSnackbar (
+    key.current = enqueueSnackbar (
       "loading..." , {
         variant : "warning"  ,
         persist: true,
@@ -412,21 +541,9 @@ function PaperSheet ( props ) {
     );
     (async ()=> {
       let user = Firebase.auth().currentUser;
-      if ( disabled && user){
+      if (disabled && user){
         document.body.style.cursor = "wait";
         await Promise.all( [
-          new Promise ( async (resolve, reject)=> {
-            setTimeout ( function () {
-                try {
-                  root.current.style.top = '0vh';
-                  root.current.style.opacity = 1;
-                  return resolve ( )
-                } catch (e) {
-                  return reject ( e )
-                }
-            }, 10);
-          })
-          ,
           Firebase.database().ref  ( "Users/" + user.uid.toString ( )  )
             .once ( 'value').then ( snapshot=>{
               let incoming = [ ];
@@ -435,73 +552,212 @@ function PaperSheet ( props ) {
                 let set = new Set ( incoming );
                 selected.current = Array.from ( set );
               });
-              console.log ( "User__permissions_++_" + snapshot.exists() + '__' + incoming.length );
+              //console.log ( "User__permissions_++_" + snapshot.exists() + '__' + incoming.length );
           } )
           ,
           Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
             .once ( 'value').then ( snapshot=>{
               if (snapshot.exists ()) {
-                let incoming = {};
+                let incoming = [];
                 snapshot.forEach ( function ( childSnapshot) {
-                  incoming[childSnapshot.key] = childSnapshot.val();
+                  incoming.push(childSnapshot.val());
                 });
-                if (parseInt(new Date() - incoming.endDate) > 0 && incoming.endDate !== 0 ) {
+                //console.log(JSON.stringify(incoming));
+                let incoming_ = incoming.filter(item=>parseInt(new Date() - item.endDate) < 0 && item.endDate !== 0);
+                if (incoming_.length!==incoming.length) {
                   Firebase.database().ref ( "Plans/" + Firebase.auth().currentUser.uid.toString ( ) )
-                    .set ( {num:0,endDate:0} ,  ( error )=> {
+                    .set ( incoming_ ,  ( error )=> {
                       if ( error ) {
                         console.log ( error )
                         alert ( 'failed to update plan to FireBase!' );
-                      } else { // eslint-disable-next-line
-                        console.log ( 'FireBase updated' + "__" + Firebase.auth().currentUser.displayName )
+                      } else {
+                        console.log ( 'FireBase updated__' + Firebase.auth().currentUser.displayName )
                         enqueueSnackbar (
-                          "Your trial has expired!" , {
-                            variant : "info"  ,
+                          "atleast one plan has expired!" , {
+                            variant : "warning"  ,
                             autoHideDuration: 3500,
                           }
                         );
+                        let expired = incoming.filter(item=>!(parseInt(new Date() - item.endDate) < 0 && item.endDate !== 0));
+                        Firebase.database().ref ( "expiredPlans/" + Firebase.auth().currentUser.uid.toString ( ) )
+                          .once ( "value" ).then ( (snapshot) => {
+                            let mem = [];
+                            if (snapshot.exists()) {
+                              snapshot.forEach ( function ( childSnapshot) {
+                                expired.push(childSnapshot.val());
+                              });
+                            }
+                            Firebase.database().ref ( "expiredPlans/" + Firebase.auth().currentUser.uid.toString ( ) )
+                              .set ( [...mem, ...expired], (error) => {
+                                if (!error) {
+                                  setExpiredPlan ( [ ...mem , ...expired ] );
+                                }else {
+                                  console.log ( error )
+                                  alert ( 'failed to update expired plan to FireBase!' );
+                                }
+                              } )
+                          } )
                       }
                   } );
-                  alert ( `Your trial has expired!` )
-                }else if ( incoming.endDate !== plan.endDate || incoming.num !== plan.num ){
-                  switch ( incoming.num ){
-                    case ( 10 ) : decorate ( 10 , button1 , '448aff' ); break;
-                    case ( 50 ) : decorate ( 50 , button2 , '6a1b9a' ); break;
-                    case ( 80 ) : decorate ( 80 , button3 , 'e040fb' ); break;
-                    case ( 9999 ) : decorate ( 9999 , button4 , '00c853' ); break;
-                    default:
-                  }
-                  console.log ( "User__plans_++_" + snapshot.exists() + '_-_' + JSON.stringify ( incoming ) );
-                  setPlan ( incoming );
+                }
+                if ( JSON.stringify(incoming_) !== JSON.stringify(plan) ){
+                  //console.log ( "User__plans_++_" + snapshot.exists() + '_-_' + JSON.stringify ( incoming ) );
+                  setPlan ( incoming_ );
                 }
               }
           } )
+          ,
+          Firebase.database().ref ( "expiredPlans/" + user.uid.toString ( ) )
+            .once ( "value" ).then ( (snapshot) => {
+              if (snapshot.exists()) {
+                let expired = [];
+                snapshot.forEach ( function ( childSnapshot) {
+                  expired.push(childSnapshot.val());
+                });
+                if (!expiredplan.length) {
+                  setExpiredPlan (expired);
+                }
+              }
+            } )
         ] )
           .catch ( console.log )
-        closeSnackbar ( key );
         document.body.style.cursor = "default";
         setDisabled ( false )
       }
+      closeSnackbar ( key.current );
     })();
     return ()=>{
-      closeSnackbar ( key );
     }
   })
 
-  function decorate ( num , ref , color){
-    button1.current.style.boxShadow= `none`
-    button2.current.style.boxShadow= `none`
-    button3.current.style.boxShadow= `none`
-    button4.current.style.boxShadow= `none`
-    ref.current.style.boxShadow= `-5px -5px 5px ${'#' + color}`
+  React.useLayoutEffect (() => {
+    new Promise ( async (resolve, reject)=> {
+      setTimeout ( function () {
+          try {
+            if (root.current) {
+              root.current.style.top = '0vh';
+              root.current.style.opacity = 1;
+            }
+            return resolve ( )
+          } catch (e) {
+            return reject ( e )
+          }
+      }, 10);
+    }).catch(console.log)
+  },[root])
 
-  }
-
-  function choose ( num , ref, color ){
-    card_chosen.num = num;
-    closeSnackbar ( clicked.current );
-    decorate ( num , ref, color);
+  function choose ( num , key=null, expired=false, value=0 ){
+    recipt.current.index = key;
+    recipt.current.expired = expired;
+    recipt.current.value=value;
+    set_card_chosen ( { ...card_chosen,num:num })
     handleClickOpen ( );
   }
+
+  function PriceList (props){
+    switch (props.num) {
+      case 10:
+        return  <
+          SimpleCard
+            onClick={debounce(()=>choose(10,props.index,props.expired,5),300)}
+            icon={<PersonIcon/>}
+            type={'10 Companies'}
+            value={5}
+            user={'Max 1 User'}
+            shade={'#448aff'}
+            title={props.plan && props.plan.num === 10? 'Your current Plan' : ''}
+            expiry={props.plan && props.plan.num === 10? new Date ( props.plan.endDate ) : ''}
+            disabled={disabled}
+            border={props.border}
+            expired={props.expired}
+          />;
+      case 50:
+        return <
+          SimpleCard
+            onClick={debounce(()=>choose(50,props.index,props.expired,50),300)}
+            icon={<PeopleIcon/>}
+            type={'50 Companies'}
+            value={50}
+            user={'Max 5 Users'}
+            shade={'#6a1b9a'}
+            title={props.plan && props.plan.num === 50? 'Your current Plan' : ''}
+            expiry={props.plan && props.plan.num === 50? new Date ( props.plan.endDate ) : ''}
+            disabled={disabled}
+            border={props.border}
+            expired={props.expired}
+          />
+      case 80:
+        return <
+          SimpleCard
+            onClick={debounce(()=>choose(80,props.index,props.expired,150),300)}
+            icon={<EmojiPeopleIcon/>}
+            type={'80 Companies'}
+            value={150}
+            user={'Max 15 Users'}
+            shade={'#e040fb'}
+            title={props.plan && props.plan.num === 80? 'Your current Plan' : ''}
+            expiry={props.plan && props.plan.num === 80? new Date ( props.plan.endDate ) : ''}
+            disabled={disabled}
+            border={props.border}
+            expired={props.expired}
+          />
+      case 9999:
+        return <
+          SimpleCard
+            onClick={debounce(()=>choose(9999,props.index,props.expired,500),300)}
+            icon={<BusinessCenterIcon color='white'/>}
+            type={'Enterprise Package'}
+            value={500}
+            user={'Max 1 Company'}
+            shade={'#00c853'}
+            title={props.plan && props.plan.num === 9999? 'Your current Plan' : ''}
+            expiry={props.plan && props.plan.num === 9999? new Date ( props.plan.endDate ) : ''}
+            disabled={disabled}
+            border={props.border}
+            expired={props.expired}
+          />
+      default:
+        return null;
+    }
+  }
+
+  useScrollPosition(
+    ({ prevPos, currPos }) => {
+      try {
+        if (row1.current&&row2.current&&row3.current&&guide.current) {
+          console.log( JSON.stringify ( { prevPos, currPos } ) );
+          function midPoint ( box ){
+            return ( box.top + ( box.height / 2 ) )
+          }
+          function absolute ( row ){
+            return Math.abs(
+              midPoint ( row.current.getBoundingClientRect() )
+                - midPoint ( guide.current.getBoundingClientRect() )
+            )
+          }
+          let rows = [ row1 , row2 , row3 ]
+          let row_positions = rows.map ( item=>absolute(item) );
+          //loop through the array and look for the lowest number
+          var index = 0;
+          var value = row_positions[0];
+          for (var i = 1; i < row_positions.length; i++) {
+            if (row_positions[i] < value) {
+              value = row_positions[i];
+              index = i;
+            }
+          }
+          let update = row_positions.map ( item=>true );
+          update[index] = false;
+          setRow ( update )
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    null,
+    false,
+    150
+  )
 
   return (
     <div className={classes.paper}>
@@ -509,76 +765,111 @@ function PaperSheet ( props ) {
         <div className={classes.grow} />
         <SectionDesktop/>
       </Toolbar>
-      <div className={classes.root}>
-        <div className={classes.transitionGroup} ref={root}>
-          <Typography variant="h2" component="p" color="textSecondary" style={{textAlign:'center'}}>
-            Choose a plan that is best for you
-          </Typography>
-          <Grid container spacing={5} className={classes.prices}>
-            <SimpleCard
-              onClick={debounce(()=>choose(10,button1,'448aff'),300)}
-              ref={button1}
-              icon={<PersonIcon/>}
-              type={'10 Companies'}
-              value={5}
-              user={'Max 1 User'}
-              shade={'#448aff'}
-              title={plan.num === 10? 'Your current Plan' : ''}
-              expiry={plan.num === 10? new Date ( plan.endDate ) : ''}
-              disabled={disabled}
+      <Grid container className={classes.root}>
+        <Grid item  style={{flex:'1 0 auto',alignSelf:'flex-start',}}>
+          <div style={{display:'flex',justifyContent:"center"}}>
+            <div style={{position:'fixed',top:'30vh'}} ref={guide}>
+              <div className={clsx({
+                [classes.vl]: row[0],
+                [classes.vll]: !row[0],
+              })}>
+              </div>
+              <div style={{height:'1vh'}}/>
+              <div className={clsx({
+                [classes.vl]: row[1],
+                [classes.vll]: !row[1],
+              })}>
+              </div>
+              <div style={{height:'1vh'}}/>
+              <div className={clsx({
+                [classes.vl]: row[2],
+                [classes.vll]: !row[2],
+              })}>
+              </div>
+            </div>
+          </div>
+        </Grid>
+        <Grid  item xs={11} style={{flex:'0 1 auto'}} className={classes.transitionGroup} ref={root}>
+          <div ref={row1}>
+            <Typography variant="h2" component="p" color="textSecondary" style={{textAlign:'right'}}>
+              Your Current Plan
+            </Typography>
+            <div style={{height:theme.mixins.toolbar.minHeight*2/3}}/>
+            <Grid container spacing={5} className={classes.prices}>
+              {plan.map ( (plan , index) =>
+                <PriceList
+                  index={index}
+                  num={plan.num}
+                  border={true}
+                  plan={plan}
+                />
+              )}
+            </Grid>
+          </div>
+          <div ref={row2}>
+            <Typography variant="h2" component="p" color="textSecondary" style={{textAlign:'right'}}>
+              Choose a plan that is best for you
+            </Typography>
+            <div style={{height:theme.mixins.toolbar.minHeight*2/3}}/>
+            <Grid container spacing={5} className={classes.prices}>
+              <PriceList num={10}   />
+              <PriceList num={50}   />
+              <PriceList num={80}   />
+              <PriceList num={9999} />
+            </Grid>
+          </div>
+          <div ref={row3}>
+            <Typography variant="h2" component="p" color="textSecondary" style={{textAlign:'right'}}>
+              Expired plans
+            </Typography>
+            <div style={{height:theme.mixins.toolbar.minHeight*2/3}}/>
+            <Grid container spacing={5} className={classes.prices}>
+            {expiredplan.map ( (plan , index) =>
+              <PriceList
+                index={index}
+                num={plan.num}
+                border={true}
+                plan={plan}
+                expired={true}
+              />
+            )}
+            </Grid>
+          </div>
+        </Grid>
+      </Grid>
+      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition} >
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        <Toolbar/>
+        {(recipt.current.index!==null) ?
+          (
+            <Recipt
+              selected={(!recipt.current.expired ? plan : expiredplan)[recipt.current.index].following}
+              expiry={new Date ( (!recipt.current.expired ? plan : expiredplan)[recipt.current.index].endDate )}
+              start={new Date ( (!recipt.current.expired ? plan : expiredplan)[recipt.current.index].endDate - ( (!recipt.current.expired ? plan : expiredplan)[recipt.current.index].period * 24 * 60 * 60 * 1000 ) )}
+              plan={(!recipt.current.expired ? plan : expiredplan)[recipt.current.index].num}
+              card_chosen={card_chosen}
+              value={recipt.current.value}
             />
-            <SimpleCard
-              onClick={debounce(()=>choose(50,button2,'6a1b9a'),300)}
-              ref={button2}
-              icon={<PeopleIcon/>}
-              type={'50 Companies'}
-              value={50}
-              user={'Max 5 Users'}
-              shade={'#6a1b9a'}
-              title={plan.num === 50? 'Your current Plan' : ''}
-              expiry={plan.num === 50? new Date ( plan.endDate ) : ''}
-              disabled={disabled}
-            />
-            <SimpleCard
-              onClick={debounce(()=>choose(80,button3,'e040fb'),300)}
-              ref={button3}
-              icon={<EmojiPeopleIcon/>}
-              type={'80 Companies'}
-              value={150}
-              user={'Max 15 Users'}
-              shade={'#e040fb'}
-              title={plan.num === 80? 'Your current Plan' : ''}
-              expiry={plan.num === 80? new Date ( plan.endDate ) : ''}
-              disabled={disabled}
-            />
-            <SimpleCard
-              onClick={debounce(()=>choose(9999,button4,'00c853'),300)}
-              ref={button4}
-              icon={<BusinessCenterIcon color='white'/>}
-              type={'Enterprise Package'}
-              value={500}
-              user={'Max 1 Company'}
-              shade={'#00c853'}
-              title={plan.num === 9999? 'Your current Plan' : ''}
-              expiry={plan.num === 9999? new Date ( plan.endDate ) : ''}
-              disabled={disabled}
-            />
-          </Grid>
-        </div>
-        <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition} >
-          <AppBar className={classes.appBar}>
-            <Toolbar>
-              <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-                <CloseIcon />
-              </IconButton>
-            </Toolbar>
-          </AppBar>
-          <Toolbar/>
-          <VerticalLinearStepper {...props} selected={selected.current}/>
-        </Dialog>
-      </div>
+          )
+            :
+          (
+           <VerticalLinearStepper
+            {...props}
+            selected={selected.current}
+            card_chosen={card_chosen}
+            plan={plan}
+          />
+          )
+        }
+      </Dialog>
     </div>
   );
 }
 
-export default withRouter ( withSnackbar ( PaperSheet ) )//
+export default withRouter ( withSnackbar ( PaperSheet ) )

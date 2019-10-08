@@ -16,6 +16,7 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import DataUsageIcon from '@material-ui/icons/DataUsage';
 import Graph from './barchart';
 import Doughnut from './doughnutchart';
+import UsersTable from './usersTable'
 
 const useStyles = makeStyles(theme => ({
   root:{
@@ -174,6 +175,12 @@ export default function PaperSheet() {
             <Paper className={classes.paper1}>
               <Doughnut/>
             </Paper>
+          </Grid>
+        </Grid>
+        <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
+        <Grid container spacing={2} className={classes.container}>
+          <Grid item xs={10}>
+            <UsersTable/>
           </Grid>
         </Grid>
       </div>
