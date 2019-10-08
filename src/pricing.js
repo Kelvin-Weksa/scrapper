@@ -812,10 +812,10 @@ function PaperSheet ( props ) {
             </Typography>
             <div style={{height:theme.mixins.toolbar.minHeight*2/3}}/>
             <Grid container spacing={5} className={classes.prices}>
-              <PriceList num={10}   />
-              <PriceList num={50}   />
-              <PriceList num={80}   />
-              <PriceList num={9999} />
+              <PriceList num={10}  />
+              <PriceList num={50}  />
+              <PriceList num={80}  />
+              <PriceList num={9999}/>
             </Grid>
           </div>
           <div ref={row3}>
