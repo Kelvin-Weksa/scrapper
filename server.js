@@ -10270,11 +10270,36 @@ function sbicparticipations ( socket , monitor ) {
 }
 Scrappers.push ( sbicparticipations );
 
+app.use ( express.json ( ) );
+
+app.get ( '/allUsers' , function ( req , res ) {
+  //console.log("allUsers");
+  function listAllUsers(nextPageToken) {
+    // List batch of users, 1000 at a time.
+    admin.auth().listUsers(1000, nextPageToken)
+      .then(function(listUsersResult) {
+        users = []
+        listUsersResult.users.forEach(function(userRecord) {
+          users.push( userRecord.toJSON() );
+        });
+        if (listUsersResult.pageToken) {
+          // List next batch of users.
+          listAllUsers(listUsersResult.pageToken);
+        }else{
+          res.send ( users );
+        }
+      })
+      .catch(function(error) {
+        console.log('Error listing users:', error);
+      });
+  }
+  // Start listing users recursively from the beginning, 1000 at a time.
+  listAllUsers();
+});
+
 app.get ( '/*' , function ( req , res ) {
   res.sendFile ( path.join ( __dirname , 'build' , 'index.html' ) );
 });
-
-app.use ( express.json ( ) );
 
 app.post ( '/register', function ( request , response ){
   console.log ( request.body );      // your JSON

@@ -32,47 +32,58 @@ class App extends Component {
     permitted: [ ],
     permissionsLoaded: false,
     error: null,
-    errorInfo: null
+    errorInfo: null,
+    meter:0,
   };
 
-  componentDidMount = ( )=> {
+  componentDidMount = async ( )=> {
     let user = Firebase.auth().currentUser;
+    let date = new Date();
     if ( user ){
-      Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
-        .once ( 'value').then ( snapshot=>{
-          if (snapshot.exists()) {
-            let plan = [];
-            snapshot.forEach ( function ( childSnapshot) {
-              plan.push(childSnapshot.val());
-            });
-            if ( plan.length ){
-              let set = new Set ();
-              plan.forEach((item) => {
-                item.following.forEach((following) => {
-                  set.add(following);
+      await Promise.all([
+        Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
+          .once ( 'value').then ( snapshot=>{
+            if (snapshot.exists()) {
+              let plan = [];
+              snapshot.forEach ( function ( childSnapshot) {
+                plan.push(childSnapshot.val());
+              });
+              if ( plan.length ){
+                let set = new Set ();
+                plan.forEach((item) => {
+                  item.following.forEach((following) => {
+                    set.add(following);
+                  })
                 })
-              })
-              let Listed = Listing.filter ( companyList => Array.from(set)
-                .some ( permission => companyList.includes( permission ) ) );
-              if (plan.some(item=>item.num===9999)) {
-                Listed = Listing;
-              }
-              this.setState ( {...this.state , permitted: Listed , permissionsLoaded: true} );
-                if ( Listed.length ){
-                  let Land = Listed[ 0 ];
-                  this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
+                let Listed = Listing.filter ( companyList => Array.from(set)
+                  .some ( permission => companyList.includes( permission ) ) );
+                if (plan.some(item=>item.num===9999)) {
+                  Listed = Listing;
                 }
-                console.log ( "DashboardUser__plans_++_" + snapshot.exists() + '_-_' + JSON.stringify ( plan ) );
-              }else{
-                console.log('subscriptions expred!');
+                this.setState ( {...this.state , permitted: Listed , permissionsLoaded: true} );
+                  if ( Listed.length ){
+                    let Land = Listed[ 0 ];
+                    this.fetcher ( Land[ 2 ] , Land[ 1 ] , Land[ 3 ] );
+                  }
+                  //console.log ( "DashboardUser__plans_++_" + snapshot.exists() + '_-_' + JSON.stringify ( plan ) );
+                }else{
+                  //console.log('subscriptions expred!');
+                  this.setState ( {...this.state , permissionsLoaded: true} );
+                }
+
+              }else {
+                console.log('new user!');
                 this.setState ( {...this.state , permissionsLoaded: true} );
               }
-
-            }else {
-              console.log('new user!');
-              this.setState ( {...this.state , permissionsLoaded: true} );
-            }
-        } )
+          } ),
+          Firebase.database().ref  ( "metering/" + user.uid.toString ( ) + `/${date.getFullYear()}_${date.getMonth()}_${date.getDate()}` )
+            .once ( 'value').then ( snapshot=>{
+              if (snapshot.exists()) {
+                let meter = snapshot.val();
+                this.setState ( {...this.state , meter:meter} );
+              }
+            } )
+      ])
     }
 
     socket.on ( "outgoing data", ( data ) => {
@@ -115,7 +126,7 @@ class App extends Component {
       snapshot.forEach ( function ( childSnapshot) {
         incoming.push ( childSnapshot.val ( ) );
       });
-
+      this.meter(incoming.length+this.state.characters.length);
       this.setState ( {
         characters: snapshot.exists ( ) ? [...incoming ] : [ ] ,
         loaded: snapshot.exists() ,
@@ -150,6 +161,7 @@ class App extends Component {
         });
         console.log ( incoming )
         if ( snapshot.exists ( ) ){
+          this.meter(incoming.length+this.state.characters.length);
           this.setState ( {
             characters : [ ...this.state.characters , ...incoming ] ,
             page : this.state.page + 1
@@ -159,10 +171,21 @@ class App extends Component {
             page : 0
           } )
         }
-
-
       })
     }
+  }
+
+  meter = (n) =>{
+    let date = new Date()
+    Firebase.database().ref ( "metering/" + Firebase.auth().currentUser.uid.toString ( ) + `/${date.getFullYear()}_${date.getMonth()}_${date.getDate()}` )
+      .set ( this.state.meter + n , (error) => {
+        if (!error) {
+          this.setState({...this.state,meter:this.state.meter + n})
+        }else {
+          console.log ( error )
+          alert ( 'failed to update metering information plan to FireBase!' );
+        }
+      } )
   }
 
   componentDidCatch = ( error , errorInfo )=> {

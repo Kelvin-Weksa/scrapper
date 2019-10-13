@@ -329,7 +329,7 @@ function Recipt ( props ){
               <StyledTableCell align="center" style={{backgroundColor: theme.palette.background.default,}}>
                 <div style={{display:"inline-block"}}>
                   <Typography variant="h4" component="h2" style={{float:'left',padding:0}}>
-                    <AttachMoneyIcon/>{props.value}
+                    <AttachMoneyIcon/>{props.card_chosen.value}
                   </Typography>
                   <Typography variant="overline" style={{float:'left'}}>
                     Month
@@ -465,6 +465,7 @@ function VerticalLinearStepper ( props ){
                           if (selected) {
                             props.card_chosen.period = selected;
                             props.card_chosen.endDate = new Date().getTime() + selected * 1000 * 60 * 60 * 24;
+                            props.card_chosen.startDate = new Date().getTime();
                             handleNext(activeStep === steps.length - 1)
                           }
                         }
@@ -496,8 +497,11 @@ function PaperSheet ( props ) {
   let recipt = React.useRef ({
     index:null,
     expired:false,
-    value:0,
   });
+  const selected_plan = ()=>{
+    let array = !recipt.current.expired ? plan : expiredplan;
+    return array[recipt.current.index]
+  };
   let root  = React.createRef();
   let row1 = React.createRef();
   let row2 = React.createRef();
@@ -510,12 +514,16 @@ function PaperSheet ( props ) {
     num:0,
     period:0,
     endDate:0,
+    value:0,
+    startDate:0,
   },]);
   const [expiredplan, setExpiredPlan] = React.useState([]);
   const [card_chosen, set_card_chosen] = React.useState ({
     num: 0,
-    endDate:0,
     period:0,
+    endDate:0,
+    value:0,
+    startDate:0,
     following:[],
   });
   const [row, setRow] = React.useState ([false,true,true])
@@ -646,75 +654,74 @@ function PaperSheet ( props ) {
     }).catch(console.log)
   },[root])
 
-  function choose ( num , key=null, expired=false, value=0 ){
+  function choose ( num, plan, key=null, ){
     recipt.current.index = key;
-    recipt.current.expired = expired;
-    recipt.current.value=value;
-    set_card_chosen ( { ...card_chosen,num:num })
+    recipt.current.expired = new Date(plan.endDate) - new Date() < 0;
+    set_card_chosen ( { ...card_chosen,num:num,value:plan.value })
     handleClickOpen ( );
   }
 
   function PriceList (props){
-    switch (props.num) {
+    switch (props.plan.num) {
       case 10:
         return  <
           SimpleCard
-            onClick={debounce(()=>choose(10,props.index,props.expired,5),300)}
+            onClick={debounce(()=>choose(10,props.plan,props.index),300)}
             icon={<PersonIcon/>}
             type={'10 Companies'}
-            value={5}
+            value={props.plan.value}
             user={'Max 1 User'}
             shade={'#448aff'}
-            title={props.plan && props.plan.num === 10? 'Your current Plan' : ''}
-            expiry={props.plan && props.plan.num === 10? new Date ( props.plan.endDate ) : ''}
+            title={props.plan.startDate && props.plan.num === 10? props.title : ''}
+            expiry={props.plan.startDate && props.plan.num === 10? new Date ( props.plan.endDate ) : ''}
             disabled={disabled}
             border={props.border}
-            expired={props.expired}
+            expired={new Date(props.plan.endDate) - new Date() < 0}
           />;
       case 50:
         return <
           SimpleCard
-            onClick={debounce(()=>choose(50,props.index,props.expired,50),300)}
+            onClick={debounce(()=>choose(50,props.plan,props.index),300)}
             icon={<PeopleIcon/>}
             type={'50 Companies'}
-            value={50}
+            value={props.plan.value}
             user={'Max 5 Users'}
             shade={'#6a1b9a'}
-            title={props.plan && props.plan.num === 50? 'Your current Plan' : ''}
-            expiry={props.plan && props.plan.num === 50? new Date ( props.plan.endDate ) : ''}
+            title={props.plan.startDate && props.plan.num === 50? props.title : ''}
+            expiry={props.plan.startDate && props.plan.num === 50? new Date ( props.plan.endDate ) : ''}
             disabled={disabled}
             border={props.border}
-            expired={props.expired}
+            expired={new Date(props.plan.endDate) - new Date() < 0}
           />
       case 80:
         return <
           SimpleCard
-            onClick={debounce(()=>choose(80,props.index,props.expired,150),300)}
+            onClick={debounce(()=>choose(80,props.plan,props.index),300)}
             icon={<EmojiPeopleIcon/>}
             type={'80 Companies'}
-            value={150}
+            value={props.plan.value}
             user={'Max 15 Users'}
             shade={'#e040fb'}
-            title={props.plan && props.plan.num === 80? 'Your current Plan' : ''}
-            expiry={props.plan && props.plan.num === 80? new Date ( props.plan.endDate ) : ''}
+            title={props.plan.startDate && props.plan.num === 80? props.title : ''}
+            expiry={props.plan.startDate && props.plan.num === 80? new Date ( props.plan.endDate ) : ''}
             disabled={disabled}
             border={props.border}
-            expired={props.expired}
+            expired={new Date(props.plan.endDate) - new Date() < 0}
           />
       case 9999:
         return <
           SimpleCard
-            onClick={debounce(()=>choose(9999,props.index,props.expired,500),300)}
+            onClick={debounce(()=>choose(9999,props.plan,props.index),300)}
             icon={<BusinessCenterIcon color='white'/>}
             type={'Enterprise Package'}
-            value={500}
+            value={props.plan.value}
             user={'Max 1 Company'}
             shade={'#00c853'}
-            title={props.plan && props.plan.num === 9999? 'Your current Plan' : ''}
-            expiry={props.plan && props.plan.num === 9999? new Date ( props.plan.endDate ) : ''}
+            title={props.plan.startDate && props.plan.num === 9999? props.title : ''}
+            expiry={props.plan.startDate && props.plan.num === 9999? new Date ( props.plan.endDate ) : ''}
             disabled={disabled}
             border={props.border}
-            expired={props.expired}
+            expired={new Date(props.plan.endDate) - new Date() < 0}
           />
       default:
         return null;
@@ -725,7 +732,7 @@ function PaperSheet ( props ) {
     ({ prevPos, currPos }) => {
       try {
         if (row1.current&&row2.current&&row3.current&&guide.current) {
-          console.log( JSON.stringify ( { prevPos, currPos } ) );
+          //console.log( JSON.stringify ( { prevPos, currPos } ) );
           function midPoint ( box ){
             return ( box.top + ( box.height / 2 ) )
           }
@@ -796,14 +803,17 @@ function PaperSheet ( props ) {
             </Typography>
             <div style={{height:theme.mixins.toolbar.minHeight*2/3}}/>
             <Grid container spacing={5} className={classes.prices}>
-              {plan.map ( (plan , index) =>
-                <PriceList
-                  index={index}
-                  num={plan.num}
-                  border={true}
-                  plan={plan}
-                />
-              )}
+              {React.useMemo(() =>
+                plan.map ( (plan , index) =>
+                  <PriceList
+                    index={index}
+                    border={true}
+                    plan={plan}
+                    disabled={disabled}
+                    title={"Your current Plan"}
+                  />
+                ),[plan,disabled])
+              }
             </Grid>
           </div>
           <div ref={row2}>
@@ -812,10 +822,10 @@ function PaperSheet ( props ) {
             </Typography>
             <div style={{height:theme.mixins.toolbar.minHeight*2/3}}/>
             <Grid container spacing={5} className={classes.prices}>
-              <PriceList num={10}  />
-              <PriceList num={50}  />
-              <PriceList num={80}  />
-              <PriceList num={9999}/>
+              {React.useMemo(()=><PriceList plan={{num:10,value:5,disabled:disabled}}  />,[disabled])}
+              {React.useMemo(()=><PriceList plan={{num:50,value:50,disabled:disabled}}  />,[disabled])}
+              {React.useMemo(()=><PriceList plan={{num:80,value:150,disabled:disabled}}  />,[disabled])}
+              {React.useMemo(()=><PriceList plan={{num:9999,value:500,disabled:disabled}} />,[disabled])}
             </Grid>
           </div>
           <div ref={row3}>
@@ -824,15 +834,17 @@ function PaperSheet ( props ) {
             </Typography>
             <div style={{height:theme.mixins.toolbar.minHeight*2/3}}/>
             <Grid container spacing={5} className={classes.prices}>
-            {expiredplan.map ( (plan , index) =>
-              <PriceList
-                index={index}
-                num={plan.num}
-                border={true}
-                plan={plan}
-                expired={true}
-              />
-            )}
+            {React.useMemo(()=>
+              expiredplan.map ( (plan , index) =>
+                <PriceList
+                  index={index}
+                  border={true}
+                  plan={plan}
+                  disabled={disabled}
+                  title={"expired plan"}
+                />
+              ) , [expiredplan,disabled])
+            }
             </Grid>
           </div>
         </Grid>
@@ -849,12 +861,11 @@ function PaperSheet ( props ) {
         {(recipt.current.index!==null) ?
           (
             <Recipt
-              selected={(!recipt.current.expired ? plan : expiredplan)[recipt.current.index].following}
-              expiry={new Date ( (!recipt.current.expired ? plan : expiredplan)[recipt.current.index].endDate )}
-              start={new Date ( (!recipt.current.expired ? plan : expiredplan)[recipt.current.index].endDate - ( (!recipt.current.expired ? plan : expiredplan)[recipt.current.index].period * 24 * 60 * 60 * 1000 ) )}
-              plan={(!recipt.current.expired ? plan : expiredplan)[recipt.current.index].num}
+              selected={selected_plan().following}
+              expiry={new Date ( selected_plan().endDate )}
+              start={new Date ( selected_plan().endDate - ( selected_plan().period * 24 * 60 * 60 * 1000 ) )}
+              plan={selected_plan().num}
               card_chosen={card_chosen}
-              value={recipt.current.value}
             />
           )
             :

@@ -10,37 +10,44 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SimpleTabs() {
+export default function SimpleTabs (props) {
   const classes = useStyles();
   const theme = useTheme ()
   let ctx = React.createRef();
-
+  let backgroundColor = [
+    theme.palette.primary.main,
+    theme.palette.primary.main,
+    theme.palette.primary.main,
+    theme.palette.primary.main,
+    theme.palette.primary.main,
+    theme.palette.primary.main,
+    theme.palette.primary.main,
+  ]
+  backgroundColor[new Date().getDay()] = theme.palette.secondary.light;
+  backgroundColor.push(backgroundColor.shift())
+  let borderColor=[
+    theme.palette.secondary.light,
+    theme.palette.secondary.light,
+    theme.palette.secondary.light,
+    theme.palette.secondary.light,
+    theme.palette.secondary.light,
+    theme.palette.secondary.light,
+    theme.palette.secondary.light,
+  ]
+  borderColor[new Date().getDay()] = theme.palette.primary.light;
+  borderColor.push(borderColor.shift())
   React.useEffect ( () => {
+    let ary = props.data.wk_days.reverse()
+    ary.push(ary.shift())
     new Chart(ctx.current, {
         type: 'bar',
         data: {
             labels: ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat' , 'Sun'],
             datasets: [{
-                label: '# Usage last seven days',
-                data: [12, 19, 3, 5, 2, 3, 10],
-                backgroundColor: [
-                  theme.palette.primary.main,
-                  theme.palette.primary.main,
-                  theme.palette.primary.main,
-                  theme.palette.primary.main,
-                  theme.palette.primary.main,
-                  theme.palette.primary.main,
-                  theme.palette.primary.main,
-                ],
-                borderColor: [
-                    theme.palette.secondary.light,
-                    theme.palette.secondary.light,
-                    theme.palette.secondary.light,
-                    theme.palette.secondary.light,
-                    theme.palette.secondary.light,
-                    theme.palette.secondary.light,
-                    theme.palette.secondary.light,
-                ],
+                label: '#This week Usage',
+                data: [...ary.reverse()],
+                backgroundColor: [...backgroundColor ],
+                borderColor: [...borderColor],
                 borderWidth: 0.3
             }]
         },

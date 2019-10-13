@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SimpleTabs() {
+export default function SimpleTabs(props) {
   const classes = useStyles();
   const theme = useTheme ()
   let ctx = React.createRef();
@@ -23,7 +23,7 @@ export default function SimpleTabs() {
             labels: ['tablet', 'mobile', 'desktop', ],
             datasets: [{
                 label: '# of Votes',
-                data: [12, 19, 13,],
+                data: [...props.data.devices],
                 backgroundColor: [
                   theme.palette.primary.main,
                   theme.palette.secondary.main,

@@ -60,9 +60,9 @@ const useStyles = makeStyles(theme => ({
   },
   transitionGroup:{
     transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
-    //opacity: 0.5,
+    opacity: 0.5,
     position: 'relative',
-    //top: '-4vh',
+    top: '-4vh',
   },
 }));
 
@@ -78,8 +78,8 @@ export default React.forwardRef( function SimpleCard ( props , ref ) {
           setTimeout ( function () {
               try {
                 if (root.current) {
-                  //root.current.style.top = '0vh';
-                  //root.current.style.opacity = 1;
+                  root.current.style.top = '0vh';
+                  root.current.style.opacity = 1;
                 }
                 return resolve ( )
               } catch (e) {

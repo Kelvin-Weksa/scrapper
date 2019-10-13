@@ -16,7 +16,60 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import DataUsageIcon from '@material-ui/icons/DataUsage';
 import Graph from './barchart';
 import Doughnut from './doughnutchart';
-import UsersTable from './usersTable'
+import UsersTable from './usersTable';
+import Firebase from './firebase'
+
+function getDifference(a, b){
+    var i = 0;
+    var j = 0;
+    var result = "";
+
+    while (j < b.length)
+    {
+        if (a[i] !== b[j] || i === a.length)
+            result += b[j];
+        else
+            i++;
+        j++;
+    }
+    return result;
+}
+
+function myNet () {
+  if (this.getMonth() === 0){return "January"};
+  if (this.getMonth() === 1){return "February"};
+  if (this.getMonth() === 2){return "March"};
+  if (this.getMonth() === 3){return "April"};
+  if (this.getMonth() === 4){return "May"};
+  if (this.getMonth() === 5){return "June"};
+  if (this.getMonth() === 6){return "July"};
+  if (this.getMonth() === 7){return "August"};
+  if (this.getMonth() === 8){return "September"};
+  if (this.getMonth() === 9){return "October"};
+  if (this.getMonth() === 10){return "November"};
+  if (this.getMonth() === 11){return "December"};
+};
+
+function msToTime ( duration ) {
+    var minutes = parseInt ( ( duration / ( 1000 * 60 ) ) % 60 )
+        , hours = parseInt ( ( duration / ( 1000 * 60 * 60 ) ) % 24 );
+
+    hours =  ( hours < 10 ) ? "0" + hours : hours;
+    minutes = ( minutes < 10 ) ? "0" + minutes : minutes;
+    return hours + ":hrs " + minutes + ": mins";
+}
+
+function isBetween ( past , future ) {
+  if (future.getTime()>past.getTime()) {
+    return past.getTime() <= this.getTime() && future.getTime() > this.getTime()
+  }else {
+    return future.getTime() <= this.getTime() && past.getTime() > this.getTime()
+  }
+}
+// eslint-disable-next-line
+Date.prototype.isBetween = isBetween;
+// eslint-disable-next-line
+Date.prototype.myNet = myNet;
 
 const useStyles = makeStyles(theme => ({
   root:{
@@ -109,22 +162,179 @@ export default function PaperSheet() {
   const classes = useStyles();
   const theme = useTheme();
   let root = React.createRef();
+  const [plans , setPlans] = React.useState([])
+  const [allUsers_plans,setAllUsers_plans]=React.useState({})
+  const [expiredPlans , setExpiredPlans] = React.useState([])
+  const [allUsers,setAllUsers] = React.useState([])
+  const [meter,setMeter] = React.useState([])
+  const [devices,setDevices] = React.useState([])
+  const date = new Date();
+  const thisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+  const lastMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+  const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+
+  const lastMonthUsers = allUsers.filter(item=>new Date (item.metadata.creationTime).isBetween(lastMonth,thisMonth));
+  const thisMonthUsers = allUsers.filter(item=>new Date (item.metadata.creationTime).isBetween(thisMonth,nextMonth));
+
+  const allPlans = [ ...plans, ...expiredPlans ];
+  const lastMonthPlans = allPlans.filter(item=>new Date (item.startDate).isBetween(lastMonth,thisMonth));
+  const thisMonthPlans = allPlans.filter(item=>new Date (item.startDate).isBetween(thisMonth,nextMonth));
+
+  const lastMonthActiveUsers = allUsers.filter(item=>new Date (item.metadata.lastSignInTime).isBetween(lastMonth,thisMonth));
+  const thisMonthActiveUsers = allUsers.filter(item=>new Date (item.metadata.lastSignInTime).isBetween(thisMonth,nextMonth));
+
+  const total_meter = meter.map((obj) => {
+    let item = 0;
+    for (var prop in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+        item = obj[prop].data;
+      }
+    }
+    return item;
+  });
+
+  let item_of_week = [0,0,0,0,0,0,0];
+
+  meter.filter((item) => {//obtain last six days + today
+    for (var prop in item) {
+      let date;
+      if (Object.prototype.hasOwnProperty.call(item, prop)) {
+        date = new Date( prop.replace(/_/g,' ') );
+        let today = new Date()
+        return date.isBetween(
+            new Date(date.getFullYear(),date.getMonth(),today.getDate()-6),
+            new Date(today.getFullYear(),today.getMonth(),today.getDate()+1))
+      }
+    }
+    return false;
+  }).forEach((obj) => {
+    for (var prop in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+        let date = new Date( prop.replace(/_/g,' ') );
+        item_of_week[date.getDay()] += obj[prop].data
+      }
+    }
+  });
+
 
   React.useEffect ( () => {
-    (()=> {
-      new Promise( async(resolve, reject)=> {
-        setTimeout( ()=> {
-          try {
-            root.current.style.top = '0vh';
-            root.current.style.opacity = 1;
-          } catch (e) {
-            return reject ( e )
-          }
+    (async ()=> {
+      await Promise.all ([
+        new Promise( async(resolve, reject)=> {
+          setTimeout( ()=> {
+            try {
+              if (root.current) {
+                root.current.style.top = '0vh';
+                root.current.style.opacity = 1;
+              }
+            } catch (e) {
+              return reject ( e )
+            }
 
-        }, 10);
-      }).catch ( console.log );
+          }, 10);
+        }),
+        fetch ('/allUsers').then(
+          jsondata=>jsondata.json()
+            .then((data) => {
+              if (JSON.stringify(data)!==JSON.stringify(allUsers)) {
+                setAllUsers(data.reverse())
+              }
+            })
+        ),
+        Firebase.database().ref  ( "Plans" )
+          .once ( 'value').then ( snapshot=>{
+            if (snapshot.exists ()) {
+              let plans_ = []
+              let allUsers_plans_ = {}
+              snapshot.forEach ( function ( childSnapshot) {
+                allUsers_plans_[childSnapshot.key]=childSnapshot.val();
+                plans_ = plans_.concat ( ...childSnapshot.val() );
+              });
+              if (plans_.length) {
+                if (JSON.stringify(plans_)!==JSON.stringify(plans)) {
+                  console.log(getDifference(JSON.stringify(plans_),JSON.stringify(plans)));
+                  setPlans (plans_)
+                }
+              }
+              if (JSON.stringify(allUsers_plans_)!==JSON.stringify(allUsers_plans)) {
+                setAllUsers_plans (allUsers_plans_)
+              }
+            }
+        } ),
+
+        Firebase.database().ref  ( "expiredPlans" )
+          .once ( 'value').then ( snapshot=>{
+            if (snapshot.exists ()) {
+              let expiredPlans_ = []
+              snapshot.forEach ( function ( childSnapshot) {
+                expiredPlans_= expiredPlans_.concat ( ...childSnapshot.val() );
+              });
+              if (expiredPlans_.length) {
+                if (JSON.stringify(expiredPlans_)!==JSON.stringify(expiredPlans)) {
+                  setExpiredPlans (expiredPlans_)
+                }
+              }
+            }
+        } ),
+
+        Firebase.database().ref  ( "metering" )
+          .once ( 'value').then ( snapshot=>{
+            if (snapshot.exists()) {
+              let meter_ = [];
+              snapshot.forEach ( function ( childSnapshot) {
+                let obj = childSnapshot.val();
+                for (var prop in obj) {
+                  if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                    let outgoing = {}
+                    outgoing[prop]={key:childSnapshot.key,data:obj[prop]}
+                    meter_.push ( outgoing );
+                    //console.log(outgoing);
+                  }
+                }
+              });
+              if (JSON.stringify(meter_)!==JSON.stringify(meter)) {
+                setMeter (meter_)
+              }
+            }
+          } ),
+
+        Firebase.database().ref  ( "devices")
+          .once ( 'value').then ( snapshot=>{
+            if (snapshot.exists()) {
+              let voter = {
+                desktop:0,
+                tablet:0,
+                mobile:0
+              };
+              snapshot.forEach ( function ( childSnapshot) {
+                let obj = childSnapshot.val();
+                for (var prop in obj) {
+                  if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                    //console.log(obj[prop]);
+                    voter = obj[prop].reduce((voter,item)=>{
+                      if (item==="Desktop") {
+                        voter.desktop += 1;
+                      }else if (item==="Tablet") {
+                        voter.tablet += 1;
+                      }else if (item==="Mobile") {
+                        voter.mobile += 1;
+                      }
+                      return voter;
+                    },voter)
+                  }
+                }
+              });
+              let devices_ = [voter.tablet,voter.mobile,voter.desktop]
+              //console.log(devices_);
+              if (JSON.stringify(devices)!==JSON.stringify(devices_)) {
+                setDevices (devices_)
+              }
+            }
+        } )
+      ]).catch(console.log);
     })();
-  } )
+  },[allUsers,root,allUsers_plans,devices,expiredPlans,meter,plans,]);
+
 
   return (
     <div>
@@ -137,29 +347,28 @@ export default function PaperSheet() {
           <SmallCard xs={12} sm={6} lg={3}
             icon={<PeopleIcon/>}
             title={"Registered Users"}
-            content={"250"}
-            percent={"0.5%"}
-            direction={true}
+            content={allUsers.length}
+            percent={Math.round(((thisMonthUsers.length-lastMonthUsers.length) * 100)/thisMonthUsers.length)+'%'}
+            direction={thisMonthUsers.length>lastMonthUsers.length}
           />
           <SmallCard xs={12} sm={6} lg={3}
             icon={<MonetizationOnIcon/>}
             title={"Revenue"}
-            content={"$15,000"}
-            percent={"8%"}
-            direction={true}
+            content={"$"+allPlans.reduce((total,num) => total+num.value,0)}
+            percent={Math.round(((thisMonthPlans.length-lastMonthPlans.length) * 100)/thisMonthPlans.length)+'%'}
+            direction={thisMonthPlans.length>lastMonthPlans.length}
           />
           <SmallCard xs={12} sm={6} lg={3}
             icon={<EmojiPeopleIcon/>}
             title={"Active Users"}
-            content={"50"}
-            percent={"-10%"}
-            direction={false}
-            duration={'since last week'}
+            content={thisMonthActiveUsers.length}
+            percent={Math.round(((thisMonthActiveUsers.length-lastMonthActiveUsers.length) * 100)/thisMonthActiveUsers.length)+'%'}
+            direction={thisMonthActiveUsers.length>lastMonthActiveUsers.length}
           />
           <SmallCard xs={12} sm={6} lg={3}
             icon={<DataUsageIcon/>}
             title={"Downloaded App Data"}
-            content={"603MB"}
+            content={total_meter.reduce((total,num)=>total+num,0)+"MB"}
             percent={"17%"}
             direction={true}
           />
@@ -168,23 +377,63 @@ export default function PaperSheet() {
         <Grid container spacing={2} className={classes.container}>
           <Grid item xs={5} style={{}}>
             <Paper className={classes.paper1}>
-              <Graph/>
+            {/*eslint-disable-next-line*/}
+              {React.useMemo(()=><Graph data={{wk_days:item_of_week}}/>,[meter])}
             </Paper>
           </Grid>
           <Grid item xs={5}>
             <Paper className={classes.paper1}>
-              <Doughnut/>
+              {React.useMemo(()=><Doughnut data={{devices:devices}}/>,[devices])}
             </Paper>
           </Grid>
         </Grid>
         <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
         <Grid container spacing={2} className={classes.container}>
           <Grid item xs={10}>
-            <UsersTable/>
+            {React.useMemo(()=>
+              <UsersTable
+                allUsers={allUsers.map((item) => {
+                  if (allUsers_plans[item.uid]) {
+                  let sum = [];
+                  let value = 0;
+                  let remains = [];
+                  allUsers_plans[item.uid].forEach((it) => {
+                    sum.push (it.following.length)
+                    value += it.value;
+                    remains.push (Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000)) >= 1 ?
+                      `${Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000))} days`
+                      :
+                      `${msToTime((it.endDate - new Date())%(24 * 60 * 60 * 1000))}`)
+
+                  })
+                  item.followed = `[${sum.join(" | ")}]`;
+                  item.spent = value;
+                  item.subscription = `[${remains.join(" | ")}]`;
+                  item.data = meter.filter((obj) => {
+                    let key;
+                    for (var prop in obj) {
+                      if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                        key = obj[prop].key;
+                      }
+                    }
+                    return key===item.uid;
+                  }).map((obj) => {
+                    let data;
+                    for (var prop in obj) {
+                      if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                        data = obj[prop].data;
+                      }
+                    }
+                    return data;
+                  }).reduce((total,num)=>total+num,0);
+                }
+                  return item;
+              })}/>
+              ,[allUsers,allUsers_plans,meter])}
           </Grid>
         </Grid>
+        <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
       </div>
     </div>
   );
 }
-//{[33,22,2.5,2.3,5,1,20,2.5,4,1.5,2,2.5,5].reduce ( (a,b) => a + b , 0)}
