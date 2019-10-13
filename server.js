@@ -10273,7 +10273,7 @@ Scrappers.push ( sbicparticipations );
 app.use ( express.json ( ) );
 
 app.get ( '/allUsers' , function ( req , res ) {
-  //console.log("allUsers");
+  console.log("allUsers");
   function listAllUsers(nextPageToken) {
     // List batch of users, 1000 at a time.
     admin.auth().listUsers(1000, nextPageToken)
@@ -10293,7 +10293,6 @@ app.get ( '/allUsers' , function ( req , res ) {
         console.log('Error listing users:', error);
       });
   }
-  // Start listing users recursively from the beginning, 1000 at a time.
   listAllUsers();
 });
 

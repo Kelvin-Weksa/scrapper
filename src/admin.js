@@ -19,22 +19,6 @@ import Doughnut from './doughnutchart';
 import UsersTable from './usersTable';
 import Firebase from './firebase'
 
-function getDifference(a, b){
-    var i = 0;
-    var j = 0;
-    var result = "";
-
-    while (j < b.length)
-    {
-        if (a[i] !== b[j] || i === a.length)
-            result += b[j];
-        else
-            i++;
-        j++;
-    }
-    return result;
-}
-
 function myNet () {
   if (this.getMonth() === 0){return "January"};
   if (this.getMonth() === 1){return "February"};
@@ -158,25 +142,170 @@ function SmallCard (props){
   )
 }
 
+function AllPlans ( ){
+  const [plans , setPlans] = React.useState([])
+  const [expiredPlans , setExpiredPlans] = React.useState([])
+  const [allUsers_plans,setAllUsers_plans]=React.useState({})
+
+  React.useEffect( () => {
+    (async()=> {
+      if (!plans.length||!expiredPlans.length||!allUsers_plans.length) {
+        await Promise.all([
+          Firebase.database().ref  ( "Plans" )
+            .once ( 'value').then ( snapshot=>{
+              if (snapshot.exists ()) {
+                let plans_ = []
+                let allUsers_plans_ = {}
+                snapshot.forEach ( function ( childSnapshot) {
+                  allUsers_plans_[childSnapshot.key]=childSnapshot.val();
+                  plans_ = plans_.concat ( ...childSnapshot.val() );
+                });
+                if (plans_.length) {
+                  if (JSON.stringify(plans_)!==JSON.stringify(plans)) {
+                    setPlans (plans_)
+                  }
+                }
+                if (JSON.stringify(allUsers_plans_)!==JSON.stringify(allUsers_plans)) {
+                  setAllUsers_plans (allUsers_plans_)
+                }
+              }
+          } ),
+
+          Firebase.database().ref  ( "expiredPlans" )
+            .once ( 'value').then ( snapshot=>{
+              if (snapshot.exists ()) {
+                let expiredPlans_ = []
+                snapshot.forEach ( function ( childSnapshot) {
+                  expiredPlans_= expiredPlans_.concat ( ...childSnapshot.val() );
+                });
+                if (expiredPlans_.length) {
+                  if (JSON.stringify(expiredPlans_)!==JSON.stringify(expiredPlans)) {
+                    setExpiredPlans (expiredPlans_)
+                  }
+                }
+              }
+          } ),
+        ])
+      }
+    })();
+  },[plans,expiredPlans,allUsers_plans] )
+
+  return {
+    allPlans:[ ...plans, ...expiredPlans ],
+    allUsers_plans: allUsers_plans,
+  };
+
+}
+
+function Metering (){
+  const [meter,setMeter] = React.useState([])
+  React.useEffect(() => {
+    if (!meter.length) {
+      Firebase.database().ref  ( "metering" )
+        .once ( 'value').then ( snapshot=>{
+          if (snapshot.exists()) {
+            let meter_ = [];
+            snapshot.forEach ( function ( childSnapshot) {
+              let obj = childSnapshot.val();
+              for (var prop in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                  let outgoing = {}
+                  outgoing[prop]={key:childSnapshot.key,data:obj[prop]}
+                  meter_.push ( outgoing );
+                  //console.log(outgoing);
+                }
+              }
+            });
+            if (JSON.stringify(meter_)!==JSON.stringify(meter)) {
+              setMeter (meter_)
+            }
+          }
+        } )
+    }
+  },[meter])
+  return meter;
+}
+
+function Devices (){
+  const [devices,setDevices] = React.useState([])
+    React.useEffect( () => {
+      if (!devices.length) {
+        Firebase.database().ref  ( "devices")
+          .once ( 'value').then ( snapshot=>{
+            if (snapshot.exists()) {
+              let voter = {
+                desktop:0,
+                tablet:0,
+                mobile:0
+              };
+              snapshot.forEach ( function ( childSnapshot) {
+                let obj = childSnapshot.val();
+                for (var prop in obj) {
+                  if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                    //console.log(obj[prop]);
+                    voter = obj[prop].reduce((voter,item)=>{
+                      if (item==="Desktop") {
+                        voter.desktop += 1;
+                      }else if (item==="Tablet") {
+                        voter.tablet += 1;
+                      }else if (item==="Mobile") {
+                        voter.mobile += 1;
+                      }
+                      return voter;
+                    },voter)
+                  }
+                }
+              });
+              let devices_ = [voter.tablet,voter.mobile,voter.desktop]
+              //console.log(devices_);
+              if (JSON.stringify(devices)!==JSON.stringify(devices_)) {
+                setDevices (devices_)
+              }
+            }
+        } )
+      }
+    },[devices] )
+  return devices;
+}
+
+function AllUsers(){
+  const [allUsers,setAllUsers] = React.useState([]);
+  React.useEffect(() => {
+      if (!allUsers.length) {
+        fetch ('/allUsers').then(
+          jsondata=>jsondata.json()
+            .then((data) => {
+              if (JSON.stringify(data)!==JSON.stringify(allUsers)) {
+                console.log("it didnt");
+                setAllUsers(data.reverse())
+              }
+            })
+        )
+      }
+  },[allUsers])
+  return allUsers;
+}
+
 export default function PaperSheet() {
   const classes = useStyles();
   const theme = useTheme();
   let root = React.createRef();
-  const [plans , setPlans] = React.useState([])
-  const [allUsers_plans,setAllUsers_plans]=React.useState({})
-  const [expiredPlans , setExpiredPlans] = React.useState([])
-  const [allUsers,setAllUsers] = React.useState([])
-  const [meter,setMeter] = React.useState([])
-  const [devices,setDevices] = React.useState([])
+
   const date = new Date();
   const thisMonth = new Date(date.getFullYear(), date.getMonth(), 1);
   const lastMonth = new Date(date.getFullYear(), date.getMonth() - 1, 1);
   const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
 
+  const allPlans_Master = React.useCallback(AllPlans,[])();
+  const allUsers_plans = allPlans_Master.allUsers_plans;
+  const allPlans = allPlans_Master.allPlans;
+  const meter = React.useCallback(Metering,[])();
+  const devices = React.useCallback(Devices,[])();
+  const allUsers = React.useCallback(AllUsers,[])();//AllUsers();
+
   const lastMonthUsers = allUsers.filter(item=>new Date (item.metadata.creationTime).isBetween(lastMonth,thisMonth));
   const thisMonthUsers = allUsers.filter(item=>new Date (item.metadata.creationTime).isBetween(thisMonth,nextMonth));
 
-  const allPlans = [ ...plans, ...expiredPlans ];
   const lastMonthPlans = allPlans.filter(item=>new Date (item.startDate).isBetween(lastMonth,thisMonth));
   const thisMonthPlans = allPlans.filter(item=>new Date (item.startDate).isBetween(thisMonth,nextMonth));
 
@@ -216,125 +345,23 @@ export default function PaperSheet() {
     }
   });
 
-
   React.useEffect ( () => {
     (async ()=> {
-      await Promise.all ([
-        new Promise( async(resolve, reject)=> {
-          setTimeout( ()=> {
-            try {
-              if (root.current) {
-                root.current.style.top = '0vh';
-                root.current.style.opacity = 1;
-              }
-            } catch (e) {
-              return reject ( e )
+      new Promise( async(resolve, reject)=> {
+        setTimeout( ()=> {
+          try {
+            if (root.current) {
+              root.current.style.top = '0vh';
+              root.current.style.opacity = 1;
             }
+          } catch (e) {
+            return reject ( e )
+          }
 
-          }, 10);
-        }),
-        fetch ('/allUsers').then(
-          jsondata=>jsondata.json()
-            .then((data) => {
-              if (JSON.stringify(data)!==JSON.stringify(allUsers)) {
-                setAllUsers(data.reverse())
-              }
-            })
-        ),
-        Firebase.database().ref  ( "Plans" )
-          .once ( 'value').then ( snapshot=>{
-            if (snapshot.exists ()) {
-              let plans_ = []
-              let allUsers_plans_ = {}
-              snapshot.forEach ( function ( childSnapshot) {
-                allUsers_plans_[childSnapshot.key]=childSnapshot.val();
-                plans_ = plans_.concat ( ...childSnapshot.val() );
-              });
-              if (plans_.length) {
-                if (JSON.stringify(plans_)!==JSON.stringify(plans)) {
-                  console.log(getDifference(JSON.stringify(plans_),JSON.stringify(plans)));
-                  setPlans (plans_)
-                }
-              }
-              if (JSON.stringify(allUsers_plans_)!==JSON.stringify(allUsers_plans)) {
-                setAllUsers_plans (allUsers_plans_)
-              }
-            }
-        } ),
-
-        Firebase.database().ref  ( "expiredPlans" )
-          .once ( 'value').then ( snapshot=>{
-            if (snapshot.exists ()) {
-              let expiredPlans_ = []
-              snapshot.forEach ( function ( childSnapshot) {
-                expiredPlans_= expiredPlans_.concat ( ...childSnapshot.val() );
-              });
-              if (expiredPlans_.length) {
-                if (JSON.stringify(expiredPlans_)!==JSON.stringify(expiredPlans)) {
-                  setExpiredPlans (expiredPlans_)
-                }
-              }
-            }
-        } ),
-
-        Firebase.database().ref  ( "metering" )
-          .once ( 'value').then ( snapshot=>{
-            if (snapshot.exists()) {
-              let meter_ = [];
-              snapshot.forEach ( function ( childSnapshot) {
-                let obj = childSnapshot.val();
-                for (var prop in obj) {
-                  if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-                    let outgoing = {}
-                    outgoing[prop]={key:childSnapshot.key,data:obj[prop]}
-                    meter_.push ( outgoing );
-                    //console.log(outgoing);
-                  }
-                }
-              });
-              if (JSON.stringify(meter_)!==JSON.stringify(meter)) {
-                setMeter (meter_)
-              }
-            }
-          } ),
-
-        Firebase.database().ref  ( "devices")
-          .once ( 'value').then ( snapshot=>{
-            if (snapshot.exists()) {
-              let voter = {
-                desktop:0,
-                tablet:0,
-                mobile:0
-              };
-              snapshot.forEach ( function ( childSnapshot) {
-                let obj = childSnapshot.val();
-                for (var prop in obj) {
-                  if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-                    //console.log(obj[prop]);
-                    voter = obj[prop].reduce((voter,item)=>{
-                      if (item==="Desktop") {
-                        voter.desktop += 1;
-                      }else if (item==="Tablet") {
-                        voter.tablet += 1;
-                      }else if (item==="Mobile") {
-                        voter.mobile += 1;
-                      }
-                      return voter;
-                    },voter)
-                  }
-                }
-              });
-              let devices_ = [voter.tablet,voter.mobile,voter.desktop]
-              //console.log(devices_);
-              if (JSON.stringify(devices)!==JSON.stringify(devices_)) {
-                setDevices (devices_)
-              }
-            }
-        } )
-      ]).catch(console.log);
+        }, 10);
+      }).catch(console.log)
     })();
-  },[allUsers,root,allUsers_plans,devices,expiredPlans,meter,plans,]);
-
+  },[root]);
 
   return (
     <div>
@@ -437,3 +464,5 @@ export default function PaperSheet() {
     </div>
   );
 }
+
+//balanc
