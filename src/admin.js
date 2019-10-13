@@ -301,7 +301,7 @@ export default function PaperSheet() {
   const allPlans = allPlans_Master.allPlans;
   const meter = React.useCallback(Metering,[])();
   const devices = React.useCallback(Devices,[])();
-  const allUsers = React.useCallback(AllUsers,[])();//AllUsers();
+  const allUsers = React.useCallback(AllUsers,[])();
 
   const lastMonthUsers = allUsers.filter(item=>new Date (item.metadata.creationTime).isBetween(lastMonth,thisMonth));
   const thisMonthUsers = allUsers.filter(item=>new Date (item.metadata.creationTime).isBetween(thisMonth,nextMonth));
@@ -427,7 +427,7 @@ export default function PaperSheet() {
                   allUsers_plans[item.uid].forEach((it) => {
                     sum.push (it.following.length)
                     value += it.value;
-                    remains.push (Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000)) >= 1 ?
+                    remains.push (Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000)) > 1 ?
                       `${Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000))} days`
                       :
                       `${msToTime((it.endDate - new Date())%(24 * 60 * 60 * 1000))}`)
@@ -456,7 +456,8 @@ export default function PaperSheet() {
                 }
                   return item;
               })}/>
-              ,[allUsers,allUsers_plans,meter])}
+              ,[allUsers,allUsers_plans,meter])
+            }
           </Grid>
         </Grid>
         <div style={{height:theme.mixins.toolbar.minHeight/2}}/>

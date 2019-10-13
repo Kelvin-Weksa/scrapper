@@ -143,7 +143,7 @@ export default React.forwardRef( function SimpleCard ( props , ref ) {
                   {props.expiry ? `${props.expiry.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
                 </Typography>
                 <Typography variant='subtitle1' color="primary" style={{position:'relative',top:'-5vh'}}>
-                  {props.expiry ? Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000)) >= 1 ?
+                  {props.expiry ? Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000)) > 1 ?
                     `${Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000))} days remaining`
                     :
                     `${msToTime((props.expiry - new Date())%(24 * 60 * 60 * 1000))} remaining` : ``}

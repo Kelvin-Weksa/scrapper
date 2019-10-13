@@ -78,7 +78,7 @@ const StyledTableRow = withStyles(theme => ({
     '&:nth-of-type(odd)': {
       backgroundColor: theme.palette.background.default,
     },
-  },    
+  },
 }))(TableRow);
 
 function createData(name, followed, subscription, email, spent , data , uid) {
@@ -101,8 +101,8 @@ const useStyles = makeStyles(theme => ({
     position:'relative',
   },
   sticky:{
-    position : 'sticky' ,
-    top : 0 ,
+    //position : 'sticky' ,
+    top : 500 ,
     zIndex: theme.zIndex.appBar ,
   },
 }));
@@ -184,7 +184,7 @@ export default function CustomizedTables ( props ) {
 
   return (
     <Paper className={classes.root}>
-      <Table stickyHeader className={classes.table}>
+      <Table stickyHeader={true} className={classes.table} aria-label="sticky table">
         <TableHead className={classes.sticky}>
           <TableRow>
             <StyledTableCell align="left">Name</StyledTableCell>
