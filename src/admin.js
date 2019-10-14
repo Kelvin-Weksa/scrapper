@@ -17,7 +17,8 @@ import DataUsageIcon from '@material-ui/icons/DataUsage';
 import Graph from './barchart';
 import Doughnut from './doughnutchart';
 import UsersTable from './usersTable';
-import Firebase from './firebase'
+import Firebase from './firebase';
+import Notifications from './notification';
 
 function myNet () {
   if (this.getMonth() === 0){return "January"};
@@ -92,6 +93,7 @@ const useStyles = makeStyles(theme => ({
   content:{
     display:'flex',
     flexFlow:'row no-wrap',
+    position:'relative',
 },
   container:{
     position:'relative',
@@ -458,6 +460,14 @@ export default function PaperSheet() {
               })}/>
               ,[allUsers,allUsers_plans,meter])
             }
+          </Grid>
+        </Grid>
+        <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
+        <Grid container spacing={2} className={classes.container}>
+          <Grid item xs={10}>
+            <Paper className={classes.paper1}>
+              <Notifications/>
+            </Paper>
           </Grid>
         </Grid>
         <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
