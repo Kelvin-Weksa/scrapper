@@ -16,6 +16,8 @@ const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.paper,
     position:'relative',
+    width: '100%',
+    maxHeight: "70vh",
   },
   container:{
     position:'relative',
@@ -62,7 +64,6 @@ export default function SelectedListItem(props) {
   };
 
   return (
-
     <div className={classes.root}>
       <Paper  className={classes.info}>
         <IconButton  className={classes.rightIcon}>
@@ -94,15 +95,15 @@ export default function SelectedListItem(props) {
                 position:'relative',
                 top:theme.mixins.toolbar.minHeight/2
               }}
+              color="textPrimary"
+              variant="body1"
             >
               {notifications[selectedIndex]}
             </Typography>
           </Paper>
         </Grid>
       </Grid>
-
       <Divider />
     </div>
-
   );
 }

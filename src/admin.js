@@ -66,11 +66,10 @@ const useStyles = makeStyles(theme => ({
   },
   paper1: {
     padding: theme.spacing(1.5, 1),
-    //overflow: 'visible',
     transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
     "&:hover": {
       transform: `scale(1.1)` ,
-      boxShadow: `0 0 11px ${theme.palette.secondary.main}` ,
+      boxShadow: `0 0 11px ${theme.palette.secondary.dark}` ,
     },
     minWidth: "50%",
   },
@@ -367,7 +366,7 @@ export default function PaperSheet() {
 
   return (
     <div>
-      <Toolbar>
+      <Toolbar> 
         <div className={classes.grow} />
         <SectionDesktop/>
       </Toolbar>

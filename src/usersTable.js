@@ -67,6 +67,8 @@ const StyledTableCell = withStyles(theme => ({
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.common.white,
     textAlign:'center',
+    position : 'sticky' ,
+    top : 0 ,
   },
   body: {
     fontSize: 14,
@@ -101,8 +103,8 @@ const useStyles = makeStyles(theme => ({
     position:'relative',
   },
   sticky:{
-    //position : 'sticky' ,
-    top : 500 ,
+    position : 'sticky' ,
+    top : 0 ,
     zIndex: theme.zIndex.appBar ,
   },
 }));
@@ -199,20 +201,20 @@ export default function CustomizedTables ( props ) {
         <TableBody>
           {showing.map(row => (
             <StyledTableRow key={row.name}>
-              <StyledTableCell component="th" scope="row">
+              <TableCell component="th" scope="row">
                 {row.name}
-              </StyledTableCell>
-              <StyledTableCell align="center">{row.email}</StyledTableCell>
-              <StyledTableCell align="center">{row.subscription}</StyledTableCell>
-              <StyledTableCell align="center">{row.spent}</StyledTableCell>
-              <StyledTableCell align="center">{row.followed}</StyledTableCell>
-              <StyledTableCell align="center">{row.data||0}MB</StyledTableCell>
-              <StyledTableCell align="right">
+              </TableCell>
+              <TableCell align="center">{row.email}</TableCell>
+              <TableCell align="center">{row.subscription}</TableCell>
+              <TableCell align="center">{row.spent}</TableCell>
+              <TableCell align="center">{row.followed}</TableCell>
+              <TableCell align="center">{row.data||0}MB</TableCell>
+              <TableCell align="right">
                 <IOSSwitch
                   checked={state[row.uid]||false}
                   onChange={handleChange(row.uid)}
                 />
-              </StyledTableCell>
+              </TableCell>
             </StyledTableRow>
           ))}
         </TableBody>
