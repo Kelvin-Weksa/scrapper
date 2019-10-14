@@ -773,7 +773,7 @@ function PaperSheet ( props ) {
         <SectionDesktop/>
       </Toolbar>
       <Grid container className={classes.root}>
-        <Grid item  style={{flex:'1 0 auto',alignSelf:'flex-start',}}>
+        <Grid item xs={1} style={{flex:'0 1 5%',alignSelf:'flex-start',}}>
           <div style={{display:'flex',justifyContent:"center"}}>
             <div style={{position:'fixed',top:'30vh'}} ref={guide}>
               <div className={clsx({
@@ -796,7 +796,7 @@ function PaperSheet ( props ) {
             </div>
           </div>
         </Grid>
-        <Grid  item xs={11} style={{flex:'0 1 auto'}} className={classes.transitionGroup} ref={root}>
+        <Grid  item style={{flex:'1 0 95%'}} className={classes.transitionGroup} ref={root}>
           <div ref={row1}>
             <Typography variant="h2" component="p" color="textSecondary" style={{textAlign:'right'}}>
               Your Current Plan

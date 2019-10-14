@@ -19,6 +19,8 @@ import Doughnut from './doughnutchart';
 import UsersTable from './usersTable';
 import Firebase from './firebase';
 import Notifications from './notification';
+import clsx from 'clsx';
+import {useScrollPosition} from './use-scroll-position'
 
 function myNet () {
   if (this.getMonth() === 0){return "January"};
@@ -64,6 +66,12 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     top: '-7vh'
   },
+  transitionGroup:{
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+    opacity: 0,
+    position: 'relative',
+    top: '-7vh',
+  },
   paper1: {
     padding: theme.spacing(1.5, 1),
     transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
@@ -100,7 +108,17 @@ const useStyles = makeStyles(theme => ({
     display:'flex',
     flexFlow:'row wrap',
     justifyContent:"space-evenly",
-  }
+  },
+  vl: {
+    borderLeft: `6px solid ${theme.palette.primary.main}`,
+    height: `4vh`,
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+  },
+  vll: {
+    borderLeft: `6px solid ${theme.palette.secondary.main}`,
+    height: `10vh`,
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+}
 }));
 
 function SmallCard (props){
@@ -364,113 +382,190 @@ export default function PaperSheet() {
     })();
   },[root]);
 
+  const [row, setRow] = React.useState ([false,true,true,true])
+  let row1 = React.createRef();
+  let row2 = React.createRef();
+  let row3 = React.createRef();
+  let row4 = React.createRef();
+  let guide = React.createRef();
+
+  useScrollPosition(
+    ({ prevPos, currPos }) => {
+      try {
+        if (row1.current&&row2.current&&row3.current&&row4.current&&guide.current) {
+          //console.log( JSON.stringify ( { prevPos, currPos } ) );
+          function midPoint ( box ){
+            return ( box.top + ( box.height / 2 ) )
+          }
+          function absolute ( row ){
+            return Math.abs(
+              midPoint ( row.current.getBoundingClientRect() )
+                - midPoint ( guide.current.getBoundingClientRect() )
+            )
+          }
+          let rows = [ row1 , row2 , row3 , row4 ]
+          let row_positions = rows.map ( item=>absolute(item) );
+          //loop through the array and look for the lowest number
+          var index = 0;
+          var value = row_positions[0];
+          for (var i = 1; i < row_positions.length; i++) {
+            if (row_positions[i] < value) {
+              value = row_positions[i];
+              index = i;
+            }
+            //console.log(row_positions);
+          }
+          let update = row_positions.map ( item=>true );
+          update[index] = false;
+          setRow ( update )
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    null,
+    false,
+    150
+  )
+
   return (
     <div>
-      <Toolbar> 
+      <Toolbar>
         <div className={classes.grow} />
         <SectionDesktop/>
       </Toolbar>
-      <div className={classes.root} ref={root}>
-        <Grid container spacing={2} className={classes.container}>
-          <SmallCard xs={12} sm={6} lg={3}
-            icon={<PeopleIcon/>}
-            title={"Registered Users"}
-            content={allUsers.length}
-            percent={Math.round(((thisMonthUsers.length-lastMonthUsers.length) * 100)/thisMonthUsers.length)+'%'}
-            direction={thisMonthUsers.length>lastMonthUsers.length}
-          />
-          <SmallCard xs={12} sm={6} lg={3}
-            icon={<MonetizationOnIcon/>}
-            title={"Revenue"}
-            content={"$"+allPlans.reduce((total,num) => total+num.value,0)}
-            percent={Math.round(((thisMonthPlans.length-lastMonthPlans.length) * 100)/thisMonthPlans.length)+'%'}
-            direction={thisMonthPlans.length>lastMonthPlans.length}
-          />
-          <SmallCard xs={12} sm={6} lg={3}
-            icon={<EmojiPeopleIcon/>}
-            title={"Active Users"}
-            content={thisMonthActiveUsers.length}
-            percent={Math.round(((thisMonthActiveUsers.length-lastMonthActiveUsers.length) * 100)/thisMonthActiveUsers.length)+'%'}
-            direction={thisMonthActiveUsers.length>lastMonthActiveUsers.length}
-          />
-          <SmallCard xs={12} sm={6} lg={3}
-            icon={<DataUsageIcon/>}
-            title={"Downloaded App Data"}
-            content={total_meter.reduce((total,num)=>total+num,0)+"MB"}
-            percent={"17%"}
-            direction={true}
-          />
+      <Grid container className={classes.root} ref={root}>
+        <Grid item  style={{flex:'0 1 5%',alignSelf:'flex-start',}}>
+          <div style={{display:'flex',justifyContent:"center"}}>
+            <div style={{position:'fixed',top:'30vh'}} ref={guide}>
+              <div className={clsx({
+                [classes.vl]: row[0],
+                [classes.vll]: !row[0],
+              })}>
+              </div>
+              <div style={{height:'1vh'}}/>
+              <div className={clsx({
+                [classes.vl]: row[1],
+                [classes.vll]: !row[1],
+              })}>
+              </div>
+              <div style={{height:'1vh'}}/>
+              <div className={clsx({
+                [classes.vl]: row[2],
+                [classes.vll]: !row[2],
+              })}>
+              </div>
+              <div style={{height:'1vh'}}/>
+              <div className={clsx({
+                [classes.vl]: row[3],
+                [classes.vll]: !row[3],
+              })}>
+              </div>
+            </div>
+          </div>
         </Grid>
-        <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
-        <Grid container spacing={2} className={classes.container}>
-          <Grid item xs={5} style={{}}>
-            <Paper className={classes.paper1}>
-            {/*eslint-disable-next-line*/}
-              {React.useMemo(()=><Graph data={{wk_days:item_of_week}}/>,[meter])}
-            </Paper>
+        <Grid  item style={{flex:'1 0 95%'}}>
+          <Grid container spacing={2} className={classes.container} ref={row1}>
+            <SmallCard xs={12} sm={6} lg={3}
+              icon={<PeopleIcon/>}
+              title={"Registered Users"}
+              content={allUsers.length}
+              percent={Math.round(((thisMonthUsers.length-lastMonthUsers.length) * 100)/thisMonthUsers.length)+'%'}
+              direction={thisMonthUsers.length>lastMonthUsers.length}
+            />
+            <SmallCard xs={12} sm={6} lg={3}
+              icon={<MonetizationOnIcon/>}
+              title={"Revenue"}
+              content={"$"+allPlans.reduce((total,num) => total+num.value,0)}
+              percent={Math.round(((thisMonthPlans.length-lastMonthPlans.length) * 100)/thisMonthPlans.length)+'%'}
+              direction={thisMonthPlans.length>lastMonthPlans.length}
+            />
+            <SmallCard xs={12} sm={6} lg={3}
+              icon={<EmojiPeopleIcon/>}
+              title={"Active Users"}
+              content={thisMonthActiveUsers.length}
+              percent={Math.round(((thisMonthActiveUsers.length-lastMonthActiveUsers.length) * 100)/thisMonthActiveUsers.length)+'%'}
+              direction={thisMonthActiveUsers.length>lastMonthActiveUsers.length}
+            />
+            <SmallCard xs={12} sm={6} lg={3}
+              icon={<DataUsageIcon/>}
+              title={"Downloaded App Data"}
+              content={total_meter.reduce((total,num)=>total+num,0)+"MB"}
+              percent={"17%"}
+              direction={true}
+            />
           </Grid>
-          <Grid item xs={5}>
-            <Paper className={classes.paper1}>
-              {React.useMemo(()=><Doughnut data={{devices:devices}}/>,[devices])}
-            </Paper>
+          <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
+          <Grid container spacing={2} className={classes.container} ref={row2}>
+            <Grid item xs={5} style={{}}>
+              <Paper className={classes.paper1}>
+              {/*eslint-disable-next-line*/}
+                {React.useMemo(()=><Graph data={{wk_days:item_of_week}}/>,[meter])}
+              </Paper>
+            </Grid>
+            <Grid item xs={5}>
+              <Paper className={classes.paper1}>
+                {React.useMemo(()=><Doughnut data={{devices:devices}}/>,[devices])}
+              </Paper>
+            </Grid>
           </Grid>
-        </Grid>
-        <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
-        <Grid container spacing={2} className={classes.container}>
-          <Grid item xs={10}>
-            {React.useMemo(()=>
-              <UsersTable
-                allUsers={allUsers.map((item) => {
-                  if (allUsers_plans[item.uid]) {
-                  let sum = [];
-                  let value = 0;
-                  let remains = [];
-                  allUsers_plans[item.uid].forEach((it) => {
-                    sum.push (it.following.length)
-                    value += it.value;
-                    remains.push (Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000)) > 1 ?
-                      `${Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000))} days`
-                      :
-                      `${msToTime((it.endDate - new Date())%(24 * 60 * 60 * 1000))}`)
+          <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
+          <Grid container spacing={2} className={classes.container} ref={row3}>
+            <Grid item xs={10}>
+              {React.useMemo(()=>
+                <UsersTable
+                  allUsers={allUsers.map((item) => {
+                    if (allUsers_plans[item.uid]) {
+                    let sum = [];
+                    let value = 0;
+                    let remains = [];
+                    allUsers_plans[item.uid].forEach((it) => {
+                      sum.push (it.following.length)
+                      value += it.value;
+                      remains.push (Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000)) > 1 ?
+                        `${Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000))} days`
+                        :
+                        `${msToTime((it.endDate - new Date())%(24 * 60 * 60 * 1000))}`)
 
-                  })
-                  item.followed = `[${sum.join(" | ")}]`;
-                  item.spent = value;
-                  item.subscription = `[${remains.join(" | ")}]`;
-                  item.data = meter.filter((obj) => {
-                    let key;
-                    for (var prop in obj) {
-                      if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-                        key = obj[prop].key;
+                    })
+                    item.followed = `[${sum.join(" | ")}]`;
+                    item.spent = value;
+                    item.subscription = `[${remains.join(" | ")}]`;
+                    item.data = meter.filter((obj) => {
+                      let key;
+                      for (var prop in obj) {
+                        if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                          key = obj[prop].key;
+                        }
                       }
-                    }
-                    return key===item.uid;
-                  }).map((obj) => {
-                    let data;
-                    for (var prop in obj) {
-                      if (Object.prototype.hasOwnProperty.call(obj, prop)) {
-                        data = obj[prop].data;
+                      return key===item.uid;
+                    }).map((obj) => {
+                      let data;
+                      for (var prop in obj) {
+                        if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+                          data = obj[prop].data;
+                        }
                       }
-                    }
-                    return data;
-                  }).reduce((total,num)=>total+num,0);
-                }
-                  return item;
-              })}/>
-              ,[allUsers,allUsers_plans,meter])
-            }
+                      return data;
+                    }).reduce((total,num)=>total+num,0);
+                  }
+                    return item;
+                })}/>
+                ,[allUsers,allUsers_plans,meter])
+              }
+            </Grid>
           </Grid>
-        </Grid>
-        <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
-        <Grid container spacing={2} className={classes.container}>
-          <Grid item xs={10}>
-            <Paper className={classes.paper1}>
-              <Notifications/>
-            </Paper>
+          <div style={{height:theme.mixins.toolbar.minHeight}}/>
+          <Grid container spacing={2} className={classes.container} ref={row4}>
+            <Grid item xs={10}>
+              <Paper className={classes.paper1}>
+                <Notifications/>
+              </Paper>
+            </Grid>
           </Grid>
+          <div style={{height:theme.mixins.toolbar.minHeight*3}}/>
         </Grid>
-        <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
-      </div>
+      </Grid>
     </div>
   );
 }
