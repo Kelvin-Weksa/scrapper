@@ -28,6 +28,7 @@ import CallIcon from '@material-ui/icons/CallOutlined';
 import Zoom from '@material-ui/core/Zoom';
 //import PermPhoneMsgOutlinedIcon from '@material-ui/icons/PermPhoneMsgOutlined';
 import clsx from 'clsx';
+import Footer from './footer';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -264,7 +265,12 @@ export default function MediaCard ( props ) {
         )}
       </Card>
     </div>
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition} >
+      <Dialog
+        fullScreen open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+        style={{display:'flex',flexFlow:'column nowrap',width:'100%'}}
+      >
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton edge="start" color="secondary" onClick={handleClose} aria-label="close">
@@ -387,6 +393,8 @@ export default function MediaCard ( props ) {
             </Hidden>
           </Grid>
         </div>
+        <div style={{flex:`1 0 auto`}}/>
+        <Footer/>
       </Dialog>
     </div>
   );

@@ -44,7 +44,7 @@ export default function SimpleTabs (props) {
         data: {
             labels: ['Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat' , 'Sun'],
             datasets: [{
-                label: '#Todays Usage',
+                label: ['#This weeks Usage'],
                 data: [...ary.reverse()],
                 backgroundColor: [...backgroundColor ],
                 borderColor: [...borderColor],

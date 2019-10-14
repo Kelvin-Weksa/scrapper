@@ -35,6 +35,7 @@ import TableHead from '@material-ui/core/TableHead';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import Footer from './footer';
 import {useScrollPosition} from './use-scroll-position'
 import clsx from 'clsx';
 
@@ -84,6 +85,23 @@ function getSteps ( ){
 }
 
 const useStyles = makeStyles(theme => ({
+  '@global': {
+    '*::-webkit-scrollbar': {
+      width: '0.4em',
+    },
+    '*::-webkit-scrollbar-track': {
+      boxShadow: `inset 0 0 3px ${theme.palette.secondary.light}` ,
+      borderRadius: '10px'
+    },
+    '*::-webkit-scrollbar-thumb': {
+      backgroundColor: `${theme.palette.primary.dark}`,
+      borderRadius: '10px',
+      "&:hover": {
+        //transform: `scale(1.1)` ,
+        backgroundColor: `${theme.palette.primary.light}`,
+      }
+    }
+  },
   root: {
     padding: theme.spacing(3, 2),
     display: 'flex',
@@ -160,7 +178,7 @@ function ListCompanies ( props ){
   React.useEffect ( ( ) => {
     if ( ( ( props.card_chosen.num - props.selected.length )  === 0 ) || props.card_chosen.num === 9999 ){
       props.continue ( true )
-    }else if ( props.selected.length >= 10 ){
+    }else if ( props.selected.length >= 10 && props.selected.length < props.card_chosen.num  ){
       props.continue ( true )
     }else{
       props.continue ( false )
@@ -767,7 +785,13 @@ function PaperSheet ( props ) {
   )
 
   return (
-    <div className={classes.paper}>
+    <div
+      className={classes.paper}
+      style={{
+        display:'flex',
+        flexFlow:'column wrap',
+        minHeight:'100vh'
+      }}>
       <Toolbar>
         <div className={classes.grow} />
         <SectionDesktop/>
@@ -849,7 +873,10 @@ function PaperSheet ( props ) {
           </div>
         </Grid>
       </Grid>
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition} >
+      <Footer/>
+      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}
+        style={{display:'flex',flexFlow:'column nowrap',width:'99%'}}
+      >
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
@@ -878,6 +905,8 @@ function PaperSheet ( props ) {
           />
           )
         }
+        <div style={{flex:`1 0 auto`}}/>
+        <Footer/>
       </Dialog>
     </div>
   );

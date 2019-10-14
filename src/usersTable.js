@@ -69,6 +69,7 @@ const StyledTableCell = withStyles(theme => ({
     textAlign:'center',
     position : 'sticky' ,
     top : 0 ,
+    zIndex: theme.zIndex.appBar,
   },
   body: {
     fontSize: 14,

@@ -19,6 +19,7 @@ import Doughnut from './doughnutchart';
 import UsersTable from './usersTable';
 import Firebase from './firebase';
 import Notifications from './notification';
+import Footer from './footer';
 import clsx from 'clsx';
 import {useScrollPosition} from './use-scroll-position'
 
@@ -59,6 +60,23 @@ Date.prototype.isBetween = isBetween;
 Date.prototype.myNet = myNet;
 
 const useStyles = makeStyles(theme => ({
+  '@global': {
+    '*::-webkit-scrollbar': {
+      width: '0.4em',
+    },
+    '*::-webkit-scrollbar-track': {
+      boxShadow: `inset 0 0 3px ${theme.palette.secondary.light}` ,
+      borderRadius: '10px'
+    },
+    '*::-webkit-scrollbar-thumb': {
+      backgroundColor: `${theme.palette.primary.dark}`,
+      borderRadius: '10px',
+      "&:hover": {
+        //transform: `scale(1.1)` ,
+        backgroundColor: `${theme.palette.primary.light}`,
+      }
+    }
+  },
   root:{
     padding: theme.spacing(3, 2),
     transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
@@ -120,6 +138,7 @@ const useStyles = makeStyles(theme => ({
     transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
 }
 }));
+
 
 function SmallCard (props){
   const classes = useStyles ();
@@ -429,7 +448,11 @@ export default function PaperSheet() {
   )
 
   return (
-    <div>
+    <div style={{
+      display:'flex',
+      flexFlow:'column wrap',
+      minHeight:'100vh'
+    }}>
       <Toolbar>
         <div className={classes.grow} />
         <SectionDesktop/>
@@ -563,9 +586,10 @@ export default function PaperSheet() {
               </Paper>
             </Grid>
           </Grid>
-          <div style={{height:theme.mixins.toolbar.minHeight*3}}/>
+          <div style={{height:theme.mixins.toolbar.minHeight}}/>
         </Grid>
       </Grid>
+      <Footer/>
     </div>
   );
 }

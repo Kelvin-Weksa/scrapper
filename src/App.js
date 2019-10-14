@@ -225,7 +225,6 @@ class App extends Component {
             paginate={this.paginate}
             content={<NestedGrid elements={ this.state.characters } loaded={this.state.loaded}/>}
           />
-
         </div>
       );
     }

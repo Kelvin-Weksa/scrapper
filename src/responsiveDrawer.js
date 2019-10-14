@@ -38,12 +38,31 @@ import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import Paper from '@material-ui/core/Paper';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
 import SectionDesktop from './sectionDesktop';
+import Footer from './footer';
 
 const drawerWidth = 225;
 
 const useStyles = makeStyles(theme => ({
+  '@global': {
+    '*::-webkit-scrollbar': {
+      width: '0.4em',
+    },
+    '*::-webkit-scrollbar-track': {
+      boxShadow: `inset 0 0 3px ${theme.palette.secondary.light}` ,
+      borderRadius: '10px'
+    },
+    '*::-webkit-scrollbar-thumb': {
+      backgroundColor: `${theme.palette.primary.dark}`,
+      borderRadius: '10px',
+      "&:hover": {
+        //transform: `scale(1.1)` ,
+        backgroundColor: `${theme.palette.primary.light}`,
+      }
+    }
+  },
   root: {
     display: 'flex',
+    alignItems:'flex-end'
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
@@ -312,128 +331,135 @@ function ResponsiveDrawer ( props ) {
   );
 //
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <div>
-        <AppBar position="fixed" className={classes.appBar}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              className={classes.menuButton}
-            >
-              <MenuIcon />
-            </IconButton>
-            <CardMedia
-              className={classes.logo}
-              image={props.logo}
-              component='img'
-            />
-            <Divider orientation="vertical" className={classes.light}/>
-            <Typography variant="h6" noWrap>
-              {props.sitePage}
-            </Typography>
-            <Divider orientation="vertical" color="secondary"/>
-            <div className={classes.grow} />
-            <SectionDesktop />
-            <div className={classes.sectionMobile}>
-              <IconButton
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon />
-              </IconButton>
-            </div>
-          </Toolbar>
-        </AppBar>
-        {renderMobileMenu}
-      </div>
-      <nav className={classes.drawer} aria-label="mailbox folders">
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-        <Hidden smUp implementation="css">
-          <Drawer
-            container={container}
-            variant="temporary"
-            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-        <Hidden xsDown implementation="css">
-          <Drawer
-            classes={{
-              paper: classes.drawerPaper,
-            }}
-            variant="permanent"
-            open
-          >
-            {drawer}
-          </Drawer>
-        </Hidden>
-      </nav>
-      <main
-        className={clsx(classes.content, {
-          [classes.contentShift]: mobileOpen,
-        })}
-      >
-        <Toolbar style={{height: theme.mixins.toolbar/2}}/>
+    <div style={{display:'flex',flexFlow:'column nowrap',minHeight:'100vh'}}>
+      <div className={classes.root}>
+        <CssBaseline />
         <div>
-          {Listed.length?
-            (<Typography className={classes.margin}>
-              <Typography style={{padding:'12px'}} variant="h5" component="h2" >
-                {props.stale ? props.stale : ''}
+          <AppBar position="fixed" className={classes.appBar}>
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={handleDrawerToggle}
+                className={classes.menuButton}
+              >
+                <MenuIcon />
+              </IconButton>
+              <CardMedia
+                className={classes.logo}
+                image={props.logo}
+                component='img'
+              />
+              <Divider orientation="vertical" className={classes.light}/>
+              <Typography variant="h6" noWrap>
+                {props.sitePage}
               </Typography>
-              <Card className={classes.info}>
-                <Tooltip title="Refresh" placement="right">
-                  <IconButton color="secondary" onClick={handleRefresh} className={classes.rightIcon}>
-                    <RestorePageIcon  />
-                  </IconButton>
-                </Tooltip>
-              </Card>
-            </Typography>):
-            ! props.permissionsLoaded ?
-            (<Typography className={classes.margin}>
-              <Typography style={{padding:'12px'}} variant="h5" component="h2" >
-                ...loading data
-              </Typography>
-              <Card className={classes.info}>
-                <Tooltip title="...loading" placement="right">
-                  <IconButton color="secondary" className={classes.rightIcon}>
-                    <HourglassEmptyIcon  />
-                  </IconButton>
-                </Tooltip>
-              </Card>
-            </Typography>) :
-            (<Paper className={classes.info1}>
-              Choose which companies to follow...
-              <Subscription className={classes.info1}/>
-            </Paper>
-          )}
+              <Divider orientation="vertical" color="secondary"/>
+              <div className={classes.grow} />
+              <SectionDesktop />
+              <div className={classes.sectionMobile}>
+                <IconButton
+                  aria-label="show more"
+                  aria-controls={mobileMenuId}
+                  aria-haspopup="true"
+                  onClick={handleMobileMenuOpen}
+                  color="inherit"
+                >
+                  <MoreIcon />
+                </IconButton>
+              </div>
+            </Toolbar>
+          </AppBar>
+          {renderMobileMenu}
         </div>
-        <Toolbar style={{height: theme.mixins.toolbar/2}}/>
-        {props.content}
-        {Listed.length? (
-          <Scroller
-            page={props.page}
-            paginate={props.paginate}
-          />
-        ):(
-          null
-        )}
-      </main>
+        <nav className={classes.drawer} aria-label="mailbox folders">
+          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+          <Hidden smUp implementation="css">
+            <Drawer
+              container={container}
+              variant="temporary"
+              anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              ModalProps={{
+                keepMounted: true, // Better open performance on mobile.
+              }}
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+          <Hidden xsDown implementation="css">
+            <Drawer
+              classes={{
+                paper: classes.drawerPaper,
+              }}
+              variant="permanent"
+              open
+            >
+              {drawer}
+            </Drawer>
+          </Hidden>
+        </nav>
+        <main
+          className={clsx(classes.content, {
+            [classes.contentShift]: mobileOpen,
+          })}
+          style={{display:'flex',flexFlow:'column nowrap',width:'99%',}}
+        >
+          <Toolbar style={{height: theme.mixins.toolbar/2}}/>
+          <div>
+            {Listed.length?
+              (<Typography className={classes.margin}>
+                <Typography style={{padding:'12px'}} variant="h5" component="h2" >
+                  {props.stale ? props.stale : ''}
+                </Typography>
+                <Card className={classes.info}>
+                  <Tooltip title="Refresh" placement="right">
+                    <IconButton color="secondary" onClick={handleRefresh} className={classes.rightIcon}>
+                      <RestorePageIcon  />
+                    </IconButton>
+                  </Tooltip>
+                </Card>
+              </Typography>):
+              ! props.permissionsLoaded ?
+              (<Typography className={classes.margin}>
+                <Typography style={{padding:'12px'}} variant="h5" component="h2" >
+                  ...loading data
+                </Typography>
+                <Card className={classes.info}>
+                  <Tooltip title="...loading" placement="right">
+                    <IconButton color="secondary" className={classes.rightIcon}>
+                      <HourglassEmptyIcon  />
+                    </IconButton>
+                  </Tooltip>
+                </Card>
+              </Typography>) :
+              (<Paper className={classes.info1}>
+                Choose which companies to follow...
+                <Subscription className={classes.info1}/>
+              </Paper>
+            )}
+          </div>
+          <Toolbar style={{height: theme.mixins.toolbar/2}}/>
+          {props.content}
+          {Listed.length? (
+            <Scroller
+              page={props.page}
+              paginate={props.paginate}
+            />
+          ):(
+            null
+          )}
+        </main>
+      </div>
+      <div style={{flex:`1 0 auto`}}/>
+      <div className={classes.appBar}>
+        <Footer/>
+      </div>
     </div>
   );
 }

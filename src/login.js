@@ -59,6 +59,23 @@ function validateName(name) {// eslint-disable-next-line
 }
 
 const useStyles = makeStyles( theme => ({
+  '@global': {
+    '*::-webkit-scrollbar': {
+      width: '0.4em',
+    },
+    '*::-webkit-scrollbar-track': {
+      boxShadow: `inset 0 0 3px ${theme.palette.secondary.light}` ,
+      borderRadius: '10px'
+    },
+    '*::-webkit-scrollbar-thumb': {
+      backgroundColor: `${theme.palette.primary.dark}`,
+      borderRadius: '10px',
+      "&:hover": {
+        //transform: `scale(1.1)` ,
+        backgroundColor: `${theme.palette.primary.light}`,
+      }
+    }
+  },
   root: {
     display: 'flex',
     flexWrap: 'wrap',
