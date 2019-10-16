@@ -1205,48 +1205,54 @@ function runcapitalapartners ( socket , monitor ) {
             } );
             return results;
           } );
+          await page.close();
 
-          await check_if_canceled ( browser , monitor , socket );
-          await Promise.all ([ ...urls .map ( ( item ) => {
-            return new Promise ( async ( resolve , reject )=> {
-              try {
-                await check_if_canceled ( browser , monitor , socket );
-                const page = await browser.newPage ( );
-                await check_if_canceled ( browser , monitor , socket );
-                await page .goto ( item.about , {timeout:0} );
-                await page .addScriptTag ( {path : "jquery.js"}  );
-                await check_if_canceled ( browser , monitor , socket );
-                item.about = await page.evaluate ( () => {
-                  function  paragraphs  ( array ) {
-                    let paragraph = '';
-                    array.forEach ( ( para ) =>{
-                      paragraph += para.innerText + '\n';
-                    } );
-                    return paragraph;
-                  };
-                  return paragraphs ( document.querySelectorAll ( 'div.content-text__text > p' ) );
-                } );
-                await check_if_canceled ( browser , monitor , socket );
-                item.phone = await page.evaluate ( () => {
-                  return document.querySelectorAll ( 'ul.contact__list > li' ) [ 0 ].innerText;
-                } );
-                await check_if_canceled ( browser , monitor , socket );
-                item.mail = await page.evaluate ( () => {
-                  return document.querySelectorAll ( 'ul.contact__list > li' ) [ 1 ].innerText;
-                } );
-                await check_if_canceled ( browser , monitor , socket );
-                item.linkedIn = await page.evaluate ( () => {
-                  let linkedIn = document.querySelectorAll ( 'ul.contact__list > li > a' ) [ 2 ];
-                  return linkedIn ? linkedIn.href : '';
-                } );
-                await check_if_canceled ( browser , monitor , socket );
-                socket.emit( 'outgoing data' , [item] )
-                return resolve ( item );
-              } catch ( e ) {
-                return reject ( e );
-              }
-            });
-          } ) ])
+          let i , j , chunk = 3;
+          for ( i = 0 , j = urls.length; i < j; i += chunk ) {
+            //.slice ( i , i+chunk )
+            await check_if_canceled ( browser , monitor , socket );
+            await Promise.all ([ ...urls.slice(i,i+chunk) .map ( ( item ) => {
+              return new Promise ( async ( resolve , reject )=> {
+                try {
+                  await check_if_canceled ( browser , monitor , socket );
+                  const page = await browser.newPage ( );
+                  await check_if_canceled ( browser , monitor , socket );
+                  await page .goto ( item.about , {timeout:0} );
+                  await page .addScriptTag ( {path : "jquery.js"}  );
+                  await check_if_canceled ( browser , monitor , socket );
+                  item.about = await page.evaluate ( () => {
+                    function  paragraphs  ( array ) {
+                      let paragraph = '';
+                      array.forEach ( ( para ) =>{
+                        paragraph += para.innerText + '\n';
+                      } );
+                      return paragraph;
+                    };
+                    return paragraphs ( document.querySelectorAll ( 'div.content-text__text > p' ) );
+                  } );
+                  await check_if_canceled ( browser , monitor , socket );
+                  item.phone = await page.evaluate ( () => {
+                    return document.querySelectorAll ( 'ul.contact__list > li' ) [ 0 ].innerText;
+                  } );
+                  await check_if_canceled ( browser , monitor , socket );
+                  item.mail = await page.evaluate ( () => {
+                    return document.querySelectorAll ( 'ul.contact__list > li' ) [ 1 ].innerText;
+                  } );
+                  await check_if_canceled ( browser , monitor , socket );
+                  item.linkedIn = await page.evaluate ( () => {
+                    let linkedIn = document.querySelectorAll ( 'ul.contact__list > li > a' ) [ 2 ];
+                    return linkedIn ? linkedIn.href : '';
+                  } );
+                  await check_if_canceled ( browser , monitor , socket );
+                  await page.close();
+                  socket.emit( 'outgoing data' , [item] )
+                  return resolve ( item );
+                } catch ( e ) {
+                  return reject ( e );
+                }
+              });
+            } ) ]);
+          }
         }
       }
       //
@@ -10418,7 +10424,7 @@ async function scheduler ( ) {
             // Do stuff
           });
 
-        }, 1000*60*15);
+        }, 1000*60*10);
         await firePush ( Scrappers [ i ] )
         clearTimeout(restart)
         console.log(Scrappers[ i ].name);
@@ -10464,7 +10470,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //karmijnkapitaal ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //runcapitalapartners ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
