@@ -10394,10 +10394,13 @@ async function scheduler ( ) {
     var ref = db.ref ( '/step/index' );
     let track = await ref.once ( 'value' )
     console.log ( "starting from index... " + track.val ( ) )
+    var restart;
     for (var i = track.val ( ); i < Scrappers.length; i++) {
       try {
         await db.ref('step/name').set(Scrappers[ i ].name)
+        restart = setTimeout(function(){ console.log("Restarting"); }, 1000*60*25);
         await firePush ( Scrappers [ i ] )
+        clearTimeout(restart)
         console.log(Scrappers[ i ].name);
         if ( i == 123 ){
           await ref.set ( 0 )
