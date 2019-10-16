@@ -1310,7 +1310,7 @@ function runcinven ( socket , monitor ) {
           } );
 
           await check_if_canceled ( browser , monitor , socket );
-          let i , j , chunk = 10;
+          let i , j , chunk = 3;
           for ( i = 0 , j = urls.length; i < j; i += chunk ) {
             //.slice ( i , i+chunk )
             await Promise.all ( [ ...urls .slice ( i , i+chunk ) .map ( ( item ) => {
@@ -10461,7 +10461,7 @@ console.log ( msToTime ( millsUntilMidnight (  ) ) );
 console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
 console.log("scheduler (); ");
-//scheduler ();
+scheduler ();
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
@@ -10480,7 +10480,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  forbion ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //forbion ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
