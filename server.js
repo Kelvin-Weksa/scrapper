@@ -52,7 +52,7 @@ async function autoScroll ( page , interval = 50 ){
 let sleep = ms => new Promise ( resolve => setTimeout ( resolve , ms ) );
 
 setInterval(function() {
-    http.get("https://kelvin-weksa.herokuapp.com/");
+    http.get("http://kelvin-weksa.herokuapp.com/");
 }, 300000); // every 5 minutes (300000)
 
 Date.prototype.addHours = function ( h ){
