@@ -10397,7 +10397,7 @@ async function scheduler ( ) {
     for (var i = track.val ( ); i < Scrappers.length; i++) {
       try {
         await db.ref('step/name').set(Scrappers[ i ].name)
-        await firePush ( Scrappers [ i ] )
+        //await firePush ( Scrappers [ i ] )
         console.log(Scrappers[ i ].name);
         if ( i == 123 ){
           await ref.set ( 0 )
@@ -10419,7 +10419,8 @@ console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
 //setTimeout ( scheduler , millsUntilMidnight ( ) );
 
-scheduler ( );
+console.log("scheduler ();");
+scheduler ();
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
