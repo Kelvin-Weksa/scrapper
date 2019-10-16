@@ -3702,7 +3702,7 @@ function menthacapital ( socket , monitor ) {
   })
 }
 Scrappers.push ( menthacapital );
-true
+
 function nom ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
@@ -5151,8 +5151,13 @@ function riversideeurope ( socket , monitor ) {
             }
         } )
       }
-
-      let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      let datas = []
+      let i , j , chunk = 3;
+      for ( i = 0 , j = urls.length; i < j; i += chunk ) {
+        //.slice ( i , i+chunk )
+        console.log ( "chunk --> " + i  )
+        datas = await Promise.all ( [  ...urls.slice(i,i+chunk). map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+      }
       browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
@@ -10501,7 +10506,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //lspvc ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //riversideeurope ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
