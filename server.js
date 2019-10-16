@@ -2228,44 +2228,50 @@ function gildehealthcare ( socket , monitor ) {
             } );
             return results;
           } );
+          let i , j , chunk = 5;
+          await page.close();
+          for ( i = 0 , j = urls.length; i < j; i += chunk ) {
+            //.slice ( i , i+chunk )
+            console.log ( "chunk --> " + i  )
+            await check_if_canceled ( browser , monitor , socket );
+            await Promise.all ([ ...urls.slice(i,i+chunk) .map ( (item) => {
+              return new Promise ( async ( resolve , reject )=> {
+                try {
+                  await check_if_canceled ( browser , monitor , socket );
+                  const page = await browser.newPage ( );
+                  await check_if_canceled ( browser , monitor , socket );
+                  await page .goto ( item.about , {timeout:0} );
+                  await page .addScriptTag ( {path : "jquery.js"}  );
+                  await check_if_canceled ( browser , monitor , socket );
 
-          await check_if_canceled ( browser , monitor , socket );
-          await Promise.all ([ ...urls .map ( (item) => {
-            return new Promise ( async ( resolve , reject )=> {
-              try {
-                await check_if_canceled ( browser , monitor , socket );
-                const page = await browser.newPage ( );
-                await check_if_canceled ( browser , monitor , socket );
-                await page .goto ( item.about , {timeout:0} );
-                await page .addScriptTag ( {path : "jquery.js"}  );
-                await check_if_canceled ( browser , monitor , socket );
-
-                item.about = await page.evaluate ( () => {
-                  function  paragraphs  ( array ) {
-                    let paragraph = '';
-                    array.forEach ( ( para ) =>{
-                      paragraph += para.innerText + '\n';
-                    } );
-                    return paragraph;
-                  };
-                  return paragraphs ( document.querySelectorAll ( 'div.col-md-6.col-md-push-3.border-right > p' ) );
-                } );
-                item.phone = await page.evaluate ( () => {
-                  let node = document.querySelector ( 'div.col-md-3.col-md-pull-6 > p' );
-                  return  node ? node .innerText : '';
-                } );
-                item.mail = await page.evaluate ( () => {
-                  let node = document.querySelector ( 'a.social_button.email' );
-                  return  node ? node .href .replace ( 'mailto:' , '' ) : '';
-                } );
-                await check_if_canceled ( browser , monitor , socket );
-                socket.emit ( 'outgoing data' , [item] )
-                return resolve ( item );
-              } catch ( e ) {
-                return reject ( e )
-              }
-            });
-          } ) ])
+                  item.about = await page.evaluate ( () => {
+                    function  paragraphs  ( array ) {
+                      let paragraph = '';
+                      array.forEach ( ( para ) =>{
+                        paragraph += para.innerText + '\n';
+                      } );
+                      return paragraph;
+                    };
+                    return paragraphs ( document.querySelectorAll ( 'div.col-md-6.col-md-push-3.border-right > p' ) );
+                  } );
+                  item.phone = await page.evaluate ( () => {
+                    let node = document.querySelector ( 'div.col-md-3.col-md-pull-6 > p' );
+                    return  node ? node .innerText : '';
+                  } );
+                  item.mail = await page.evaluate ( () => {
+                    let node = document.querySelector ( 'a.social_button.email' );
+                    return  node ? node .href .replace ( 'mailto:' , '' ) : '';
+                  } );
+                  await check_if_canceled ( browser , monitor , socket );
+                  await page.close()
+                  socket.emit ( 'outgoing data' , [item] )
+                  return resolve ( item );
+                } catch ( e ) {
+                  return reject ( e )
+                }
+              });
+            } ) ])
+          }
         }
       }
       //
@@ -10480,7 +10486,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //forbion ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //gildehealthcare ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
