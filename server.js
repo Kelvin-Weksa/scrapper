@@ -2228,7 +2228,7 @@ function gildehealthcare ( socket , monitor ) {
             } );
             return results;
           } );
-          let i , j , chunk = 5;
+          let i , j , chunk = 3;
           await page.close();
           for ( i = 0 , j = urls.length; i < j; i += chunk ) {
             //.slice ( i , i+chunk )
@@ -2325,52 +2325,58 @@ function gimv ( socket , monitor ) {
             } );
             return results;
           } );
+          await page.close();
+          let i , j , chunk = 3;
+          for ( i = 0 , j = urls.length; i < j; i += chunk ) {
+            //.slice ( i , i+chunk )
+            console.log ( "chunk --> " + i  )
+            await check_if_canceled ( browser , monitor , socket );
+            await Promise.all ([ ...urls.slice(i,i+chunk) .map ( (item) => {
+              return new Promise ( async ( resolve , reject )=> {
+                try {
+                  await check_if_canceled ( browser , monitor , socket );
+                  const page = await browser.newPage ( );
+                  await check_if_canceled ( browser , monitor , socket );
+                  await page .goto ( item.about , {timeout:0} );
+                  await page .addScriptTag ( {path : "jquery.js"}  );
+                  await check_if_canceled ( browser , monitor , socket );
 
-          await check_if_canceled ( browser , monitor , socket );
-          await Promise.all ([ ...urls .map ( (item) => {
-            return new Promise ( async ( resolve , reject )=> {
-              try {
-                await check_if_canceled ( browser , monitor , socket );
-                const page = await browser.newPage ( );
-                await check_if_canceled ( browser , monitor , socket );
-                await page .goto ( item.about , {timeout:0} );
-                await page .addScriptTag ( {path : "jquery.js"}  );
-                await check_if_canceled ( browser , monitor , socket );
+                  item.about = await page.evaluate ( () => {
+                    function  paragraphs  ( array ) {
+                      let paragraph = '';
+                      array.forEach ( ( para ) =>{
+                        paragraph += para.innerText + '\n';
+                      } );
+                      return paragraph;
+                    };
+                    return paragraphs ( document.querySelectorAll ( 'div.field__item > p' ) );
+                  } );
 
-                item.about = await page.evaluate ( () => {
-                  function  paragraphs  ( array ) {
-                    let paragraph = '';
-                    array.forEach ( ( para ) =>{
-                      paragraph += para.innerText + '\n';
-                    } );
-                    return paragraph;
-                  };
-                  return paragraphs ( document.querySelectorAll ( 'div.field__item > p' ) );
-                } );
+                  item.phone = await page.evaluate ( () => {
+                    let node = document.querySelector ( 'div.field.field--name-field-telephone.field--type-telephone > div.field__items > div.field__item' );
+                    return  node ? node .innerText : '';
+                  } );
 
-                item.phone = await page.evaluate ( () => {
-                  let node = document.querySelector ( 'div.field.field--name-field-telephone.field--type-telephone > div.field__items > div.field__item' );
-                  return  node ? node .innerText : '';
-                } );
+                  item.mail = await page.evaluate ( () => {
+                    let node = document.querySelector ( 'div.field__item > a' );
+                    return  node ? node .href .replace ( 'mailto:' , '' ) : '';
+                  } );
 
-                item.mail = await page.evaluate ( () => {
-                  let node = document.querySelector ( 'div.field__item > a' );
-                  return  node ? node .href .replace ( 'mailto:' , '' ) : '';
-                } );
+                  item.map = await page.evaluate ( () => {
+                    let node = document.querySelector ( 'div.address' );
+                    return  node ? node .innerText : '';
+                  } );
 
-                item.map = await page.evaluate ( () => {
-                  let node = document.querySelector ( 'div.address' );
-                  return  node ? node .innerText : '';
-                } );
-
-                await check_if_canceled ( browser , monitor , socket );
-                socket.emit ( 'outgoing data' , [item] )
-                return resolve ( item );
-              } catch ( e ) {
-                return reject ( e )
-              }
-            });
-          } ) ])
+                  await page.close();
+                  await check_if_canceled ( browser , monitor , socket );
+                  socket.emit ( 'outgoing data' , [item] )
+                  return resolve ( item );
+                } catch ( e ) {
+                  return reject ( e )
+                }
+              });
+            } ) ])
+          }
         }
       }
       //
@@ -3687,7 +3693,7 @@ function menthacapital ( socket , monitor ) {
   })
 }
 Scrappers.push ( menthacapital );
-
+true
 function nom ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
@@ -10486,7 +10492,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //gildehealthcare ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //gimv ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
