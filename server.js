@@ -2770,61 +2770,66 @@ function innovationquarter ( socket , monitor ) {
                 } );
                 return results;
               } );
+              await page.close();
+              let i , j , chunk = 3;
+              for ( i = 0 , j = results.length; i < j; i += chunk ) {
+                //.slice ( i , i+chunk )
+                console.log ( "chunk --> " + i  )
+                await check_if_canceled ( browser , monitor , socket );
+                await Promise.all ([ ...results.slice(i,i+chunk) .map ( (item) => {
+                  return new Promise ( async ( resolve , reject )=> {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await page .addScriptTag ( {path : "jquery.js"}  );
+                      await check_if_canceled ( browser , monitor , socket );
 
-              await check_if_canceled ( browser , monitor , socket );
-              await Promise.all ([ ...results .map ( (item) => {
-                return new Promise ( async ( resolve , reject )=> {
-                  try {
-                    await check_if_canceled ( browser , monitor , socket );
-                    const page = await browser.newPage ( );
-                    await check_if_canceled ( browser , monitor , socket );
-                    await page .goto ( item.about , {timeout:0} );
-                    await page .addScriptTag ( {path : "jquery.js"}  );
-                    await check_if_canceled ( browser , monitor , socket );
+                      item.about = await page.evaluate ( () => {
+                        function  paragraphs  ( array ) {
+                          let paragraph = '';
+                          if ( array ) {
+                            array.forEach ( ( para ) =>{
+                              paragraph += para.innerText + '\n';
+                            } );
+                          }
+                          return paragraph;
+                        };
+                        return paragraphs ( document.querySelectorAll ( 'div.entry-content > p' ) );
+                      } );
+                      item.phone = await page.evaluate ( () => {
+                        let node = document.querySelector ( 'li.phone' );
+                        return  node ? node .innerText : '';
+                      } );
+                      item.mail = await page.evaluate ( () => {
+                        let node = document.querySelector ( 'li.mail > a' );
+                        return  node ? node .href .replace ( 'mailto:' , '' ) : '';
+                      } );
+                      item.linkedIn = await page.evaluate ( () => {
+                        let node = document.querySelectorAll ( 'a.avia-team-icon' ) [ 0 ];
+                        return  node ? node .href  : '';
+                      } );
+                      item.twitter = await page.evaluate ( () => {
+                        let node = document.querySelector ( 'a.avia-team-icon' ) [ 2 ];
+                        return  node ? node .href  : '';
+                      } );
 
-                    item.about = await page.evaluate ( () => {
-                      function  paragraphs  ( array ) {
-                        let paragraph = '';
-                        if ( array ) {
-                          array.forEach ( ( para ) =>{
-                            paragraph += para.innerText + '\n';
-                          } );
-                        }
-                        return paragraph;
-                      };
-                      return paragraphs ( document.querySelectorAll ( 'div.entry-content > p' ) );
-                    } );
-                    item.phone = await page.evaluate ( () => {
-                      let node = document.querySelector ( 'li.phone' );
-                      return  node ? node .innerText : '';
-                    } );
-                    item.mail = await page.evaluate ( () => {
-                      let node = document.querySelector ( 'li.mail > a' );
-                      return  node ? node .href .replace ( 'mailto:' , '' ) : '';
-                    } );
-                    item.linkedIn = await page.evaluate ( () => {
-                      let node = document.querySelectorAll ( 'a.avia-team-icon' ) [ 0 ];
-                      return  node ? node .href  : '';
-                    } );
-                    item.twitter = await page.evaluate ( () => {
-                      let node = document.querySelector ( 'a.avia-team-icon' ) [ 2 ];
-                      return  node ? node .href  : '';
-                    } );
+                      item.whatsapp = await page.evaluate ( () => {
+                        let node = document.querySelector ( 'a.avia-team-icon' ) [ 1 ];
+                        return  node ? node .href  : '';
+                      } );
+                      await page.close();
+                      await check_if_canceled ( browser , monitor , socket );
+                      socket.emit ( 'outgoing data' , [item] )
+                      return resolve ( item );
+                    } catch ( e ) {
+                      return reject ( e )
+                    }
+                  });
+                } ) ])
+              }
 
-                    item.whatsapp = await page.evaluate ( () => {
-                      let node = document.querySelector ( 'a.avia-team-icon' ) [ 1 ];
-                      return  node ? node .href  : '';
-                    } );
-                    await check_if_canceled ( browser , monitor , socket );
-                    socket.emit ( 'outgoing data' , [item] )
-                    return resolve ( item );
-                  } catch ( e ) {
-                    return reject ( e )
-                  }
-                });
-              } ) ])
-
-              await page.close ( );
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -10492,7 +10497,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //gimv ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //innovationquarter ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
