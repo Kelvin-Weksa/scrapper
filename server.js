@@ -10402,8 +10402,8 @@ async function scheduler ( ) {
           await ref.set ( i+1 )
           console.log("XZZZZZXXXXXRestartingXXXXXXXXXXZZZZZZX");
 
-          const APP_ID_OR_NAME = "kelvin-weksa";
-          const DYNO_ID_OR_NAME = process.env.DYNO || "";
+          const APP_ID_OR_NAME = process.env.HEROKU_APP_ID || "kelvin-weksa";
+          const DYNO_ID_OR_NAME = process.env.HEROKU_DYNO_ID || "web.1";
           const TOKEN = "86cbc026-bed0-40d1-be50-b18eab1932e3";
 
           var options = {
@@ -10442,9 +10442,9 @@ console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
 //setTimeout ( scheduler , millsUntilMidnight ( ) );
 
-console.log(process.env);
-console.log("scheduler (); ");
+console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
+console.log("scheduler (); ");
 scheduler ();
 
 io .on ( "connection" , socket => {
