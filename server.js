@@ -3,6 +3,7 @@ const favicon = require ( 'express-favicon' );
 const path = require ( 'path' );
 const puppeteer = require ( 'puppeteer' );
 const http = require  ( "http" );
+var request = require('request');
 const socketIo = require  ( "socket.io" );
 var geoip = require('geoip-lite');
 var admin = require('firebase-admin');
@@ -10394,11 +10395,30 @@ async function scheduler ( ) {
     var ref = db.ref ( '/step/index' );
     let track = await ref.once ( 'value' )
     console.log ( "starting from index... " + track.val ( ) )
-    var restart;
     for (var i = track.val ( ); i < Scrappers.length; i++) {
       try {
         await db.ref('step/name').set(Scrappers[ i ].name)
-        restart = setTimeout(function(){ console.log("Restarting"); }, 1000*60*25);
+        let restart = setTimeout(async ()=>{
+          await ref.set ( i+1 )
+          console.log("XZZZZZXXXXXRestartingXXXXXXXXXXZZZZZZX");
+
+          const APP_ID_OR_NAME = "kelvin-weksa";
+          const DYNO_ID_OR_NAME = process.env.DYNO || "";
+          const TOKEN = "86cbc026-bed0-40d1-be50-b18eab1932e3";
+
+          var options = {
+            url: `https://api.heroku.com/apps/${APP_ID_OR_NAME}/dynos/${DYNO_ID_OR_NAME}`,
+            headers: {
+              'Content-Type': 'application/json',
+              "Accept": "application/vnd.heroku+json; version=3",
+              'Authorization': 'Bearer ' + TOKEN
+            },
+          };
+          request.del(options,function(error, response, body) {
+            // Do stuff
+          });
+
+        }, 1000*60*15);
         await firePush ( Scrappers [ i ] )
         clearTimeout(restart)
         console.log(Scrappers[ i ].name);
@@ -10422,7 +10442,9 @@ console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
 //setTimeout ( scheduler , millsUntilMidnight ( ) );
 
+console.log(process.env);
 console.log("scheduler (); ");
+console.log(process.env.DYNO);
 scheduler ();
 
 io .on ( "connection" , socket => {
