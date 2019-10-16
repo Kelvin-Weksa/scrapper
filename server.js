@@ -3322,7 +3322,7 @@ Scrappers.push ( liof );
 function lspvc ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -3361,70 +3361,74 @@ function lspvc ( socket , monitor ) {
                 } );
                 return results;
               } );
+              let i , j , chunk = 3;
+              for ( i = 0 , j = results.length; i < j; i += chunk ) {
+                //.slice ( i , i+chunk )
+                console.log ( "chunk --> " + i  )
+                await Promise.all ([ ...results.slice(i,i+chunk) .map ( (item) => {
+                  return new Promise ( async ( resolve , reject )=> {
+                    try {
+                      await check_if_canceled ( browser , monitor , socket );
+                      const page = await browser.newPage ( );
+                      await page.setRequestInterception ( true );
+                      page.on ( 'request' , ( request ) => {
+                        if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
+                            request .abort ( );
+                        } else {
+                            request .continue  ( );
+                        }
+                      } );
+                      page.on('dialog', async dialog => {
+                        console.log(dialog.message());
+                        await dialog.dismiss();
+                      });
+                      await check_if_canceled ( browser , monitor , socket );
+                      await page .goto ( item.about , {timeout:0} );
+                      await autoScroll ( page );
+                      await check_if_canceled ( browser , monitor , socket );
 
-              await Promise.all ([ ...results .map ( (item) => {
-                return new Promise ( async ( resolve , reject )=> {
-                  try {
-                    await check_if_canceled ( browser , monitor , socket );
-                    const page = await browser.newPage ( );
-                    await page.setRequestInterception ( true );
-                    page.on ( 'request' , ( request ) => {
-                      if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-                          request .abort ( );
-                      } else {
-                          request .continue  ( );
-                      }
-                    } );
-                    page.on('dialog', async dialog => {
-                      console.log(dialog.message());
-                      await dialog.dismiss();
-                    });
-                    await check_if_canceled ( browser , monitor , socket );
-                    await page .goto ( item.about , {timeout:0} );
-                    await autoScroll ( page );
-                    await check_if_canceled ( browser , monitor , socket );
-
-                    item.about = await page.evaluate ( () => {
-                      let about = document.querySelectorAll ( 'div.item-info > div.text > div' ) [ 0 ] ;
-                      return  about ? about.innerText : '';
-                    } );
-
-                    item.mail = await page.evaluate ( () => {
-                      let mail = document.querySelector ( 'div.item-info > div.text > div > a' ) ;
-                      return  mail ? mail .href .replace ( 'mailto:' , '' ) : '';
-                    } );
-
-                    item.phone = await page.evaluate ( () => {
-                      let node = document.querySelectorAll ( 'div.item-info > div.text > div' ) [ 1 ] ;
-                      return  node ? node.innerText.split ( 'call' ) [ 1 ] ? node.innerText .split ( 'call' ) [ 1 ] .trim ( ) : ""  : '';
-                    } );
-
-                    if ( ! item.about ) {
                       item.about = await page.evaluate ( () => {
-                        let about = document.querySelectorAll ( 'div.item-info > div.text > p' ) [ 0 ] ;
+                        let about = document.querySelectorAll ( 'div.item-info > div.text > div' ) [ 0 ] ;
                         return  about ? about.innerText : '';
                       } );
 
                       item.mail = await page.evaluate ( () => {
-                        let mail = document.querySelector ( 'div.item-info > div.text > p > a' ) ;
+                        let mail = document.querySelector ( 'div.item-info > div.text > div > a' ) ;
                         return  mail ? mail .href .replace ( 'mailto:' , '' ) : '';
                       } );
 
                       item.phone = await page.evaluate ( () => {
-                        let node = document.querySelectorAll ( 'div.item-info > div.text > p' ) [ 1 ] ;
+                        let node = document.querySelectorAll ( 'div.item-info > div.text > div' ) [ 1 ] ;
                         return  node ? node.innerText.split ( 'call' ) [ 1 ] ? node.innerText .split ( 'call' ) [ 1 ] .trim ( ) : ""  : '';
                       } );
 
+                      if ( ! item.about ) {
+                        item.about = await page.evaluate ( () => {
+                          let about = document.querySelectorAll ( 'div.item-info > div.text > p' ) [ 0 ] ;
+                          return  about ? about.innerText : '';
+                        } );
+
+                        item.mail = await page.evaluate ( () => {
+                          let mail = document.querySelector ( 'div.item-info > div.text > p > a' ) ;
+                          return  mail ? mail .href .replace ( 'mailto:' , '' ) : '';
+                        } );
+
+                        item.phone = await page.evaluate ( () => {
+                          let node = document.querySelectorAll ( 'div.item-info > div.text > p' ) [ 1 ] ;
+                          return  node ? node.innerText.split ( 'call' ) [ 1 ] ? node.innerText .split ( 'call' ) [ 1 ] .trim ( ) : ""  : '';
+                        } );
+
+                      }
+                      await page.close (  );
+                      await check_if_canceled ( browser , monitor , socket );
+                      socket.emit ( 'outgoing data' , [item] );
+                      return resolve ( item )
+                    } catch ( e ) {
+                      return reject( e )
                     }
-                    await page.close (  );
-                    await check_if_canceled ( browser , monitor , socket );
-                    socket.emit ( 'outgoing data' , [item] );
-                    return resolve ( item )
-                  } catch ( e ) {
-                    return reject( e )
-                  }
-                });
-              }) ])
+                  });
+                }) ])
+              }
 
               await page.close ( );
               return resolve ( results )
@@ -10497,7 +10501,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //innovationquarter ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //lspvc ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
