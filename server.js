@@ -51,6 +51,10 @@ async function autoScroll ( page , interval = 50 ){
 
 let sleep = ms => new Promise ( resolve => setTimeout ( resolve , ms ) );
 
+setInterval(function() {
+    http.get("https://kelvin-weksa.herokuapp.com/");
+}, 300000); // every 5 minutes (300000)
+
 Date.prototype.addHours = function ( h ){
     this.setHours ( this.getHours ( ) + h );
     return this;
@@ -1737,28 +1741,31 @@ function egeria ( socket , monitor ) {
             } );
             return results;
           } );
-
-          await check_if_canceled ( browser , monitor , socket );
-          await Promise.all ( [ ...urls .map ( (item) => {
-            return new Promise ( async ( resolve , reject )=> {
-              try {
-                await check_if_canceled ( browser , monitor , socket );
-                const page = await browser.newPage ( );
-                await check_if_canceled ( browser , monitor , socket );
-                await page .goto ( item.about , {timeout:0} );
-                await page .addScriptTag ( {path : "jquery.js"}  );
-                await check_if_canceled ( browser , monitor , socket );
-                item.about = await page.evaluate ( () => {
-                  return document.querySelector ( 'div.col-md-9' ) .innerText;
-                } );
-                await check_if_canceled ( browser , monitor , socket );
-                socket.emit ( 'outgoing data' , [item] )
-                return resolve ( item );
-              } catch ( e ) {
-                return reject ( e );
-              }
-            });
-          } ) ] )
+          let i , j , chunk = 5;
+          for ( i = 0 , j = urls.length; i < j; i += chunk ) {
+            await check_if_canceled ( browser , monitor , socket );
+            await Promise.all ( [ ...urls.slice(i , i+chunk) .map ( (item) => {
+              return new Promise ( async ( resolve , reject )=> {
+                try {
+                  await check_if_canceled ( browser , monitor , socket );
+                  const page = await browser.newPage ( );
+                  await check_if_canceled ( browser , monitor , socket );
+                  await page .goto ( item.about , {timeout:0} );
+                  await page .addScriptTag ( {path : "jquery.js"}  );
+                  await check_if_canceled ( browser , monitor , socket );
+                  item.about = await page.evaluate ( () => {
+                    return document.querySelector ( 'div.col-md-9' ) .innerText;
+                  } );
+                  await check_if_canceled ( browser , monitor , socket );
+                  await page.close();
+                  socket.emit ( 'outgoing data' , [item] )
+                  return resolve ( item );
+                } catch ( e ) {
+                  return reject ( e );
+                }
+              });
+            } ) ] )
+          }
         }
       }
       //
@@ -4070,8 +4077,9 @@ function newion ( socket , monitor ) {
                 } );
                 return results;
               } , url );
-              await page.close ( );
+
               socket.emit ( 'outgoing data' , results )
+              await page.close ( );
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -4083,7 +4091,7 @@ function newion ( socket , monitor ) {
       //
       browser.close ( );
       monitor.confirm = true;
-      //return resolve ( [ ] .concat ( ...datas ) );
+      return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
       monitor.confirm = true;
       return reject ( e );
@@ -10324,7 +10332,9 @@ app.post ( '/register', function ( request , response ){
 });
 
 console.log ( Scrappers.length + "  +++Scrappers Registered." );
+
 var db = admin .database ( );
+//admin.database.enableLogging(true);
 
 async function firePush ( scrapper ) {
   try {
@@ -10339,10 +10349,10 @@ async function firePush ( scrapper ) {
 
     var socket = {
       emit: ( room , datas ) =>  {
-        if ( room == "outgoing data" )
-          partialFresh = partialFresh .concat ( ...datas )
           datas.forEach ( ( item ) => {
+          setTimeout( async () => {
             item.timestamp = new Date ( ) .getTime ( );
+            console.log(item.name);
             ref.child(item.name.replace ( /[^\w\s]/gi, '_' ))
               .set ( item ,( error )=> {
                 if ( error ) {
@@ -10351,13 +10361,13 @@ async function firePush ( scrapper ) {
                   console.log ( 'FireBase updated' + "+++>  " + item.name.replace ( /[^\w\s]/gi, '_' ) )
                 }
             } );
+          },Math.floor(Math.random() * 101))
           } );
       }
     }
 
     //let datas = [ ];
     let datas = await scrapper ( socket , { cancel: false , confirm: false } );
-
     //ref.remove( );
     let k , j , chunk = 4 ;
     for ( k = 0 , j = datas.length;k < j; k += chunk ) {
@@ -10380,12 +10390,14 @@ async function firePush ( scrapper ) {
 }
 
 async function scheduler ( ) {
-    var ref = db.ref ( '/step' );
+    var ref = db.ref ( '/step/index' );
     let track = await ref.once ( 'value' )
     console.log ( "starting from index... " + track.val ( ) )
     for (var i = track.val ( ); i < Scrappers.length; i++) {
       try {
-        await firePush ( Scrappers.reverse ( ) [ i ] )
+        await db.ref('step/name').set(Scrappers[ i ].name)
+        await firePush ( Scrappers [ i ] )
+        console.log(Scrappers[ i ].name);
         if ( i == 123 ){
           await ref.set ( 0 )
         }else{
@@ -10406,7 +10418,7 @@ console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
 //setTimeout ( scheduler , millsUntilMidnight ( ) );
 
-//scheduler ( );
+scheduler ( );
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];

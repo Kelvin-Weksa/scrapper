@@ -10,8 +10,8 @@ import CopyrightIcon from '@material-ui/icons/Copyright';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-
-
+import MailIcon from '@material-ui/icons/Mail';
+import WhatsAppIcon from '@material-ui/icons/WhatsApp';
 
 export default function Footer (props) {
   const theme = useTheme();
@@ -40,6 +40,9 @@ export default function Footer (props) {
         <hr style={{width:"90%"}}/>
         <div style={{display:'flex',justifyContent:"center",width:'100%'}}>
           <IconButton style={{color:'white'}}>
+            <WhatsAppIcon fontSize="large"/>
+          </IconButton>
+          <IconButton style={{color:'white'}}>
             <FacebookBox fontSize="large"/>
           </IconButton>
           <IconButton style={{color:'white'}}>
@@ -56,6 +59,9 @@ export default function Footer (props) {
           </IconButton>
           <IconButton style={{color:'white'}}>
             <YouTubeIcon fontSize="large"/>
+          </IconButton>
+          <IconButton style={{color:'white'}}>
+            <MailIcon fontSize="large"/>
           </IconButton>
         </div>
         <div style={{flex:`1 0 auto`}}/>

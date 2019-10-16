@@ -545,11 +545,12 @@ export default function PaperSheet() {
                     allUsers_plans[item.uid].forEach((it) => {
                       sum.push (it.following.length)
                       value += it.value;
-                      remains.push (Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000)) > 1 ?
-                        `${Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000))} days`
-                        :
-                        `${msToTime((it.endDate - new Date())%(24 * 60 * 60 * 1000))}`)
-
+                      if ((it.endDate - new Date()) >= 0) {
+                        remains.push (Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000)) > 1 ?
+                          `${Math.round((it.endDate - new Date())/(24 * 60 * 60 * 1000))} days`
+                          :
+                          `${msToTime((it.endDate - new Date())%(24 * 60 * 60 * 1000))}`)
+                      }
                     })
                     item.followed = `[${sum.join(" | ")}]`;
                     item.spent = value;

@@ -36,8 +36,11 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import Footer from './footer';
+import PrintIcon from '@material-ui/icons/Print';
 import {useScrollPosition} from './use-scroll-position'
 import clsx from 'clsx';
+//import jsPDF from 'jspdf';
+//import html2canvas from 'html2canvas';
 
 const StyledTableCell = withStyles(theme => ({
   head: {
@@ -278,11 +281,12 @@ function CheckOut ( props ){
   )
 }
 
-function Recipt ( props ){
+const Recipt  = React.forwardRef( ( props , ref )=>{
   const theme = useTheme ();
   return (
-    <div style={{display:'flex',justifyContent:'center',alignItems:'center'}}>
-      <Paper style={{paddingLeft:'5%',paddingRight:'5%',paddingTop:'5%',position:'relative',top:'2vh'}}>
+    <div style={{display:'flex',justifyContent:'center',alignItems:'center'}} ref={ref}>
+      <div style={{height:theme.mixins.toolbar.minHeight*2}}/>
+      <Paper style={{paddingLeft:'5%',paddingRight:'5%',paddingTop:'5%',position:'relative'}}>
         <div style={{display:'flex',flexFlow:'column wrap'}}>
           <Typography variant='h4' style={{alignSelf:'center'}}>
             INVOICE
@@ -295,6 +299,14 @@ function Recipt ( props ){
               <Typography variant='h6'>
                 {Firebase.auth().currentUser.email}
               </Typography>
+              <Button
+                variant="contained"
+                size="small"
+                style={{backgroundColor:theme.palette.secondary.light}}
+                onClick={()=>props.print()}
+              >
+                <PrintIcon /> print
+              </Button>
             </div>
             <div>
               <Table>
@@ -357,28 +369,30 @@ function Recipt ( props ){
             </StyledTableRow>
           </TableBody>
         </Table>
-        <div style={{display:'flex',flexFlow:'column wrap',alignItems:'center'}}>
-          {(props.expiry - new Date()) > 0 ?
-            (
-              <Typography variant='subtitle1' color="primary">
-                {props.expiry ? Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000)) >= 1 ?
-                  `${Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000))} days remaining`
-                  :
-                  `${msToTime((props.expiry - new Date())%(24 * 60 * 60 * 1000))} remaining` : ``}
-              </Typography>
-            )
-            :
-            (
-              <Typography variant='subtitle2' color="secondary">
-                EXPIRED
-              </Typography>
-            )
-          }
+        <div style={{display:'flex',justifyContent:'space-evenly'}}>
+          <div style={{display:'flex',flexFlow:'column wrap',alignItems:'center'}}>
+            {(props.expiry - new Date()) > 0 ?
+              (
+                <Typography variant='subtitle1' color="primary">
+                  {props.expiry ? Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000)) >= 1 ?
+                    `${Math.round((props.expiry - new Date())/(24 * 60 * 60 * 1000))} days remaining`
+                    :
+                    `${msToTime((props.expiry - new Date())%(24 * 60 * 60 * 1000))} remaining` : ``}
+                </Typography>
+              )
+              :
+              (
+                <Typography variant='subtitle2' color="secondary">
+                  EXPIRED
+                </Typography>
+              )
+            }
+          </div>
         </div>
       </Paper>
     </div>
   )
-}
+})
 
 function getStepContent ( step , fn , selected , card_chosen ){
   switch (step) {
@@ -520,6 +534,7 @@ function PaperSheet ( props ) {
     let array = !recipt.current.expired ? plan : expiredplan;
     return array[recipt.current.index]
   };
+  let recipt_pdf = React.createRef();
   let root  = React.createRef();
   let row1 = React.createRef();
   let row2 = React.createRef();
@@ -671,6 +686,23 @@ function PaperSheet ( props ) {
       }, 10);
     }).catch(console.log)
   },[root])
+
+  function  printDocument() {
+    /*if (recipt_pdf.current) {
+      alert('printing')
+      const input = recipt_pdf.current;
+      html2canvas(input)
+        .then((canvas) => {
+          const imgData = canvas.toDataURL('image/png');
+          const pdf = new jsPDF();
+          pdf.addImage(imgData, 'JPEG', 0, 0);
+          // pdf.output('dataurlnewwindow');
+          pdf.save("receipt.pdf");
+        });
+    }else{
+      alert ( 'nothing to print' )
+    }*/
+  }
 
   function choose ( num, plan, key=null, ){
     recipt.current.index = key;
@@ -893,6 +925,8 @@ function PaperSheet ( props ) {
               start={new Date ( selected_plan().endDate - ( selected_plan().period * 24 * 60 * 60 * 1000 ) )}
               plan={selected_plan().num}
               card_chosen={card_chosen}
+              ref={recipt_pdf}
+              print={printDocument}
             />
           )
             :
