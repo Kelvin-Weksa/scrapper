@@ -3967,14 +3967,6 @@ function zlto ( socket , monitor ) {
             try{
               let results = [ ];
               const page = await browser .newPage ( );
-              await page.setRequestInterception ( true );
-              page.on ( 'request' , ( request ) => {
-                if (  [ 'image' , 'font'  ] .indexOf  ( request.resourceType  ( ) ) !== -1  ) {
-                    request .abort ( );
-                } else {
-                    request .continue  ( );
-                }
-              } );
               await check_if_canceled ( browser , monitor , socket );
               await page .goto ( url , { timeout : 0 , } );
               await page .addScriptTag ( { path: 'jquery.js'  } );
@@ -3998,7 +3990,7 @@ function zlto ( socket , monitor ) {
                 return results;
               } , url );
 
-              let i , j , chunk = 9;
+              let i , j , chunk = 3;
               for ( i = 0 , j = results.length; i < j; i += chunk ) {
                 //.slice ( i , i+chunk )
                 console.log ( "chunk --> " + i  )
@@ -10440,6 +10432,7 @@ async function scheduler ( ) {
     for (var i = track.val ( ); i < Scrappers.length; i++) {
       try {
         await db.ref('step/name').set(Scrappers[ i ].name);
+        console.log(Scrappers[ i ].name);
         let restart = setTimeout(async ()=>{
           let repeating = await db.ref ( '/step/retry' ).once ( 'value' );
           console.log(JSON.stringify(repeating) + '     Repeat?');
@@ -10477,7 +10470,6 @@ async function scheduler ( ) {
         }
         clearTimeout(restart)
         await db.ref ( '/step/retry' ).set(false)
-        console.log(Scrappers[ i ].name);
         if ( i == 123 ){
           await ref.set ( 0 )
         }else{
@@ -10495,12 +10487,12 @@ function millsUntilMidnight ( ) {
 }
 console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
-//setTimeout ( scheduler , millsUntilMidnight ( ) );
+setTimeout ( scheduler , millsUntilMidnight ( ) );
 
 console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
 console.log("scheduler (); ");
-scheduler ();
+//scheduler ();
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
@@ -10519,7 +10511,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //icoscapital ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //zlto ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
