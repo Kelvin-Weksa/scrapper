@@ -133,10 +133,11 @@ export default function MediaCard ( props ) {
   const { characterName , characterPost , characterImage , characterPhone , characterFax ,
     characterMail , characterMap , characterLinkedIn ,
     characterMarket , characterAbout , from } = props;
-  const characterImage_ = characterImage;//? characterImage.split( '?' )[ 0 ]: null;
+
   const [ open , setOpen ] = React.useState ( false );
   const [ shown , setShown ] = React.useState ( "" );
   const [ tooltip , setTip ] = React.useState ( "" );
+  const [characterImage_, setImage] = React.useState(characterImage)
   let toCopy = React.createRef ( );
 
   const [tooltipOpen, toolSetOpen] = React.useState(false);
@@ -208,6 +209,10 @@ export default function MediaCard ( props ) {
     }
   }
 
+  const onError = () => {
+    setImage("static/person.png")
+  }
+
   function show ( node ) {
     setShown( node );
   }
@@ -228,12 +233,12 @@ export default function MediaCard ( props ) {
         {characterName ? (
         <CardMedia
           component='img'
-          alt="KW"
           height="150"
           image={characterImage_}
           className={classes.inner_card}
           onLoad={loaded}
           ref={image}
+          onError={onError}
         />
         ):(
           <Skeleton variant="rect" height={150} className={classes.media} />

@@ -289,7 +289,9 @@ function ResponsiveDrawer ( props ) {
     </Menu>
   );
 
-  let Listed = props.permitted;//Listing.filter ( companyList => props.permitted.some ( permission => companyList.includes( permission ) ) )
+  let Listed = props.permitted.sort((a,b) => (
+    a[2].toUpperCase() > b[2].toUpperCase()) ? 1 :
+      ((b[2].toUpperCase() > a[2].toUpperCase()) ? -1 : 0));
 
   const drawer = (
     <div>
@@ -308,7 +310,7 @@ function ResponsiveDrawer ( props ) {
       <List>
         {Listed.length? (
           Listed.filter ( item => item.includes ( filter ) ).map ( (list , index ) => (
-            <ListItem button key={index} onClick={( ) => loadData ( list[ 2 ] , list[ 1 ] , list[ 3 ] )} title={list[ 0 ]}>
+            <ListItem button key={index} onClick={( ) => loadData ( list[ list.length-1 ] , list[ 1 ] , list[ 3 ] )} title={list[ 0 ]}>
                 <CardMedia
                   className={classes.media}
                   image={list[ 3 ]}
