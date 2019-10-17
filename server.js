@@ -8100,7 +8100,7 @@ function volta ( socket , monitor ) {
                 return results;
               } , url );
 
-              let i , j , chunk = 5;
+              let i , j , chunk = 3;
               for ( i = 0 , j = results.length; i < j; i += chunk ) {
                 //.slice ( i , i+chunk )
                 console.log ( "chunk --> " + i  )
