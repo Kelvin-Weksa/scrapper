@@ -113,7 +113,7 @@ let Scrappers = [ ];
 function run3i ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
       await check_if_canceled ( browser , monitor , socket );
       let urls = [ ];
       for ( i = 1; i < 9; i ++  )
@@ -176,8 +176,15 @@ function run3i ( socket , monitor ) {
         } )
       }
       await check_if_canceled ( browser , monitor , socket );
-      let datas = await Promise.all ( [  ...urls . map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
-      browser.close ( );
+      let datas = [];
+      let k , j , chunk = 3;
+      for ( k = 0 , j = urls.length; k < j; k += chunk ) {
+        //.slice ( i , i+chunk )
+        console.log ( "chunk --> " + k  )
+        let partial = await Promise.all ( [  ...urls.slice(k,k+chunk) . map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
+        datas = datas.concat ( ...partial )
+      }
+      await browser.close ( );
       monitor .confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
       //return resolve ( datas );
@@ -238,7 +245,7 @@ function runaacc ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       await check_if_canceled ( browser , monitor , socket );
       socket .emit ( "outgoing data" , urls )
       monitor .confirm = true;
@@ -321,7 +328,7 @@ function run5sq ( socket , monitor ) {
       };
       await check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [ ...urls.map ( crawlUrl ) ] ).catch ( e => { console.log ( e ) } );
-      browser.close ( );
+      await browser.close ( );
       monitor .confirm = true;
       return resolve ( datas );
     } catch ( e ) {
@@ -485,7 +492,7 @@ function runadventinternational ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       await check_if_canceled ( browser , monitor , socket );
       //socket.emit ( "outgoing data" , resultz );
       monitor .confirm = true;
@@ -630,7 +637,7 @@ function runantea ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       socket .emit ( 'outgoing data' , urls )
       monitor.confirm = true;
       return resolve ( urls );
@@ -717,7 +724,7 @@ function runbaincapital ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -951,7 +958,7 @@ function runbolsterinvestments ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -1071,7 +1078,7 @@ function runbridgepoint ( socket , monitor ) {
      }
 
       //
-      browser.close ( );
+      await browser.close ( );
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
       return reject ( e );
@@ -1117,10 +1124,14 @@ function runbrightlandsventurepartners ( socket , monitor ) {
             } );
             return results;
           } );
-
-          await check_if_canceled ( browser , monitor , socket );
-          await Promise.all ( [ ...urls.map ( ( item ) => {
-            return new Promise ( async ( resolve , reject ) => {
+          await page.close()
+          let i , j , chunk = 3;
+          for ( i = 0 , j = urls.length; i < j; i += chunk ) {
+            //.slice ( i , i+chunk )
+            console.log ( "chunk --> " + i  )
+            await check_if_canceled ( browser , monitor , socket );
+            await Promise.all ( [ ...urls.slice(i,i+chunk).map ( ( item ) => {
+              return new Promise ( async ( resolve , reject ) => {
               try {
                 await check_if_canceled ( browser , monitor , socket );
                 const page = await browser.newPage ( );
@@ -1150,6 +1161,7 @@ function runbrightlandsventurepartners ( socket , monitor ) {
                 item.linkedIn = await page.evaluate ( () => {
                   return document.querySelectorAll ( 'div.contactinfo > a' ) [ 2 ] .href;
                 } );
+                await page.close()
                 await check_if_canceled ( browser , monitor , socket );
                 socket .emit ( 'outgoing data' , [item] )
                 return resolve ( item )
@@ -1157,11 +1169,12 @@ function runbrightlandsventurepartners ( socket , monitor ) {
                 return reject ( e );
               }
             });
-          } ) ])
+            } ) ])
+          }
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -1260,7 +1273,7 @@ function runcapitalapartners ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -1345,7 +1358,7 @@ function runcinven ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -1397,7 +1410,7 @@ function committedcapital ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , urls )
       monitor.confirm = true;
@@ -1461,7 +1474,7 @@ function cottonwood ( socket , monitor) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       socket.emit ( 'outgoing data' , urls )
       return resolve ( urls );
@@ -1514,7 +1527,7 @@ function cvc ( socket , monitor) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       socket.emit ( 'outgoing data' , urls )
       return resolve ( urls );
@@ -1571,7 +1584,7 @@ function dehogedennencapital ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , urls );
       monitor.confirm = true;
@@ -1625,7 +1638,7 @@ function delftenterprises ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , urls );
       monitor.confirm = true;
@@ -1706,7 +1719,7 @@ function ecart ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -1782,7 +1795,7 @@ function egeria ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -1863,7 +1876,7 @@ function eqtpartners ( socket, monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -1966,7 +1979,7 @@ function forbion ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -2056,7 +2069,7 @@ function gembenelux ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -2180,7 +2193,7 @@ function gilde ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -2276,7 +2289,7 @@ function gildehealthcare ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -2381,7 +2394,7 @@ function gimv ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( urls );
     } catch ( e ) {
@@ -2436,7 +2449,7 @@ function healthinnovations ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       socket.emit ( "outgoing data" , urls )
       return resolve ( urls );
@@ -2489,7 +2502,7 @@ function healthinvestmentpartners ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       socket.emit ( 'outgoing data' , urls );
       return resolve ( urls );
@@ -2542,7 +2555,7 @@ function hollandcapital ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       socket.emit ( 'outgoing data' , urls );
       return resolve ( urls );
@@ -2594,7 +2607,7 @@ function horizonflevoland ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       socket.emit ( 'outgoing data' , urls );
       return resolve ( urls );
@@ -2654,7 +2667,7 @@ function hpegrowth ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       socket.emit ( 'outgoing data' , urls )
       return resolve ( urls );
@@ -2721,7 +2734,7 @@ function ibsca ( socket , monitor ) {
       await check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -2843,7 +2856,7 @@ function innovationquarter ( socket , monitor ) {
       await check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -2959,7 +2972,7 @@ function karmijnkapitaal ( socket , monitor ) {
       await check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -3072,7 +3085,7 @@ function kkr ( socket , monitor ) {
       let urls = [ `https://www.kkr.com/our-firm/team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -3188,7 +3201,7 @@ function llcp ( socket , monitor ) {
       await check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -3310,7 +3323,7 @@ function liof ( socket , monitor ) {
       let urls = [ `https://liof.nl/over-liof/contact` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
       monitor.confirm = true;
@@ -3441,7 +3454,7 @@ function lspvc ( socket , monitor ) {
       let urls = [ `https://www.lspvc.com/team.html` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -3557,7 +3570,7 @@ function main ( socket , monitor ) {
       let urls = [ `https://main.nl/team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -3618,7 +3631,7 @@ function mgf ( socket , monitor ) {
       let urls = [ `https://www.mgf.nl/ons-team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -3693,7 +3706,7 @@ function menthacapital ( socket , monitor ) {
       await check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -3820,7 +3833,7 @@ function nom ( socket , monitor ) {
       let urls = [ `https://www.nom.nl/over-ons/het-team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -3881,7 +3894,7 @@ function navitascapital ( socket , monitor ) {
       let urls = [ `https://www.navitascapital.nl/het-team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -3943,7 +3956,7 @@ function shiftinvest ( socket , monitor ) {
       await check_if_canceled ( browser , monitor , socket );
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
       monitor.confirm = true;
@@ -4056,7 +4069,7 @@ function zlto ( socket , monitor ) {
       let urls = [ `https://www.zlto.nl/wieiswie` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -4121,7 +4134,7 @@ function newion ( socket , monitor ) {
       let urls = [ `http://www.newion.com/team/jingyi-wang/4` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -4183,7 +4196,7 @@ function nordian ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -4304,7 +4317,7 @@ function npm_capital ( socket , monitor ) {
       let urls = [ `https://www.npm-capital.com/nl/team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -4367,7 +4380,7 @@ function oostnl ( socket , monitor ) {
       let urls = [ `https://oostnl.nl/nl/medewerkers` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
 
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
@@ -4491,7 +4504,7 @@ function o2capital ( socket , monitor ) {
       let urls = [ `https://o2capital.nl/over-ons/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -4553,7 +4566,7 @@ function parcomcapital ( socket , monitor ) {
       let urls = [ `https://www.parcomcapital.com/about/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -4645,7 +4658,7 @@ function plainvanilla ( socket , monitor ) {
       }
 
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -4761,7 +4774,7 @@ function pridecapital ( socket , monitor ) {
       let urls = [ `https://pridecapital.nl/over-ons/#team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -4880,7 +4893,7 @@ function primeventures ( socket , monitor ) {
       let urls = [ `https://www.primeventures.com/team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -4997,7 +5010,7 @@ function raboprivateequity ( socket , monitor ) {
       let urls = [ `http://raboprivateequity.com/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -5151,7 +5164,7 @@ function riversideeurope ( socket , monitor ) {
         console.log ( "chunk --> " + i  )
         datas = await Promise.all ( [  ...urls.slice(i,i+chunk). map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       }
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -5263,7 +5276,7 @@ function setventures ( socket , monitor ) {
       let urls = [ `http://www.setventures.com/#Team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -5382,7 +5395,7 @@ function smile_invest (socket , monitor ) {
       let urls = [ `https://smile-invest.com/team-3/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -5443,7 +5456,7 @@ function startgreen ( socket , monitor ) {
       let urls = [ `http://www.startgreen.nl/nl/overons/team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
       monitor.confirm = true;
@@ -5512,7 +5525,7 @@ function seaminvestments ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -5577,7 +5590,7 @@ function strongrootcapital ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -5696,7 +5709,7 @@ function thujacapital ( socket , monitor ) {
       let urls = [ `https://www.thujacapital.com/new-page-3` , `https://www.thujacapital.com/partners` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      //browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -5758,7 +5771,7 @@ function tiincapital ( socket , monitor ) {
 
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -5822,7 +5835,7 @@ function synergia ( socket , monitor ) {
       //
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
       await check_if_canceled ( browser , monitor , socket );
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -5945,7 +5958,7 @@ function torqxcapital ( socket , monitor ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
       await check_if_canceled ( browser , monitor , socket );
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6007,7 +6020,7 @@ function vepartners ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6109,7 +6122,7 @@ function vendiscapital ( socket , monitor ) {
       let urls = [ `https://www.vendiscapital.com/team/` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6173,7 +6186,7 @@ function victusparticipations ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6235,7 +6248,7 @@ function vortexcp ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6299,7 +6312,7 @@ function transequity ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6363,7 +6376,7 @@ function wadinko ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6491,7 +6504,7 @@ function waterland ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6553,7 +6566,7 @@ function vpcapital ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6616,7 +6629,7 @@ function impulszeeland ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6677,7 +6690,7 @@ function wmp ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) );
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6778,7 +6791,7 @@ function keadyn ( socket , monitor ) {
       let urls = [ `http://www.keadyn.com/heroes` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6843,7 +6856,7 @@ function uniiq ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6906,7 +6919,7 @@ function nascentventures ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -6968,7 +6981,7 @@ function mkbfondsen_flevoland ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) );
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7030,7 +7043,7 @@ function vectrix ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7160,7 +7173,7 @@ function aglaia_oncology ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7223,7 +7236,7 @@ function hollandstartup ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7290,7 +7303,7 @@ function thenextwomen ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7355,7 +7368,7 @@ function bfly ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7415,7 +7428,7 @@ function voccp ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) );
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7479,7 +7492,7 @@ function blckprty ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7545,7 +7558,7 @@ function vcxc ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7613,7 +7626,7 @@ function bom ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7701,7 +7714,7 @@ function dsif ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( "outgoing data" , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7811,7 +7824,7 @@ function brooklyn_ventures ( socket , monitor ) {
       let urls = [ `https://www.brooklyn-ventures.com/testimonials` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7905,7 +7918,7 @@ function biogenerationventures ( socket , monitor ) {
         datas = datas.concat ( await Promise .all ( [ ...urls .slice ( i , i + chunk ) .map ( crawlUrl ) ] ) );
       }
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -7973,7 +7986,7 @@ function socialimpactventures ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8037,7 +8050,7 @@ function henq ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8148,7 +8161,7 @@ function volta ( socket , monitor ) {
       let urls = [ `https://www.volta.ventures/team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8256,7 +8269,7 @@ function slingshot ( socket , monitor ) {
       let urls = [ `https://www.slingshot.ventures/#team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8322,7 +8335,7 @@ function peak ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8385,7 +8398,7 @@ function capitalmills ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8461,7 +8474,7 @@ function mainportinnovationfund ( socket , monitor  ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8525,7 +8538,7 @@ function investion ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8584,7 +8597,7 @@ function inkefcapital ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8683,7 +8696,7 @@ function icoscapital ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8753,7 +8766,7 @@ function ogc_partners ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8816,7 +8829,7 @@ function investinfuture ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8875,7 +8888,7 @@ function otterlooventures ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -8940,7 +8953,7 @@ function solidventures ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9003,7 +9016,7 @@ function doen ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9069,7 +9082,7 @@ function endeit ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9175,7 +9188,7 @@ function keenventurepartners ( socket , monitor ) {
       let urls = [ `https://www.keenventurepartners.com/#our-people` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9242,7 +9255,7 @@ function filsa ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9305,7 +9318,7 @@ function catenainvestments ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9425,7 +9438,7 @@ function anterracapital ( socket , monitor ) {
       let urls = [ `http://www.anterracapital.com/team` ];
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9490,7 +9503,7 @@ function walvis ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9552,7 +9565,7 @@ function percivalparticipations ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9670,7 +9683,7 @@ function o2investment ( socket , monitor ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
 
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9735,7 +9748,7 @@ function cleverclover ( socket , monitor ) {
       //
       await check_if_canceled ( browser , monitor , socket );
       socket.emit ( 'outgoing data' , [ ] .concat ( ...datas ) )
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -9794,7 +9807,7 @@ function runatlanticcapital ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       await socket .emit ( 'outgoing data' , urls );
       monitor.confirm = true;
       return resolve ( urls );
@@ -9847,7 +9860,7 @@ function beekcapital ( socket , monitor ) {
         }
       }
       //
-      browser.close ( );
+      await browser.close ( );
       await socket .emit ( 'outgoing data' , urls );
       monitor.confirm = true;
       return resolve ( urls );
@@ -9964,7 +9977,7 @@ function velociyfintech ( socket , monitor ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
 
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -10035,7 +10048,7 @@ function pulsarpartners ( socket , monitor ) {
 
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -10138,7 +10151,7 @@ function axivate ( socket , monitor ) {
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
 
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -10203,7 +10216,7 @@ function zeeuwsinvesteringsfonds ( socket , monitor ) {
 
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -10302,7 +10315,7 @@ function sbicparticipations ( socket , monitor ) {
 
       let datas = await Promise.all ( [  ...urls. map ( crawlUrl ) ] ) .catch ( e => { console.log ( e ) } );
       //
-      browser.close ( );
+      await browser.close ( );
       monitor.confirm = true;
       return resolve ( [ ] .concat ( ...datas ) );
     } catch ( e ) {
@@ -10383,6 +10396,7 @@ async function firePush ( scrapper ) {
     let fireSet = [ ];
 
     var notif = db.ref ( 'notification/glitches/' + scrapper.name );
+    notif.delete();
 
     var socket = {
       emit: ( room , datas ) =>  {
@@ -10409,7 +10423,7 @@ async function firePush ( scrapper ) {
     if (!datas.length) {
       notif.set({
         message:"Scrapper failed after 3 retries...",
-        date:new Date()
+        date:new Date().toString()
       });
     }
 
@@ -10461,7 +10475,7 @@ async function scheduler ( ) {
 
         }, 1000*60*10);
         try {
-          await sleep ( 1000*30 );
+          await sleep ( 1000*10 );
           await firePush ( Scrappers [ i ] )
         } catch (e) {
           console.log(e);
@@ -10485,12 +10499,12 @@ function millsUntilMidnight ( ) {
 }
 console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
-//setTimeout ( scheduler , millsUntilMidnight ( ) );
+setTimeout ( scheduler , millsUntilMidnight ( ) );
 
 console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
 console.log("scheduler (); ");
-scheduler ();
+//scheduler ();
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
@@ -10509,7 +10523,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //zlto ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //run3i ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
