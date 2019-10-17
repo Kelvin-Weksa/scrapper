@@ -75,19 +75,19 @@ class App extends Component {
                 console.log('new user!');
                 this.setState ( {...this.state , permissionsLoaded: true} );
               }
-          } ),
-          Firebase.database().ref  ( "metering/" + user.uid.toString ( ) + `/${date.getFullYear()}_${date.getMonth()}_${date.getDate()}` )
-            .once ( 'value').then ( snapshot=>{
-              if (snapshot.exists()) {
-                let meter = snapshot.val();
-                this.setState ( {...this.state , meter:meter} );
-              }
-            } )
+          } )
+        ,
+        Firebase.database().ref  ( "metering/" + user.uid.toString ( ) + `/${date.getFullYear()}_${date.getMonth()}_${date.getDate()}` )
+          .once ( 'value').then ( snapshot=>{
+            if (snapshot.exists()) {
+              let meter = snapshot.val();
+              this.setState ( {...this.state , meter:meter} );
+            }
+          } )
       ])
     }
 
-    socket.on ( "outgoing data", ( data ) => {
-      //let set  = new Set(  );
+    /*socket.on ( "outgoing data", ( data ) => {
       data.forEach ( ( upload ) => {
         upload.timestamp = new Date ( ).getTime ( );
         Firebase.database().ref ( this.state.path +'/' + upload.name.replace ( /[^\w\s]/gi, '_' ) )
@@ -101,7 +101,7 @@ class App extends Component {
           } );
       } );
     } );
-
+    */
     socket.on ( "logs", ( data ) => {
       console.log ( data );
     } );
@@ -133,7 +133,7 @@ class App extends Component {
         path:  get ,
         stale: incoming[ 0 ] ? incoming[ 0 ].timestamp ? msToTime ( new Date ( ).getTime ( ) - incoming[ 0 ].timestamp ) : '' : ''  ,
         refresh: () => {
-          Ref.remove ( );
+          //Ref.remove ( );
           socket.emit ( get , site );
           this.props.enqueueSnackbar("refreshing... " + site , {
             variant : "info" ,

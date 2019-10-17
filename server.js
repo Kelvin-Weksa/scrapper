@@ -10338,7 +10338,7 @@ async function firePush ( scrapper ) {
     let fireSet = [ ];
 
     var notif = db.ref ( 'notification/glitches/' + scrapper.name );
-    notif.delete();
+    notif.remove();
 
     var socket = {
       emit: ( room , datas ) =>  {
