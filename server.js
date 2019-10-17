@@ -10381,10 +10381,10 @@ async function firePush ( scrapper ) {
     var ref = db.ref ( truth [ 0 ] [ 1 ] );
     let partialFresh = [ ];
     let fireSet = [ ];
-    //[ ] .concat ( ...datas )
 
     var socket = {
       emit: ( room , datas ) =>  {
+          partialFresh = partialFresh .concat ( ...datas );
           datas.forEach ( ( item ) => {
           setTimeout( async () => {
             item.timestamp = new Date ( ) .getTime ( );
@@ -10402,9 +10402,8 @@ async function firePush ( scrapper ) {
       }
     }
 
-    //let datas = [ ];
     let datas = await scrapper ( socket , { cancel: false , confirm: false } );
-    //ref.remove( );
+
     let k , j , chunk = 4 ;
     for ( k = 0 , j = datas.length;k < j; k += chunk ) {
       //.slice ( i , i+chunk )
@@ -10412,14 +10411,9 @@ async function firePush ( scrapper ) {
         return item;
       } )
     }
-    //await ref.once ( "value").then ( snapshot => {
-     //snapshot.forEach ( ( item ) => {
-       //fireSet.push ( item .val ( ) )
-     //} )
-   //} )
 
     console.log ( datas );
-    console.log ( "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" );
+    console.log ( "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" );
   } catch ( e ) {
     console.log ( e  + "---" + scrapper.name )
   }
@@ -10465,7 +10459,7 @@ async function scheduler ( ) {
           await sleep ( 1000*30 );
           await firePush ( Scrappers [ i ] )
         } catch (e) {
-          var notif = db.ref ( 'notification/glitches' + Scrappers[ i ].name );
+          var notif = db.ref ( 'notification/glitches/' + Scrappers[ i ].name );
           notif.set({message:e,date:new Date()});
         }
         clearTimeout(restart)
@@ -10479,7 +10473,7 @@ async function scheduler ( ) {
     }
 };
 
-function millsUntilMidnight ( ) {
+//function millsUntilMidnight ( ) {
   var midnight = new Date();
   midnight.setHours( 24 , 0 , 0 , 0 );
   midnight.addHours ( -3 );
@@ -10487,12 +10481,12 @@ function millsUntilMidnight ( ) {
 }
 console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
-setTimeout ( scheduler , millsUntilMidnight ( ) );
+//setTimeout ( scheduler , millsUntilMidnight ( ) );
 
 console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
 console.log("scheduler (); ");
-//scheduler ();
+scheduler ();
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
