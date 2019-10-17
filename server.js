@@ -10438,10 +10438,15 @@ async function scheduler ( ) {
     console.log ( "starting from index... " + track.val ( ) )
     for (var i = track.val ( ); i < Scrappers.length; i++) {
       try {
-        await db.ref('step/name').set(Scrappers[ i ].name)
+        await db.ref('step/name').set(Scrappers[ i ].name);
         let restart = setTimeout(async ()=>{
-          await ref.set ( i+1 )
-          console.log("XZZZZZXXXXXRestartingXXXXXXXXXXZZZZZZX");
+          let repeating = await db.ref ( '/step/retry' ).once ( 'value' );
+          if (repeating) {
+            await ref.set ( i+1 )
+          }else {
+            await db.ref ( '/step/retry' ).set(true)
+          }
+          console.log("XZZZZZXXXXXRestartingXXXXXXZZZZZZZX");
 
           const APP_ID_OR_NAME = process.env.HEROKU_APP_ID || "kelvin-weksa";
           const DYNO_ID_OR_NAME = process.env.HEROKU_DYNO_ID || "web.1";
@@ -10465,8 +10470,10 @@ async function scheduler ( ) {
         console.log(Scrappers[ i ].name);
         if ( i == 123 ){
           await ref.set ( 0 )
+          await db.ref ( '/step/retry' ).set(false)
         }else{
           await ref.set ( i+1 )
+          await db.ref ( '/step/retry' ).set(false)
         }
 
       } catch ( e ) { console.log ( e )  }
