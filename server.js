@@ -10326,64 +10326,6 @@ function sbicparticipations ( socket , monitor ) {
 }
 Scrappers.push ( sbicparticipations );
 
-app.use ( express.json ( ) );
-
-app.get ( '/allUsers' , function ( req , res ) {
-  console.log("allUsers");
-  function listAllUsers(nextPageToken) {
-    // List batch of users, 1000 at a time.
-    admin.auth().listUsers(1000, nextPageToken)
-      .then(function(listUsersResult) {
-        users = []
-        listUsersResult.users.forEach(function(userRecord) {
-          users.push( userRecord.toJSON() );
-        });
-        if (listUsersResult.pageToken) {
-          // List next batch of users.
-          listAllUsers(listUsersResult.pageToken);
-        }else{
-          res.send ( users );
-        }
-      })
-      .catch(function(error) {
-        console.log('Error listing users:', error);
-      });
-  }
-  listAllUsers();
-});
-
-app.get ( '/*' , function ( req , res ) {
-  res.sendFile ( path.join ( __dirname , 'build' , 'index.html' ) );
-});
-
-app.post ( '/register', function ( request , response ){
-  console.log ( request.body );      // your JSON
-  admin.auth().createUser({
-    email: request.body.email.trim(),
-    emailVerified: false,
-    //phoneNumber: '+11234567890',
-    password: request.body.pass.trim(),
-    displayName: request.body.fname + " " + request.body.sname,
-    //photoURL: 'http://www.example.com/12345678/photo.png',
-    disabled: false
-  })
-  .then( userRecord=> {
-    // See the UserRecord reference doc for the contents of userRecord.
-    console.log('Successfully created new user:', userRecord.uid);
-    response.send ( userRecord );
-  })
-  .catch( error=> {
-    console.log('Error creating new user:', error.errorInfo);
-    response.send ( error.errorInfo );
-  });
-  //response.send ( request.body );    // echo the result back
-});
-
-console.log ( Scrappers.length + "  +++Scrappers Registered." );
-
-var db = admin .database ( );
-//admin.database.enableLogging(true);
-
 async function firePush ( scrapper ) {
   try {
     console.log ( "...entering " + scrapper.name )
@@ -10438,6 +10380,76 @@ async function firePush ( scrapper ) {
   }
 }
 
+app.use ( express.json ( ) );
+
+app.get ( '/allUsers' , function ( req , res ) {
+  console.log("allUsers");
+  function listAllUsers(nextPageToken) {
+    // List batch of users, 1000 at a time.
+    admin.auth().listUsers(1000, nextPageToken)
+      .then(function(listUsersResult) {
+        users = []
+        listUsersResult.users.forEach(function(userRecord) {
+          users.push( userRecord.toJSON() );
+        });
+        if (listUsersResult.pageToken) {
+          // List next batch of users.
+          listAllUsers(listUsersResult.pageToken);
+        }else{
+          res.send ( users );
+        }
+      })
+      .catch(function(error) {
+        console.log('Error listing users:', error);
+      });
+  }
+  listAllUsers();
+});
+
+app.get ( '/*' , function ( req , res ) {
+  res.sendFile ( path.join ( __dirname , 'build' , 'index.html' ) );
+});
+
+app.post ( '/register', function ( request , response ){
+  console.log ( request.body );      // your JSON
+  admin.auth().createUser({
+    email: request.body.email.trim(),
+    emailVerified: false,
+    //phoneNumber: '+11234567890',
+    password: request.body.pass.trim(),
+    displayName: request.body.fname + " " + request.body.sname,
+    //photoURL: 'http://www.example.com/12345678/photo.png',
+    disabled: false
+  })
+  .then( userRecord=> {
+    // See the UserRecord reference doc for the contents of userRecord.
+    console.log('Successfully created new user:', userRecord.uid);
+    response.send ( userRecord );
+  })
+  .catch( error=> {
+    console.log('Error creating new user:', error.errorInfo);
+    response.send ( error.errorInfo );
+  });
+  //response.send ( request.body );    // echo the result back
+});
+
+app.post ( '/scrape' , function ( req , res ) {
+  console.log ( req.body );
+  let func = Scrappers.filter(item=>item.name===req.body.funcName);
+  if (func.length === 1) {
+    firePush ( func[0] )
+    res.send({message:`scrapping of ${req.body.funcName} has begun ...`})
+  }else{
+    res.send({message:`${req.body.funcName}... no such scrapper is registered!`})
+  }
+
+});
+
+console.log ( Scrappers.length + "  +++Scrappers Registered." );
+
+var db = admin .database ( );
+//admin.database.enableLogging(true);
+
 async function scheduler ( ) {
     var ref = db.ref ( '/step/index' );
     let track = await ref.once ( 'value' )
@@ -10475,7 +10487,7 @@ async function scheduler ( ) {
 
         }, 1000*60*10);
         try {
-          await sleep ( 1000*10 );
+          await sleep ( 1000*5 );
           await firePush ( Scrappers [ i ] )
         } catch (e) {
           console.log(e);
@@ -10504,7 +10516,7 @@ setTimeout ( scheduler , millsUntilMidnight ( ) );
 console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
 console.log("scheduler (); ");
-//scheduler ();
+scheduler ();
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
