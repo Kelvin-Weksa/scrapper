@@ -342,7 +342,7 @@ Scrappers.push ( run5sq );
 function runactivecapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ], headless:false } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ], headless:true } );
       await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
@@ -375,34 +375,38 @@ function runactivecapital ( socket , monitor ) {
             return results;
           } );
 
-          await page.close ()
-
-          await Promise.all ( [ ...urls.map ( async ( item ) => {
-            return new Promise ( async ( resolve , reject ) => {
-              try{
-                await check_if_canceled ( browser , monitor , socket );
-                const page = await browser.newPage ( );
-                await page.goto ( item.about , { timeout: 0 } );
-                await check_if_canceled ( browser , monitor , socket );
-                item.about = await page.evaluate( (  )=>{
-                  function  paragraphs  ( array ) {
-                    let paragraph = '';
-                    array.forEach ( ( para ) =>{
-                      paragraph += para.innerText + '\n';
-                    } );
-                    return paragraph;
-                  };
-                  return paragraphs ( document.querySelectorAll ( 'div.block1 > p' ) );
-                } )
-                await check_if_canceled ( browser , monitor , socket );
-                socket .emit ( "outgoing data" , [ item ] )
-                //await browser.close ( );
-                return resolve ( item );
-              }catch ( e ){
-                return reject ( e );
-              }
-            } );
-          } ) ] )
+          await page.close ();
+          let i , j , chunk = 3;
+          for ( i = 0 , j = urls.length; i < j; i += chunk ) {
+            //.slice ( i , i+chunk )
+            console.log ( "chunk --> " + i  )
+            await Promise.all ( [ ...urls.slice(i,i+chunk).map ( async ( item ) => {
+              return new Promise ( async ( resolve , reject ) => {
+                try{
+                  await check_if_canceled ( browser , monitor , socket );
+                  const page = await browser.newPage ( );
+                  await page.goto ( item.about , { timeout: 0 } );
+                  await check_if_canceled ( browser , monitor , socket );
+                  item.about = await page.evaluate( (  )=>{
+                    function  paragraphs  ( array ) {
+                      let paragraph = '';
+                      array.forEach ( ( para ) =>{
+                        paragraph += para.innerText + '\n';
+                      } );
+                      return paragraph;
+                    };
+                    return paragraphs ( document.querySelectorAll ( 'div.block1 > p' ) );
+                  } )
+                  await check_if_canceled ( browser , monitor , socket );
+                  socket .emit ( "outgoing data" , [ item ] )
+                  await page.close ( );
+                  return resolve ( item );
+                }catch ( e ){
+                  return reject ( e );
+                }
+              } );
+            } ) ] )
+          }
         }
       }
       //
@@ -10504,7 +10508,7 @@ setTimeout ( scheduler , millsUntilMidnight ( ) );
 console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
 console.log("scheduler (); ");
-//scheduler ();
+scheduler ();
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
@@ -10536,7 +10540,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  runactivecapital ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //runactivecapital ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
