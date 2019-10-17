@@ -10442,8 +10442,8 @@ async function scheduler ( ) {
         await db.ref('step/name').set(Scrappers[ i ].name);
         let restart = setTimeout(async ()=>{
           let repeating = await db.ref ( '/step/retry' ).once ( 'value' );
-          console.log(JSON.stringify(repeating) + '     Restart?');
-          if (repeating) {
+          console.log(JSON.stringify(repeating) + '     Repeat?');
+          if (repeating.val ( )) {
             await ref.set ( i+1 )
           }else {
             console.log("<><><><><>><><><><><>RETRY<><><>><><><><<><><><><><>");
