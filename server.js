@@ -10382,6 +10382,8 @@ async function firePush ( scrapper ) {
     let partialFresh = [ ];
     let fireSet = [ ];
 
+    var notif = db.ref ( 'notification/glitches/' + scrapper.name );
+
     var socket = {
       emit: ( room , datas ) =>  {
           partialFresh = partialFresh .concat ( ...datas );
@@ -10404,18 +10406,21 @@ async function firePush ( scrapper ) {
 
     let datas = await scrapper ( socket , { cancel: false , confirm: false } );
 
-    let k , j , chunk = 4 ;
-    for ( k = 0 , j = datas.length;k < j; k += chunk ) {
-      //.slice ( i , i+chunk )
-      datas.slice ( k , k + chunk ).map ( item => {
-        return item;
-      } )
+    if (!datas.length) {
+      notif.set({
+        message:"Scrapper failed after 3 retries...",
+        date:new Date()
+      });
     }
 
     console.log ( datas );
     console.log ( "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" );
   } catch ( e ) {
     console.log ( e  + "---" + scrapper.name )
+    notif.set({
+      error:e,
+      date:new Date(),
+    });
   }
 }
 
@@ -10459,8 +10464,7 @@ async function scheduler ( ) {
           await sleep ( 1000*30 );
           await firePush ( Scrappers [ i ] )
         } catch (e) {
-          var notif = db.ref ( 'notification/glitches/' + Scrappers[ i ].name );
-          notif.set({message:e,date:new Date()});
+          console.log(e);
         }
         clearTimeout(restart)
         await db.ref ( '/step/retry' ).set(false)
