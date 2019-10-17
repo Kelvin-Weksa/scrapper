@@ -10338,7 +10338,7 @@ async function firePush ( scrapper ) {
     let fireSet = [ ];
 
     var notif = db.ref ( 'notification/glitches/' + scrapper.name );
-    notif.remove();
+    await notif.remove();
 
     var socket = {
       emit: ( room , datas ) =>  {
@@ -10375,7 +10375,7 @@ async function firePush ( scrapper ) {
     console.log ( e  + "---" + scrapper.name )
     notif.set({
       error:e,
-      date:new Date(),
+      date:new Date().toString(),
     });
   }
 }
@@ -10431,18 +10431,6 @@ app.post ( '/register', function ( request , response ){
     response.send ( error.errorInfo );
   });
   //response.send ( request.body );    // echo the result back
-});
-
-app.post ( '/scrape' , function ( req , res ) {
-  console.log ( req.body );
-  let func = Scrappers.filter(item=>item.name===req.body.funcName);
-  if (func.length === 1) {
-    firePush ( func[0] )
-    res.send({message:`scrapping of ${req.body.funcName} has begun ...`})
-  }else{
-    res.send({message:`${req.body.funcName}... no such scrapper is registered!`})
-  }
-
 });
 
 console.log ( Scrappers.length + "  +++Scrappers Registered." );
@@ -10524,6 +10512,19 @@ io .on ( "connection" , socket => {
   console.log ( 'New connection from ' + address + ':' + port );
   console.log ( geoip .lookup ( address ) );
 
+  /*socket.on ("get",
+    async function(data){
+      console.log ( data );
+      let func = Scrappers.filter(item=>item.name===data);
+      if (func.length === 1) {
+        firePush ( func[0] )
+        res.send({message:`scrapping of ${data} has begun ...`})
+      }else{
+        res.send({message:`${data}... no such scrapper is registered!`})
+      }
+    }
+  )*/
+
   let monitor = { cancel: false , confirm: true };
 
   const sync_ = async ( ) => {
@@ -10535,7 +10536,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //run3i ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  runactivecapital ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {

@@ -134,7 +134,8 @@ class App extends Component {
         stale: incoming[ 0 ] ? incoming[ 0 ].timestamp ? msToTime ( new Date ( ).getTime ( ) - incoming[ 0 ].timestamp ) : '' : ''  ,
         refresh: () => {
           //Ref.remove ( );
-          socket.emit ( get , site );
+          //socket.emit ( get , site );
+          alert (get);
           this.props.enqueueSnackbar("refreshing... " + site , {
             variant : "info" ,
             autoHideDuration: 900,
