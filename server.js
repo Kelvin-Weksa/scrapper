@@ -10473,7 +10473,7 @@ async function scheduler ( ) {
     }
 };
 
-//function millsUntilMidnight ( ) {
+function millsUntilMidnight ( ) {
   var midnight = new Date();
   midnight.setHours( 24 , 0 , 0 , 0 );
   midnight.addHours ( -3 );
