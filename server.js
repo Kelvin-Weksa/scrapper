@@ -10442,7 +10442,7 @@ async function scheduler ( ) {
         await db.ref('step/name').set(Scrappers[ i ].name);
         let restart = setTimeout(async ()=>{
           let repeating = await db.ref ( '/step/retry' ).once ( 'value' );
-          console.log(repeating + '     Restart?');
+          console.log(JSON.stringify(repeating) + '     Restart?');
           if (repeating) {
             await ref.set ( i+1 )
           }else {
@@ -10475,15 +10475,13 @@ async function scheduler ( ) {
           notif.set({message:e,date:new Date()});
         }
         clearTimeout(restart)
+        await db.ref ( '/step/retry' ).set(false)
         console.log(Scrappers[ i ].name);
         if ( i == 123 ){
           await ref.set ( 0 )
-          await db.ref ( '/step/retry' ).set(false)
         }else{
           await ref.set ( i+1 )
-          await db.ref ( '/step/retry' ).set(false)
         }
-
       } catch ( e ) { console.log ( e )  }
     }
 };
