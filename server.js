@@ -10469,6 +10469,7 @@ async function scheduler ( ) {
 
         }, 1000*60*10);
         try {
+          await sleep ( 1000*60*1 );
           await firePush ( Scrappers [ i ] )
         } catch (e) {
           var notif = db.ref ( 'notification/glitches' + Scrappers[ i ].name );
