@@ -1308,7 +1308,7 @@ function runcinven ( socket , monitor ) {
             } );
             return results;
           } );
-
+          await page.close()
           await check_if_canceled ( browser , monitor , socket );
           let i , j , chunk = 3;
           for ( i = 0 , j = urls.length; i < j; i += chunk ) {
@@ -1333,6 +1333,7 @@ function runcinven ( socket , monitor ) {
                     return paragraphs ( document.querySelectorAll ( 'div.bio > p' ) );
                   } );
                   await check_if_canceled ( browser , monitor , socket );
+                  await page.close()
                   socket.emit ( 'outgoing data' , [item] )
                   return resolve ( item );
                 } catch ( e ) {
