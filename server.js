@@ -342,7 +342,7 @@ Scrappers.push ( run5sq );
 function runactivecapital ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ], headless:false } );
       await check_if_canceled ( browser , monitor , socket );
       const page = await browser.newPage ( );
       await page.setRequestInterception ( true );
@@ -10504,7 +10504,7 @@ setTimeout ( scheduler , millsUntilMidnight ( ) );
 console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
 console.log("scheduler (); ");
-scheduler ();
+//scheduler ();
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];
