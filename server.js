@@ -8680,7 +8680,7 @@ function icoscapital ( socket , monitor ) {
             }
         } )
       }
-      let i , j , chunk = 5 , datas = [ ];
+      let i , j , chunk = 3 , datas = [ ];
       //var datas1 , datas2;
       for ( i = 0 , j = urls.length; i < j; i += chunk ) {
         //.slice ( i , i+chunk )
@@ -10505,7 +10505,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //brooklyn_ventures ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //icoscapital ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
