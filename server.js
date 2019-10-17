@@ -10405,7 +10405,7 @@ async function firePush ( scrapper ) {
                   console.log ( 'FireBase updated' + "+++>  " + item.name.replace ( /[^\w\s]/gi, '_' ) )
                 }
             } );
-          },Math.floor(Math.random() * 101))
+          },Math.floor(Math.random() * 11))
           } );
       }
     }
@@ -10469,7 +10469,7 @@ async function scheduler ( ) {
 
         }, 1000*60*10);
         try {
-          await sleep ( 1000*60*1 );
+          await sleep ( 1000*30 );
           await firePush ( Scrappers [ i ] )
         } catch (e) {
           var notif = db.ref ( 'notification/glitches' + Scrappers[ i ].name );
