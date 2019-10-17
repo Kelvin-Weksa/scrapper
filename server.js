@@ -10389,6 +10389,7 @@ async function firePush ( scrapper ) {
     var ref = db.ref ( truth [ 0 ] [ 1 ] );
     let partialFresh = [ ];
     let fireSet = [ ];
+    //[ ] .concat ( ...datas )
 
     var socket = {
       emit: ( room , datas ) =>  {
@@ -10441,9 +10442,11 @@ async function scheduler ( ) {
         await db.ref('step/name').set(Scrappers[ i ].name);
         let restart = setTimeout(async ()=>{
           let repeating = await db.ref ( '/step/retry' ).once ( 'value' );
+          console.log(repeating + '     Restart?');
           if (repeating) {
             await ref.set ( i+1 )
           }else {
+            console.log("<><><><><>><><><><><>RETRY<><><>><><><><<><><><><><>");
             await db.ref ( '/step/retry' ).set(true)
           }
           console.log("XZZZZZXXXXXRestartingXXXXXXZZZZZZZX");
@@ -10465,7 +10468,12 @@ async function scheduler ( ) {
           });
 
         }, 1000*60*10);
-        await firePush ( Scrappers [ i ] )
+        try {
+          await firePush ( Scrappers [ i ] )
+        } catch (e) {
+          var notif = db.ref ( 'notification/glitches' + Scrappers[ i ].name );
+          notif.set({message:e,date:new Date()});
+        }
         clearTimeout(restart)
         console.log(Scrappers[ i ].name);
         if ( i == 123 ){
