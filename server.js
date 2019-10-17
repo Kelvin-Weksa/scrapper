@@ -5323,10 +5323,10 @@ function smile_invest (socket , monitor ) {
                 } );
                 return results;
               } , url );
-
+              await page.close ( );
               await check_if_canceled ( browser , monitor , socket );
 
-              let i , j , chunk = 10;
+              let i , j , chunk = 3;
               for ( i = 0 , j = results.length; i < j; i += chunk ) {
                 //.slice ( i , i+chunk )
                 console.log ( "chunk --> " + i  )
@@ -5381,7 +5381,6 @@ function smile_invest (socket , monitor ) {
                 } ) ] )
               }
 
-              await page.close ( );
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -7724,7 +7723,7 @@ Scrappers.push ( dsif );
 function brooklyn_ventures ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -7762,9 +7761,9 @@ function brooklyn_ventures ( socket , monitor ) {
                 } );
                 return results;
               } , url );
-
+              await page.close ( );
               let resultz = results.filter ( item => item.url );
-              let i , j , chunk = 10;
+              let i , j , chunk = 3;
               for ( i = 0 , j = resultz.length; i < j; i += chunk ) {
                 //.slice ( i , i+chunk )
                 console.log ( "chunk --> " + i  )
@@ -7801,7 +7800,7 @@ function brooklyn_ventures ( socket , monitor ) {
                         return selector.href;
                       } ) .catch ( console.log )
 
-                      //await page.close (  );
+                      await page.close (  );
                       socket.emit ( 'outgoing data' , [ item ] );
                       return resolve ( item );
                     } catch ( e ) {
@@ -7811,7 +7810,6 @@ function brooklyn_ventures ( socket , monitor ) {
                 } ) ] )
               }
 
-              await page.close ( );
               return resolve ( results )
             }catch ( e ){
               return reject ( e )
@@ -10507,7 +10505,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //riversideeurope ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //brooklyn_ventures ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
