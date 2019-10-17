@@ -135,7 +135,7 @@ class App extends Component {
         refresh: () => {
           //Ref.remove ( );
           //socket.emit ( get , site );
-          alert (get);
+          alert (site);
           this.props.enqueueSnackbar("refreshing... " + site , {
             variant : "info" ,
             autoHideDuration: 900,

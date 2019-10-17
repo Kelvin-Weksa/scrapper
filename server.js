@@ -6394,7 +6394,7 @@ Scrappers.push ( wadinko );
 function waterland ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -6433,7 +6433,7 @@ function waterland ( socket , monitor ) {
                 return results;
               } , url );
 
-              let i , j , chunk = 5;
+              let i , j , chunk = 3;
               for ( i = 0 , j = results.length; i < j; i += chunk ) {
                 //.slice ( i , i+chunk )
                 console.log ( "chunk --> " + i  )
@@ -6463,7 +6463,6 @@ function waterland ( socket , monitor ) {
                       await check_if_canceled ( browser , monitor , socket );
                       await page .goto ( item.about , {timeout:0} );
                       await check_if_canceled ( browser , monitor , socket );
-
                       item.about = await page.$$eval ( 'div.textblock > p' , ( query ) => {
                         function  paragraphs  ( array ) {
                           let paragraph = '';
@@ -6474,18 +6473,7 @@ function waterland ( socket , monitor ) {
                         }
                         return paragraphs ( query );
                       } );
-
-                      /*item.about += await page.$$eval ( 'div.fusion-text > p' , ( query ) => {
-                        function  paragraphs  ( array ) {
-                            let paragraph = '';
-                            array.forEach ( ( para ) =>{
-                              paragraph += para.innerText + '\n';
-                          } );
-                            return paragraph;
-                          }
-                        return paragraphs ( query );
-                      } );*/
-                      //await page.close (  );
+                      await page.close (  );
                       await check_if_canceled ( browser , monitor , socket );
                       socket.emit ( 'outgoing data' , [ item ] );
                       return resolve ( item );
@@ -10368,7 +10356,7 @@ async function firePush ( scrapper ) {
 
     if (!datas.length) {
       notif.set({
-        message:"Scrapper failed after 3 retries...",
+        message:"Scrapper failed to load ...",
         date:new Date().toString()
       });
     }
@@ -10378,7 +10366,7 @@ async function firePush ( scrapper ) {
   } catch ( e ) {
     console.log ( e  + "---" + scrapper.name )
     notif.set({
-      error:e,
+      error:"internal error",
       date:new Date().toString(),
     });
   }
@@ -10503,7 +10491,7 @@ function millsUntilMidnight ( ) {
 }
 console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
-setTimeout ( scheduler , millsUntilMidnight ( ) );
+//setTimeout ( scheduler , millsUntilMidnight ( ) );
 
 console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
@@ -10516,7 +10504,7 @@ io .on ( "connection" , socket => {
   console.log ( 'New connection from ' + address + ':' + port );
   console.log ( geoip .lookup ( address ) );
 
-  /*socket.on ("get",
+  socket.on ("scrape",
     async function(data){
       console.log ( data );
       let func = Scrappers.filter(item=>item.name===data);
@@ -10527,7 +10515,7 @@ io .on ( "connection" , socket => {
         res.send({message:`${data}... no such scrapper is registered!`})
       }
     }
-  )*/
+  )
 
   let monitor = { cancel: false , confirm: true };
 
@@ -10540,7 +10528,7 @@ io .on ( "connection" , socket => {
     return monitor;
   }
 
-  //runactivecapital ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
+  //waterland ( socket , { cancel: false , confirm: false } ) .then ( console.log ).catch ( console.log );
 
   socket .on ( "1" ,
     async function ( data ) {
