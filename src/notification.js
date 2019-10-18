@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     position:'relative',
     width: '100%',
-    maxHeight: "70vh",
   },
   container:{
     position:'relative',
@@ -31,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   paper:{
     backgroundColor: theme.palette.background.paper,
     width: '90%',
-    height: '90%'
+    height: '99%'
   },
   message_display:{
     backgroundColor:"#D3D3D3",
@@ -55,8 +54,7 @@ const useStyles = makeStyles(theme => ({
     zIndex:theme.zIndex.appBar,
   },
   media: {
-    height: 80,
-    transform:'scale(0.9,0.5)'
+    height: theme.mixins.toolbar.minHeight*1.5,
   },
 }));
 
@@ -88,8 +86,6 @@ export default function SelectedListItem(props) {
     }
   },[notif])
 
-  console.log(notif);
-
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
@@ -102,7 +98,7 @@ export default function SelectedListItem(props) {
         </IconButton>
       </Paper>
       <Grid container spacing={2} className={classes.container}>
-        <Grid item xs={4}>
+        <Grid item xs={4} style={{overflow:'auto',maxHeight:'50vh'}}>
           <List component="nav" aria-label="main mailbox folders">
             {notif.map((item,index)=>
               <ListItem
@@ -123,7 +119,7 @@ export default function SelectedListItem(props) {
             )}
           </List>
         </Grid>
-        <Grid item xs={8} className={classes.message_display}>
+        <Grid item xs={8} className={classes.message_display} style={{overflow:'auto',maxHeight:'50vh'}}>
           <Paper className={classes.paper}>
             <Typography
               style={{
@@ -143,6 +139,7 @@ export default function SelectedListItem(props) {
             </Typography>
             <div style={{height:theme.mixins.toolbar.minHeight}}/>
             <CardMedia
+              component='img'
               className={classes.media}
               image={
                 notif.length&&Listing.filter(em=>em.some(it=>it===notif[selectedIndex].subject))[0] ?
@@ -150,6 +147,7 @@ export default function SelectedListItem(props) {
                     ``
               }
             />
+            <div style={{height:theme.mixins.toolbar.minHeight*2}}/>
           </Paper>
         </Grid>
       </Grid>

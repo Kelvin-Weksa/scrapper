@@ -587,7 +587,7 @@ export default function PaperSheet() {
               </Paper>
             </Grid>
           </Grid>
-          <div style={{height:theme.mixins.toolbar.minHeight}}/>
+          <div style={{height:theme.mixins.toolbar.minHeight*1.5}}/>
         </Grid>
       </Grid>
       <Footer/>
