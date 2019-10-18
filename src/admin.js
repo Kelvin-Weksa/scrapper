@@ -583,7 +583,7 @@ export default function PaperSheet() {
           <Grid container spacing={2} className={classes.container} ref={row4}>
             <Grid item xs={10}>
               <Paper className={classes.paper1}>
-                <Notifications/>
+              {React.useMemo(()=><Notifications/>,[])}
               </Paper>
             </Grid>
           </Grid>

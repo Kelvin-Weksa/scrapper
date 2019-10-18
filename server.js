@@ -6399,7 +6399,7 @@ Scrappers.push ( wadinko );
 function waterland ( socket , monitor ) {
   return new Promise ( async ( resolve , reject ) => {
     try {
-      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: false } );
+      const browser = await puppeteer.launch ( { args: [ '--no-sandbox' , '--disable-setuid-sandbox' ] , headless: true } );
       await check_if_canceled ( browser , monitor , socket );
       //specific to website
       function crawlUrl ( url ) {
@@ -10363,7 +10363,7 @@ async function firePush ( scrapper ) {
 
     if (!datas.length) {
       notif.set({
-        message:"Scrapper could not parse page .... stucture of webssite may have changed",
+        message:"could not parse page .... stucture of website may have changed",
         date:new Date().toString()
       });
     }
@@ -10503,7 +10503,7 @@ console.log ( msToTime ( millsUntilMidnight (  ) ) );
 console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
 console.log("scheduler (); ");
-scheduler ();
+//scheduler ();
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];

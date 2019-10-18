@@ -11,6 +11,9 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import AllInboxIcon from '@material-ui/icons/AllInbox';
+import Firebase from './firebase';
+import Listing from './list';
+import CardMedia from '@material-ui/core/CardMedia';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -51,13 +54,41 @@ const useStyles = makeStyles(theme => ({
     boxShadow: `0 0 11px ` ,
     zIndex:theme.zIndex.appBar,
   },
+  media: {
+    height: 80,
+    transform:'scale(0.9,0.5)'
+  },
 }));
 
 export default function SelectedListItem(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [selectedIndex, setSelectedIndex] = React.useState(0);
-  const notifications = ["Server Info","Scrapper's Scheduler"]
+  const [notif,setNotif] = React.useState([]);
+
+  React.useEffect(() => {
+    if (!notif.length) {
+      Firebase.database().ref  ( "notification/glitches" )
+        .once ( 'value').then ( snapshot=>{
+          if (snapshot.exists ()) {
+            let notif_ = []
+            snapshot.forEach ( function ( childSnapshot) {
+              notif_.push({
+                subject:childSnapshot.key,
+                message:childSnapshot.val()
+              });
+            });
+            if (notif_.length) {
+              if (JSON.stringify(notif_)!==JSON.stringify(notif)) {
+                setNotif (notif_)
+              }
+            }
+          }
+      } )
+    }
+  },[notif])
+
+  console.log(notif);
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
@@ -71,9 +102,9 @@ export default function SelectedListItem(props) {
         </IconButton>
       </Paper>
       <Grid container spacing={2} className={classes.container}>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           <List component="nav" aria-label="main mailbox folders">
-            {notifications.map((item,index)=>
+            {notif.map((item,index)=>
               <ListItem
                 button
                 selected={selectedIndex === index}
@@ -82,24 +113,43 @@ export default function SelectedListItem(props) {
                 <ListItemIcon>
                   <CommentIcon color="primary"/>
                 </ListItemIcon>
-                <ListItemText primary={item} />
+                <ListItemText
+                  primary={
+                    Listing.filter(em=>em.some(it=>it===item.subject))[0] ?
+                      Listing.filter(em=>em.some(it=>it===item.subject))[0][2] :
+                        item.subject
+                  }/>
               </ListItem>
             )}
           </List>
         </Grid>
-        <Grid item xs={6} className={classes.message_display}>
+        <Grid item xs={8} className={classes.message_display}>
           <Paper className={classes.paper}>
             <Typography
               style={{
                 textAlign:"center",
                 position:'relative',
-                top:theme.mixins.toolbar.minHeight/2
+                top:theme.mixins.toolbar.minHeight/2,
+                padding:'3px'
               }}
-              color="textPrimary"
-              variant="body1"
+              color="primary"
+              variant="subtitle1"
             >
-              {notifications[selectedIndex]}
+              {notif.length?notif[selectedIndex].message.date:''}
             </Typography>
+            <div style={{height:theme.mixins.toolbar.minHeight/2,}}/>
+            <Typography variant="body1" color="secondary" style={{padding:'5px',textAlign:"center",}}>
+              {notif.length?notif[selectedIndex].message.message:''}
+            </Typography>
+            <div style={{height:theme.mixins.toolbar.minHeight}}/>
+            <CardMedia
+              className={classes.media}
+              image={
+                notif.length&&Listing.filter(em=>em.some(it=>it===notif[selectedIndex].subject))[0] ?
+                  Listing.filter(em=>em.some(it=>it===notif[selectedIndex].subject))[0][3] :
+                    ``
+              }
+            />
           </Paper>
         </Grid>
       </Grid>
