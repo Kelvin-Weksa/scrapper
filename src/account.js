@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles, } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -26,6 +26,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import SectionDesktop from './sectionDesktop';
 import Footer from './footer';
+import Notifications from './user_notification';
+import clsx from 'clsx';
+import {useScrollPosition} from './use-scroll-position'
 
 function strongPass ( pwd ){
   let array = [ ];
@@ -56,44 +59,18 @@ function strongPass ( pwd ){
 }
 
 function debounce( func, wait, immediate) {
-  // 'private' variable for instance
-  // The returned function will be able to reference this due to closure.
-  // Each call to the returned function will share this common timer.
   var timeout;
-
-  // Calling debounce returns a new anonymous function
   return function() {
-    // reference the context and args for the setTimeout function
     var context = this,
       args = arguments;
-
-    // Should the function be called now? If immediate is true
-    //   and not already in a timeout then the answer is: Yes
     var callNow = immediate && !timeout;
-
-    // This is the basic debounce behaviour where you can call this
-    //   function several times, but it will only execute once
-    //   [before or after imposing a delay].
-    //   Each time the returned function is called, the timer starts over.
     clearTimeout(timeout);
-
-    // Set the new timeout
     timeout = setTimeout(function() {
-
-      // Inside the timeout function, clear the timeout variable
-      // which will let the next execution run when in 'immediate' mode
       timeout = null;
-
-      // Check if the function already ran with the immediate flag
       if (!immediate) {
-        // Call the original function with apply
-        // apply lets you define the 'this' object as well as the arguments
-        //    (both captured before setTimeout)
         func.apply(context, args);
       }
     }, wait);
-
-    // Immediate mode and no wait timer? Execute the function..
     if (callNow) func.apply(context, args);
   }
 }
@@ -152,7 +129,7 @@ const useStyles = makeStyles(theme => ({
   outer:{
     position : "relative" ,
     overflow:'visible',
-    //height:'103%'
+    width:'65vw'
   },
   inner:{
     width: '90%',
@@ -203,12 +180,26 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     top: '-6vh',
     ...theme.typography.h4
-  }
+  },
+  paper1: {
+    padding: theme.spacing(1.5, 1),
+    transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+  },
+  vl: {
+    borderLeft: `6px solid ${theme.palette.primary.main}`,
+    height: `4vh`,
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+  },
+  vll: {
+    borderLeft: `6px solid ${theme.palette.secondary.main}`,
+    height: `10vh`,
+    transition : "all 1000ms cubic-bezier(0.34, 1.61, 0.7, 1)",
+}
 }));
 
 function PaperSheet ( props ) {
   const classes = useStyles();
-  //const theme = useTheme ( );
+  const theme = useTheme ( );
   let root = React.createRef();
   let card = React.createRef ( );
   const [values, setValues] = React.useState({
@@ -254,7 +245,7 @@ function PaperSheet ( props ) {
         new Promise( async(resolve, reject)=> {
           setTimeout( ()=> {
             try {
-              root.current.style.top = '5vh';
+              root.current.style.top = '0vh';
               root.current.style.opacity = 1;
             } catch (e) {
               return reject ( e )
@@ -544,6 +535,51 @@ function PaperSheet ( props ) {
     setOpen ( false )
   }
 
+  const [row, setRow] = React.useState ([false,true,true])
+  let row1 = React.createRef();
+  let row2 = React.createRef();
+  let row3 = React.createRef();
+  let guide = React.createRef();
+
+  useScrollPosition(
+    ({ prevPos, currPos }) => {
+      try {
+        if (row1.current&&row2.current&&row3.current&&guide.current) {
+          //console.log( JSON.stringify ( { prevPos, currPos } ) );
+          function midPoint ( box ){
+            return ( box.top + ( box.height / 2 ) )
+          }
+          function absolute ( row ){
+            return Math.abs(
+              midPoint ( row.current.getBoundingClientRect() )
+                - midPoint ( guide.current.getBoundingClientRect() )
+            )
+          }
+          let rows = [ row1 , row2 , row3 ]
+          let row_positions = rows.map ( item=>absolute(item) );
+          //loop through the array and look for the lowest number
+          var index = 0;
+          var value = row_positions[0];
+          for (var i = 1; i < row_positions.length; i++) {
+            if (row_positions[i] < value) {
+              value = row_positions[i];
+              index = i;
+            }
+            //console.log(row_positions);
+          }
+          let update = row_positions.map ( item=>true );
+          update[index] = false;
+          setRow ( update )
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    null,
+    false,
+    150
+  )
+
   return (
     <div style={{
       display:'flex',
@@ -555,162 +591,191 @@ function PaperSheet ( props ) {
         <SectionDesktop/>
       </Toolbar>
       <div className={classes.root} ref={root}>
-        <Grid container spacing={3} style={{justifyContent:'flex-end'}}>
-          <Grid item xs={8} >
-            <Paper className={classes.outer} ref={card}>
-              <Paper className={classes.inner}>
-                <Typography className={classes.typography}>
-                  Edit Profile
-                </Typography>
-              </Paper>
-              <Grid container spacing={3}>
-                <Grid item xs={6} component='form' style={{display:'flex',alignItems:'flex-end', flexDirection:'column'}}>
-                  <Input
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    label="first name"
-                    validate={values.fNameValid}
-                    value={values.fName}
-                    onChange={handleChange('fName')}
-                  />
-                  <Input
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    label="email adress"
-                    validate={values.emailValid}
-                    value={values.email}
-                    onChange={handleChange('email')}
-                  />
-                  <Input
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    label="company"
-                    validate={values.companyValid}
-                    onChange={handleChange('company')}
-                    value={values.company}
-                  />
-                  <Input
-                    autoComplete="on"
-                    onPaste={disablePaste}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    label={values.passLabel}
-                    validate={values.pass1Valid}
-                    onChange={handleChange('pass1')}
-                    value={values.pass1}
-                    type={values.showPassword1 ? 'text' : 'password'}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            edge="end"
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword1}
-                            onMouseDown={handleMouseDownPassword}
-                          >
-                            {values.showPassword1 ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={6} component='form' style={{display:'flex',alignItems:'flex-start', flexDirection:'column'}}>
-                  <Input
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    label="last name"
-                    validate={values.sNameValid}
-                    value={values.sName}
-                    onChange={handleChange('sName')}
-                  />
-                  <Input
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    label="phoneNumber"
-                    validate={values.phoneValid}
-                    value={values.phone}
-                    onChange={handleChange('phone')}
-                  />
-                  <Input
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    label="job"
-                    validate={values.jobValid}
-                    value={values.job}
-                    onChange={handleChange('job')}
-                  />
-                  <Input
-                    autoComplete="on"
-                    onPaste={disablePaste}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                    label={values.pass2Label}
-                    validate={values.pass2Valid}
-                    value={values.pass2}
-                    onChange={handleChange('pass2')}
-                    type={values.showPassword2 ? 'text' : 'password'}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            edge="end"
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword2}
-                            onMouseDown={handleMouseDownPassword}
-                          >
-                            {values.showPassword2 ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Button variant="contained" color="secondary" className={classes.buttonFire} onClick={handleUpdate}>
-                  save details
-                  <SaveIcon className={classes.rightIcon} />
-                </Button>
-              </Grid>
-            </Paper>
+        <div style={{height:theme.mixins.toolbar.minHeight}}/>
+        <div style={{display:"flex"}}>
+          <Grid item  style={{flex:'0 1 5%',alignSelf:'flex-start',}}>
+            <div style={{display:'flex',justifyContent:"center"}}>
+              <div style={{position:'fixed',top:'30vh'}} ref={guide}>
+                <div className={clsx({
+                  [classes.vl]: row[0],
+                  [classes.vll]: !row[0],
+                })}>
+                </div>
+                <div style={{height:'1vh'}}/>
+                <div className={clsx({
+                  [classes.vl]: row[1],
+                  [classes.vll]: !row[1],
+                })}>
+                </div>
+                <div style={{height:'1vh'}}/>
+                <div className={clsx({
+                  [classes.vl]: row[2],
+                  [classes.vll]: !row[2],
+                })}>
+                </div>
+              </div>
+            </div>
           </Grid>
-          <Grid item xs={3}>
-            <Grid container spacing={2}
-              style={{
-                display:'flex',
-                justifyContent:'center',
-                alignItems:'flex-end',
-                position:'relative',
-                top :'3vh',
+          <Grid container spacing={3}
+            style={{
+              display:'flex',
+              flexFlow:'column nowrap',
+              alignItems:'center',
+              justifyContent:'flex-end',
             }}>
-              <Grid item>
-                <Paper className={classes.outer_card}>
-                  <CardMedia
-                    component='img'
-                    alt="KW"
-                    height="300"
-                    image="static/person.png"
-                    className={classes.inner_card}
-                  />
-                  <Typography className={classes.billboard}>
-                    {values.fName + " " + values.sName}
-                  </Typography>
-                  <div style={{display:"flex",justifyContent:'space-evenly',position:'relative',top:'-4vh'}}>
-                    <Button color="primary">
-                      Upload profile picture
-                    </Button>
-                    <Button color="primary">
-                      remove profile picture
-                    </Button>
-                  </div>
-                  <Button variant="contained" color="secondary" className={classes.button} onClick={()=>{props.history.push ( '/pricing' )}}>
-                    Subscription
-                    <AccountBalanceIcon className={classes.rightIcon} />
+            <Grid item  ref={row1}>
+              <Paper className={classes.outer_card}>
+                <CardMedia
+                  component='img'
+                  alt="KW"
+                  height="300"
+                  image="static/person.png"
+                  className={classes.inner_card}
+                />
+                <Typography className={classes.billboard}>
+                  {values.fName + " " + values.sName}
+                </Typography>
+                <div style={{display:"flex",justifyContent:'space-evenly',position:'relative',top:'-4vh'}}>
+                  <Button color="primary">
+                    Upload profile picture
                   </Button>
-                </Paper>
-              </Grid>
+                  <Button color="primary">
+                    remove profile picture
+                  </Button>
+                </div>
+                <Button variant="contained" color="secondary" className={classes.button} onClick={()=>{props.history.push ( '/pricing' )}}>
+                  Subscription
+                  <AccountBalanceIcon className={classes.rightIcon} />
+                </Button>
+              </Paper>
             </Grid>
+            <div style={{height:theme.mixins.toolbar.minHeight}}/>
+            <Grid item ref={row2}>
+              <Paper className={classes.outer} ref={card}>
+                <Paper className={classes.inner}>
+                  <Typography className={classes.typography}>
+                    Edit Profile
+                  </Typography>
+                </Paper>
+                <Grid container spacing={3}>
+                  <Grid item xs={6} component='form' style={{display:'flex',alignItems:'flex-end', flexDirection:'column'}}>
+                    <Input
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      label="first name"
+                      validate={values.fNameValid}
+                      value={values.fName}
+                      onChange={handleChange('fName')}
+                    />
+                    <Input
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      label="email adress"
+                      validate={values.emailValid}
+                      value={values.email}
+                      onChange={handleChange('email')}
+                    />
+                    <Input
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      label="company"
+                      validate={values.companyValid}
+                      onChange={handleChange('company')}
+                      value={values.company}
+                    />
+                    <Input
+                      autoComplete="on"
+                      onPaste={disablePaste}
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      label={values.passLabel}
+                      validate={values.pass1Valid}
+                      onChange={handleChange('pass1')}
+                      value={values.pass1}
+                      type={values.showPassword1 ? 'text' : 'password'}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              edge="end"
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword1}
+                              onMouseDown={handleMouseDownPassword}
+                            >
+                              {values.showPassword1 ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={6} component='form' style={{display:'flex',alignItems:'flex-start', flexDirection:'column'}}>
+                    <Input
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      label="last name"
+                      validate={values.sNameValid}
+                      value={values.sName}
+                      onChange={handleChange('sName')}
+                    />
+                    <Input
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      label="phoneNumber"
+                      validate={values.phoneValid}
+                      value={values.phone}
+                      onChange={handleChange('phone')}
+                    />
+                    <Input
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      label="job"
+                      validate={values.jobValid}
+                      value={values.job}
+                      onChange={handleChange('job')}
+                    />
+                    <Input
+                      autoComplete="on"
+                      onPaste={disablePaste}
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
+                      label={values.pass2Label}
+                      validate={values.pass2Valid}
+                      value={values.pass2}
+                      onChange={handleChange('pass2')}
+                      type={values.showPassword2 ? 'text' : 'password'}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              edge="end"
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword2}
+                              onMouseDown={handleMouseDownPassword}
+                            >
+                              {values.showPassword2 ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Button variant="contained" color="secondary" className={classes.buttonFire} onClick={handleUpdate}>
+                    save details
+                    <SaveIcon className={classes.rightIcon} />
+                  </Button>
+                </Grid>
+              </Paper>
+            </Grid>
+            <div style={{height:theme.mixins.toolbar.minHeight}}/>
+            <Grid item style={{width:'70vw'}} ref={row3}>
+              <Paper className={classes.paper1}>
+                {React.useMemo(()=><Notifications/>,[])}
+              </Paper>
+            </Grid>
+            <div style={{height:theme.mixins.toolbar.minHeight}}/>
           </Grid>
-        </Grid>
+        </div>
       </div>
       <Dialog onClose={()=>setOpen(false)} open={open} className={classes.avatar}>
         <DialogContent style={{display:'flex', flexDirection:'column',alignItems:'center'}}>
