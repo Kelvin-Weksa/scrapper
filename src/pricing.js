@@ -39,6 +39,8 @@ import Footer from './footer';
 import PrintIcon from '@material-ui/icons/Print';
 import {useScrollPosition} from './use-scroll-position'
 import clsx from 'clsx';
+import Hidden from '@material-ui/core/Hidden';
+import StarIcon from '@material-ui/icons/Star';
 //import jsPDF from 'jspdf';
 //import html2canvas from 'html2canvas';
 
@@ -223,20 +225,38 @@ function ListCompanies ( props ){
     }
   }
 
+  function isEven(n) {
+   return n % 2 === 0;
+  }
+
+  const boxProps = {
+    bgcolor: 'background.paper',
+    m: 1,
+    border: 1,
+    //style: { width: '5rem', height: '5rem' },
+  };
+
+  let Listed = Listing.sort((a,b) => (
+    a[2].toUpperCase() > b[2].toUpperCase()) ? 1 :
+      ((b[2].toUpperCase() > a[2].toUpperCase()) ? -1 : 0));
+
   return (
     <React.Fragment>
       <Typography>
         {props.card_chosen.num === 9999 ? "ALL Companies Selected..." : helperText()  }
       </Typography>
-      <Grid container spacing={3} justify="center">
-        {Listing.map ( ( list , index )=>(
-          <Grid item xs={3}>
-            <FormControlLabel
-              control={
-                <Checkbox checked={state[ list[ 2 ].replace ( /\s/g, '_') ]} onChange={handleChange ( list[ 2 ].replace ( /\s/g, '_') )} />
-              }
-              label={list[ 2 ]}
-            />
+      <Grid container spacing={3} justify="space-between">
+        {Listed.map ( ( list , index )=>(
+          <Grid item md={3}>
+            <Box borderColor="primary.main" {...boxProps}>
+              <FormControlLabel
+                control={
+                  <Checkbox checked={state[ list[ 2 ].replace ( /\s/g, '_') ]} onChange={handleChange ( list[ 2 ].replace ( /\s/g, '_') )} />
+                }
+                label={list[ 2 ]}
+                labelPlacement={isEven(index) ? "end" : "start"}
+              />
+            </Box>
           </Grid>
         ) )}
       </Grid>
@@ -255,8 +275,11 @@ function CheckOut ( props ){
         {props.card_chosen.num !== 9999 ?
           (<Grid container spacing={1}>
             {props.selected.map ( (item) =>
-              <Grid item xs={3} wrap="nowrap">
-                <Typography color='secondary'>{item.replace ( /_/g, ' ')}</Typography>
+              <Grid item sm={3} wrap="nowrap">
+                <Typography color='secondary'>
+                  <StarIcon color='primary' fontSize="small"/>
+                  {item.replace ( /_/g, ' ')}
+                </Typography>
               </Grid>)}
           </Grid>) :
           (null)
@@ -283,6 +306,51 @@ function CheckOut ( props ){
 
 const Recipt  = React.forwardRef( ( props , ref )=>{
   const theme = useTheme ();
+
+  const salutation = (
+    <div>
+      <Typography variant='h6'>
+        {Firebase.auth().currentUser.displayName}
+      </Typography>
+      <Typography variant='h6'>
+        {Firebase.auth().currentUser.email}
+      </Typography>
+      <Button
+        variant="contained"
+        size="small"
+        style={{backgroundColor:theme.palette.secondary.light}}
+        onClick={()=>props.print()}
+      >
+        <PrintIcon /> print
+      </Button>
+    </div>
+  )
+
+  const duration = (
+    <div>
+      <Table>
+        <TableBody>
+          <StyledTableRow>
+            <StyledTableCell align="center">from</StyledTableCell>
+            <StyledTableCell align="center">
+              <Typography variant='subtitle2' color="primary">
+                {props.start ? `${props.start.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
+              </Typography>
+            </StyledTableCell>
+          </StyledTableRow>
+          <StyledTableRow>
+            <StyledTableCell align="center">to</StyledTableCell>
+            <StyledTableCell align="center">
+              <Typography variant='subtitle2' color="primary">
+                {props.expiry ? `${props.expiry.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
+              </Typography>
+            </StyledTableCell>
+          </StyledTableRow>
+        </TableBody>
+      </Table>
+    </div>
+  )
+
   return (
     <div style={{display:'flex',justifyContent:'center',alignItems:'center'}} ref={ref}>
       <div style={{height:theme.mixins.toolbar.minHeight*2}}/>
@@ -291,46 +359,18 @@ const Recipt  = React.forwardRef( ( props , ref )=>{
           <Typography variant='h4' style={{alignSelf:'center'}}>
             INVOICE
           </Typography>
-          <div style={{display:'flex',justifyContent:'space-between'}}>
-            <div>
-              <Typography variant='h6'>
-                {Firebase.auth().currentUser.displayName}
-              </Typography>
-              <Typography variant='h6'>
-                {Firebase.auth().currentUser.email}
-              </Typography>
-              <Button
-                variant="contained"
-                size="small"
-                style={{backgroundColor:theme.palette.secondary.light}}
-                onClick={()=>props.print()}
-              >
-                <PrintIcon /> print
-              </Button>
+          <Hidden xsDown>
+            <div style={{display:'flex',justifyContent:'space-between'}}>
+              {salutation}
+              {duration}
             </div>
-            <div>
-              <Table>
-                <TableBody>
-                  <StyledTableRow>
-                    <StyledTableCell align="center">from</StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Typography variant='subtitle2' color="primary">
-                        {props.start ? `${props.start.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
-                      </Typography>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                  <StyledTableRow>
-                    <StyledTableCell align="center">to</StyledTableCell>
-                    <StyledTableCell align="center">
-                      <Typography variant='subtitle2' color="primary">
-                        {props.expiry ? `${props.expiry.toString().split(' ').slice ( 0 , 5 ).join(' ')}` : ``}
-                      </Typography>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                </TableBody>
-              </Table>
+          </Hidden>
+          <Hidden smUp>
+            <div style={{display:'flex', flexFlow:'column nowrap', justifyContent:'space-between'}}>
+              {salutation}
+              {duration}
             </div>
-          </div>
+          </Hidden>
         </div>
         <Table >
           <TableHead>
@@ -349,8 +389,11 @@ const Recipt  = React.forwardRef( ( props , ref )=>{
                 {props.card_chosen.num !== 9999 ?
                   (<Grid container spacing={1}>
                     {props.selected.map ( (item) =>
-                      <Grid item xs={4}>
-                        <Typography color='secondary' >{item.replace ( /_/g, ' ')}</Typography>
+                      <Grid item sm={4} >
+                        <Typography color='secondary' >
+                          <StarIcon color='primary' fontSize="small"/>
+                          {item.replace ( /_/g, ' ')}
+                        </Typography>
                       </Grid>)}
                     </Grid>) :
                   (null)
@@ -831,7 +874,7 @@ function PaperSheet ( props ) {
       <Grid container className={classes.root}>
         <Grid item xs={1} style={{flex:'0 1 5%',alignSelf:'flex-start',}}>
           <div style={{display:'flex',justifyContent:"center"}}>
-            <div style={{position:'fixed',top:'30vh'}} ref={guide}>
+            <div style={{position:'fixed',top:'30vh',left:'1vw'}} ref={guide}>
               <div className={clsx({
                 [classes.vl]: row[0],
                 [classes.vll]: !row[0],

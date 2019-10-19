@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     height: theme.mixins.toolbar.minHeight,
     position: 'absolute' ,
     top: -(theme.mixins.toolbar.minHeight/2),
-    left: '1.5vh',
+    right: '1.5vh',
     border: `1px solid ${theme.palette.primary.main}` ,
     borderRadius: '2px',
     backgroundColor: theme.palette.primary.main,
@@ -67,19 +67,19 @@ export default function SelectedListItem(props) {
   const [notif,setNotif] = React.useState([
     {
       message:{
-        message:"dummy nofification1"
+        message:"dummy message1"
       },
       subject:"dummy notification1"
     },
     {
       message:{
-        message:"dummy nofification2"
+        message:"dummy message2"
       },
       subject:"dummy notification2"
     },
     {
       message:{
-        message:"dummy nofification3"
+        message:"dummy message3"
       },
       subject:"dummy notification3"
     },
@@ -107,14 +107,12 @@ export default function SelectedListItem(props) {
     }
   },[notif])
 
-  console.log(notif);
-
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} style={{width:'65vw'}}>
       <Paper  className={classes.info}>
         <IconButton  className={classes.rightIcon}>
           <AllInboxIcon/>
@@ -129,15 +127,15 @@ export default function SelectedListItem(props) {
                 selected={selectedIndex === index}
                 onClick={event => handleListItemClick(event, index)}
               >
-                <ListItemIcon>
-                  <CommentIcon color="primary"/>
-                </ListItemIcon>
                 <ListItemText
                   primary={
                     Listing.filter(em=>em.some(it=>it===item.subject))[0] ?
                       Listing.filter(em=>em.some(it=>it===item.subject))[0][2] :
                         item.subject
                   }/>
+                  <ListItemIcon>
+                    <CommentIcon color="primary"/>
+                  </ListItemIcon>
               </ListItem>
             )}
           </List>

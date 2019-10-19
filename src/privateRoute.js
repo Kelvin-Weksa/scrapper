@@ -92,7 +92,7 @@ function AuthedUser ( props ) {
                   }
                 }else{
                   enqueueSnackbar (
-                    "begin your trial" , {
+                    "create a new subscription" , {
                       variant : "info"  ,
                       autoHideDuration: 4500,
                     }
@@ -131,6 +131,13 @@ function AuthedUser ( props ) {
                 return reject(e)
               }
             })
+            ,
+            Firebase.database().ref  ( "userData/" + user.uid  + "/isAdmin" )
+              .once ( 'value').then ( snapshot=>{
+                if (snapshot.exists ()) {
+                  sessionStorage.setItem('isAdmin', snapshot.val());
+                }
+            } )
           ])
         })();
       }else {

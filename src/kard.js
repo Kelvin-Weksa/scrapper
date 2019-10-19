@@ -20,7 +20,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Divider from '@material-ui/core/Divider';
 import MapOutlinedIcon from '@material-ui/icons/MapOutlined';
 import Hidden from '@material-ui/core/Hidden';
-
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import Linkedin from 'mdi-material-ui/LinkedinBox';
 import Email from '@material-ui/icons/EmailOutlined';
@@ -274,8 +273,12 @@ export default function MediaCard ( props ) {
         fullScreen open={open}
         onClose={handleClose}
         TransitionComponent={Transition}
-        style={{display:'flex',flexFlow:'column nowrap',width:'100%'}}
-      >
+        style={{
+          display:'flex',
+          flexFlow:'column nowrap',
+          width:'100%',
+        }}
+        >
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton edge="start" color="secondary" onClick={handleClose} aria-label="close">
@@ -326,7 +329,7 @@ export default function MediaCard ( props ) {
               </Grid>
             </Hidden>
             <Hidden smUp>
-              <Grid item xs={12}>
+              <Grid item xs={12} style={{display:'flex',flexFlow:'column nowrap'}}>
                 <Paper className={clsx(classes.paper)} >
                   <Typography variant="h4" className={classes.title}>
                     {characterName}
@@ -360,41 +363,46 @@ export default function MediaCard ( props ) {
                     </Tooltip>
                   </Typography>
                 </Paper>
+                  <div style={{flex:`1 0 auto`}}/>
+                  <Toolbar
+                    color="secondary"
+                    style={{
+                      display:"flex",
+                      flexDirection:'row',
+                      justifyContent:'center',
+                      alignItems:'center',
+                      opacity: 0.8,
+                      boxShadow: `0 0 5px ${theme.palette.primary.light}`,
+                      backgroundColor:theme.palette.secondary.dark
+                    }}
+                    >
+                    <Button size="small" color="primary" onClick={()=>show(
+                      <div>
+                        <Linkedin/>
+                        {characterLinkedIn? characterLinkedIn : "LinkedIn..."}
+                      </div>)}>
+                      <Linkedin/>
+                    </Button>
+                    <Button size="small" color="primary" onClick={()=>show(
+                      <div>
+                        <Email/>
+                        {characterMail? characterMail : "mail..."}
+                      </div>)}>
+                      <Email/>
+                    </Button>
+                    <Button size="small" color="primary" onClick={()=>show(
+                      <div>
+                        <CallIcon/>
+                          {characterPhone ? characterPhone : "phone..."}
+                        </div>)}>
+                      <CallIcon/>
+                    </Button>
+                  </Toolbar>
                 <div>
-                  <Button size="small" color="primary" style={{textAlign:'left'}}onClick={()=>show(
-                    <div>
-                      <MapOutlinedIcon/>
-                        {characterMap}
-                    </div>)}>
-                  </Button>
+
                 </div>
                 <Divider variant="middle" />
               </Grid>
-              <AppBar position="fixed" color="secondary" style={{top: 'auto', bottom: 0, opacity: .8,flexShrink: 0 , boxShadow: `0 0 5px ${theme.palette.primary.light}`}} >
-                <Toolbar style={{display:"flex",flexDirection:'row',justifyContent:'center',alignItems:'center',maxHeight:'20vh'}}>
-                  <Button size="small" color="primary" onClick={()=>show(
-                    <div>
-                      <Linkedin/>
-                      {characterLinkedIn? characterLinkedIn : "LinkedIn..."}
-                    </div>)}>
-                    <Linkedin/>
-                  </Button>
-                  <Button size="small" color="primary" onClick={()=>show(
-                    <div>
-                      <Email/>
-                      {characterMail? characterMail : "mail..."}
-                    </div>)}>
-                    <Email/>
-                  </Button>
-                  <Button size="small" color="primary" onClick={()=>show(
-                    <div>
-                      <CallIcon/>
-                        {characterPhone ? characterPhone : "phone..."}
-                      </div>)}>
-                    <CallIcon/>
-                  </Button>
-                </Toolbar>
-              </AppBar>
             </Hidden>
           </Grid>
         </div>

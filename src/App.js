@@ -84,6 +84,54 @@ class App extends Component {
               this.setState ( {...this.state , meter:meter} );
             }
           } )
+          ,
+          Firebase.database().ref  ( "Plans/" + user.uid.toString ( )  )
+            .once ( 'value').then ( snapshot=>{
+              if (snapshot.exists ()) {
+                let incoming = [];
+                snapshot.forEach ( function ( childSnapshot) {
+                  incoming.push(childSnapshot.val());
+                });
+                //console.log(JSON.stringify(incoming));
+                let incoming_ = incoming.filter(item=>parseInt(new Date() - item.endDate) < 0 && item.endDate !== 0);
+                if (incoming_.length!==incoming.length) {
+                  Firebase.database().ref ( "Plans/" + Firebase.auth().currentUser.uid.toString ( ) )
+                    .set ( incoming_ ,  ( error )=> {
+                      if ( error ) {
+                        console.log ( error )
+                        alert ( 'failed to update plan to FireBase!' );
+                      } else {
+                        console.log ( 'FireBase updated__' + Firebase.auth().currentUser.displayName )
+                        this.props.enqueueSnackbar (
+                          "atleast one plan has expired!" , {
+                            variant : "warning"  ,
+                            autoHideDuration: 3500,
+                          }
+                        );
+                        let expired = incoming.filter(item=>!(parseInt(new Date() - item.endDate) < 0 && item.endDate !== 0));
+                        Firebase.database().ref ( "expiredPlans/" + Firebase.auth().currentUser.uid.toString ( ) )
+                          .once ( "value" ).then ( (snapshot) => {
+                            let mem = [];
+                            if (snapshot.exists()) {
+                              snapshot.forEach ( function ( childSnapshot) {
+                                expired.push(childSnapshot.val());
+                              });
+                            }
+                            Firebase.database().ref ( "expiredPlans/" + Firebase.auth().currentUser.uid.toString ( ) )
+                              .set ( [...mem, ...expired], (error) => {
+                                if (!error) {
+
+                                }else {
+                                  console.log ( error )
+                                  alert ( 'failed to update expired plan to FireBase!' );
+                                }
+                              } )
+                          } )
+                      }
+                  } );
+                }
+              }
+          } )
       ])
     }
 
@@ -107,12 +155,12 @@ class App extends Component {
     } );
   }
 
-  fetcher = ( site , get , logo ) => {
+  fetcher = ( site , get , logo  ) => {
     this.setState ( {
       page : 1 ,
       loaded: false ,
       refresh: null,
-      sitePage: site  ,
+      sitePage: Listing.filter(it=>it.some(em=>em===site))[0][2]  ,
       logo: logo ,
       stale : '' ,
       characters: [ /*{ name: "burna boy" , job: "temperature " , image: "static/live-from-space.jpg" , market: "UK/London"}*/ ],
@@ -135,7 +183,7 @@ class App extends Component {
         refresh: () => {
           //Ref.remove ( );
           socket.emit ( "scrape" , site );
-          this.props.enqueueSnackbar("refreshing... " + site , {
+          this.props.enqueueSnackbar("refreshing... " + this.state.sitePage , {
             variant : "info" ,
             autoHideDuration: 900,
           });

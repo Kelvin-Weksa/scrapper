@@ -19,9 +19,11 @@ import Doughnut from './doughnutchart';
 import UsersTable from './usersTable';
 import Firebase from './firebase';
 import Notifications from './notification';
+import NotificationsMobile from './notification_mobile'
 import Footer from './footer';
 import clsx from 'clsx';
-import {useScrollPosition} from './use-scroll-position'
+import {useScrollPosition} from './use-scroll-position';
+import Hidden from '@material-ui/core/Hidden';
 
 function myNet () {
   if (this.getMonth() === 0){return "January"};
@@ -460,7 +462,7 @@ export default function PaperSheet() {
       <Grid container className={classes.root} ref={root}>
         <Grid item  style={{flex:'0 1 5%',alignSelf:'flex-start',}}>
           <div style={{display:'flex',justifyContent:"center"}}>
-            <div style={{position:'fixed',top:'30vh'}} ref={guide}>
+            <div style={{position:'fixed',top:'30vh',left:'1vw'}} ref={guide}>
               <div className={clsx({
                 [classes.vl]: row[0],
                 [classes.vll]: !row[0],
@@ -520,17 +522,35 @@ export default function PaperSheet() {
           </Grid>
           <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
           <Grid container spacing={2} className={classes.container} ref={row2}>
-            <Grid item xs={5} style={{}}>
-              <Paper className={classes.paper1}>
-              {/*eslint-disable-next-line*/}
-                {React.useMemo(()=><Graph data={{wk_days:item_of_week}}/>,[meter])}
-              </Paper>
-            </Grid>
-            <Grid item xs={5}>
-              <Paper className={classes.paper1}>
-                {React.useMemo(()=><Doughnut data={{devices:devices}}/>,[devices])}
-              </Paper>
-            </Grid>
+            <Hidden xsDown>
+              <Grid item xs={5} style={{}}>
+                <Paper className={classes.paper1}>
+                {/*eslint-disable-next-line*/}
+                  {React.useMemo(()=><Graph data={{wk_days:item_of_week}}/>,[meter])}
+                </Paper>
+              </Grid>
+              <Grid item xs={5}>
+                <Paper className={classes.paper1}>
+                  {React.useMemo(()=><Doughnut data={{devices:devices}}/>,[devices])}
+                </Paper>
+              </Grid>
+            </Hidden>
+            <Hidden smUp>
+              <div style={{display:'flex',flexFlow:'column nowrap'}}>
+                <Grid item>
+                  <Paper className={classes.paper1}>
+                  {/*eslint-disable-next-line*/}
+                    {React.useMemo(()=><Graph data={{wk_days:item_of_week}}/>,[meter])}
+                  </Paper>
+                </Grid>
+                <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
+                <Grid item >
+                  <Paper className={classes.paper1}>
+                    {React.useMemo(()=><Doughnut data={{devices:devices}}/>,[devices])}
+                  </Paper>
+                </Grid>
+              </div>
+            </Hidden>
           </Grid>
           <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
           <Grid container spacing={2} className={classes.container} ref={row3}>
@@ -583,7 +603,12 @@ export default function PaperSheet() {
           <Grid container spacing={2} className={classes.container} ref={row4}>
             <Grid item xs={10}>
               <Paper className={classes.paper1}>
-              {React.useMemo(()=><Notifications/>,[])}
+                <Hidden xsDown>
+                  {React.useMemo(()=><Notifications/>,[])}
+                </Hidden>
+                <Hidden smUp>
+                  {React.useMemo(()=><NotificationsMobile/>,[])}
+                </Hidden>
               </Paper>
             </Grid>
           </Grid>

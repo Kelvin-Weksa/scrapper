@@ -8,6 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Firebase from './firebase'
 import Switch from '@material-ui/core/Switch';
+import Hidden from '@material-ui/core/Hidden';
 
 const IOSSwitch = withStyles(theme => ({
   root: {
@@ -90,7 +91,7 @@ function createData(name, followed, subscription, email, spent , data , uid) {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: '100%',
+    //width: '100%',
     maxHeight: "70vh",
     overflow: 'auto',
     transition : "all 300ms cubic-bezier(0.34, 1.61, 0.7, 1)",
@@ -100,7 +101,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   table: {
-    minWidth: 700,
+    //minWidth: "50%",
     position:'relative',
   },
   sticky:{
@@ -191,11 +192,13 @@ export default function CustomizedTables ( props ) {
         <TableHead className={classes.sticky}>
           <TableRow>
             <StyledTableCell align="left">Name</StyledTableCell>
-            <StyledTableCell align="right">email</StyledTableCell>
-            <StyledTableCell align="right">Days left in subscription</StyledTableCell>
-            <StyledTableCell align="right">Total Amount Spent</StyledTableCell>
-            <StyledTableCell align="right">No. of Companies followed</StyledTableCell>
-            <StyledTableCell align="right">Downloaded data (MB)</StyledTableCell>
+            <Hidden xsDown>
+              <StyledTableCell align="right">email</StyledTableCell>
+              <StyledTableCell align="right">Days left in subscription</StyledTableCell>
+              <StyledTableCell align="right">Total Amount Spent</StyledTableCell>
+              <StyledTableCell align="right">No. of Companies followed</StyledTableCell>
+              <StyledTableCell align="right">Downloaded data (MB)</StyledTableCell>
+            </Hidden>
             <StyledTableCell align="right">Admin status</StyledTableCell>
           </TableRow>
         </TableHead>
@@ -205,11 +208,13 @@ export default function CustomizedTables ( props ) {
               <TableCell component="th" scope="row">
                 {row.name}
               </TableCell>
-              <TableCell align="center">{row.email}</TableCell>
-              <TableCell align="center">{row.subscription}</TableCell>
-              <TableCell align="center">{row.spent}</TableCell>
-              <TableCell align="center">{row.followed}</TableCell>
-              <TableCell align="center">{row.data||0}MB</TableCell>
+              <Hidden xsDown>
+                <TableCell align="center">{row.email}</TableCell>
+                <TableCell align="center">{row.subscription}</TableCell>
+                <TableCell align="center">{row.spent}</TableCell>
+                <TableCell align="center">{row.followed}</TableCell>
+                <TableCell align="center">{row.data||0}MB</TableCell>
+              </Hidden>
               <TableCell align="right">
                 <IOSSwitch
                   checked={state[row.uid]||false}

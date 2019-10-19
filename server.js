@@ -10498,12 +10498,12 @@ function millsUntilMidnight ( ) {
 }
 console.log ( msToTime ( millsUntilMidnight (  ) ) );
 
-//setTimeout ( scheduler , millsUntilMidnight ( ) );
+setTimeout ( scheduler , millsUntilMidnight ( ) );
 
 console.log(process.env.HEROKU_APP_NAME);
 console.log(process.env.DYNO);
 console.log("scheduler (); ");
-scheduler ();
+//scheduler ();
 
 io .on ( "connection" , socket => {
   var address = socket.handshake.headers [ 'x-forwarded-for' ];

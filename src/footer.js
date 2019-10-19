@@ -1,11 +1,8 @@
 import React from 'react';
 import {useTheme } from '@material-ui/core/styles';
-import Linkedin from 'mdi-material-ui/GooglePlusBox';
 import FacebookBox from 'mdi-material-ui/FacebookBox';
 import TwitterBox from 'mdi-material-ui/Twitter';
 import InstagramIcon from '@material-ui/icons/Instagram';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import YouTubeIcon from '@material-ui/icons/YouTube';
 import CopyrightIcon from '@material-ui/icons/Copyright';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -20,7 +17,6 @@ export default function Footer (props) {
       style={{
         display:'flex',
         flexFlow:'column nowrap',
-        width:'100%',
         boxShadow: `0 0 11px ${theme.palette.secondary.dark}` ,
       }}
 
@@ -38,7 +34,7 @@ export default function Footer (props) {
 
         <div style={{height:theme.mixins.toolbar.minHeight/2}}/>
         <hr style={{width:"90%"}}/>
-        <div style={{display:'flex',justifyContent:"center",width:'100%'}}>
+        <div style={{display:'flex',justifyContent:'center'}}>
           <IconButton style={{color:'white'}}>
             <WhatsAppIcon fontSize="large"/>
           </IconButton>
@@ -49,16 +45,7 @@ export default function Footer (props) {
             <TwitterBox fontSize="large"/>
           </IconButton>
           <IconButton style={{color:'white'}}>
-            <Linkedin fontSize="large"/>
-          </IconButton>
-          <IconButton style={{color:'white'}}>
             <InstagramIcon fontSize="large"/>
-          </IconButton>
-          <IconButton style={{color:'white'}}>
-            <GitHubIcon fontSize="large"/>
-          </IconButton>
-          <IconButton style={{color:'white'}}>
-            <YouTubeIcon fontSize="large"/>
           </IconButton>
           <IconButton style={{color:'white'}}>
             <MailIcon fontSize="large"/>

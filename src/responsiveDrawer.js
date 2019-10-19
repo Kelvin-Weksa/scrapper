@@ -15,7 +15,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import clsx from 'clsx';
-//import Listing from './list'
 import IconBreadcrumbs from './breadCrumb'
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
@@ -24,23 +23,16 @@ import ClearIcon from '@material-ui/icons/Clear';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
-import Card from '@material-ui/core/Card';
-import Badge from '@material-ui/core/Badge';
-import MoreIcon from '@material-ui/icons/MoreVert';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import Subscription from './cardsDialog'
 import Scroller from './scrollMain'
-import Firebase from './firebase'
+import Card from '@material-ui/core/Card';
+import Subscription from './cardsDialog'
 import { withRouter } from 'react-router-dom'
-import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import Paper from '@material-ui/core/Paper';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
 import SectionDesktop from './sectionDesktop';
 import Footer from './footer';
 
-const drawerWidth = 225;
+const drawerWidth = 230;
 
 const useStyles = makeStyles(theme => ({
   '@global': {
@@ -73,10 +65,10 @@ const useStyles = makeStyles(theme => ({
   appBar: {
     //backgroundImage:`url(static/pexels.jpeg)`,
     boxShadow: `0 0 5px ${theme.palette.secondary.light}` ,
-    marginLeft: drawerWidth,
     zIndex: theme.zIndex.drawer ,
     [theme.breakpoints.up('sm')]: {
       width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
     },
   },
   menuButton: {
@@ -159,6 +151,9 @@ const useStyles = makeStyles(theme => ({
     position:'relative',
     margin:'auto',
     width:'60%',
+    [theme.breakpoints.down('sm')]: {
+      width:'90%',
+    },
     textAlign:"center",
     "&:hover": {
       boxShadow: `0 0 11px ${theme.palette.primary.main}`
@@ -173,8 +168,6 @@ function ResponsiveDrawer ( props ) {
   const { enqueueSnackbar , closeSnackbar } = useSnackbar();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [ filter , setFilter ] = React.useState ( "PE" );
-
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   function handleDrawerToggle() {
     setMobileOpen(!mobileOpen);
@@ -202,35 +195,6 @@ function ResponsiveDrawer ( props ) {
     }
   }
 
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  function handleMobileMenuClose() {
-    setMobileMoreAnchorEl(null);
-  }
-
-  function handleLogout() {
-    Firebase.auth().signOut().then( ()=> {
-      enqueueSnackbar ( "Sign-out successful" , {
-          variant : "info"  ,
-          autoHideDuration: 2500,
-      });
-      //sessionStorage.removeItem ( 'User' );
-    }).catch( error=> {
-      enqueueSnackbar ( "An error happened" , {
-          variant : "error"  ,
-          autoHideDuration: 2500,
-      });
-      console.log(error);
-    });
-    props.history.push("/")
-  }
-
-  function handleMobileMenuOpen(event) {
-    setMobileMoreAnchorEl(event.currentTarget);
-  }
-
-  const mobileMenuId = 'primary-search-account-menu-mobile';
-
   function handleRefresh ( ) {
     // variant could be success, error, warning, info, or default
     const action = ( key ) => (
@@ -257,37 +221,6 @@ function ResponsiveDrawer ( props ) {
 
   };
 
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem onClick>
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <Badge badgeContent={1} color="secondary">
-            <AccountCircle />
-          </Badge>
-        </IconButton>
-        <p>Account</p>
-      </MenuItem>
-      <MenuItem  onClick={handleLogout}>
-        <IconButton color="inherit">
-          <ExitToAppOutlinedIcon/>
-        </IconButton>
-        <p>LogOut</p>
-      </MenuItem>
-    </Menu>
-  );
 
   let Listed = props.permitted.sort((a,b) => (
     a[2].toUpperCase() > b[2].toUpperCase()) ? 1 :
@@ -360,20 +293,8 @@ function ResponsiveDrawer ( props ) {
               <Divider orientation="vertical" color="secondary"/>
               <div className={classes.grow} />
               <SectionDesktop />
-              <div className={classes.sectionMobile}>
-                <IconButton
-                  aria-label="show more"
-                  aria-controls={mobileMenuId}
-                  aria-haspopup="true"
-                  onClick={handleMobileMenuOpen}
-                  color="inherit"
-                >
-                  <MoreIcon />
-                </IconButton>
-              </div>
             </Toolbar>
           </AppBar>
-          {renderMobileMenu}
         </div>
         <nav className={classes.drawer} aria-label="mailbox folders">
           {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
@@ -459,7 +380,7 @@ function ResponsiveDrawer ( props ) {
         </main>
       </div>
       <div style={{flex:`1 0 auto`}}/>
-      <div className={classes.appBar}>
+      <div className={classes.appBar} style={{flexFlow:'0 1 auto'}}>
         <Footer/>
       </div>
     </div>

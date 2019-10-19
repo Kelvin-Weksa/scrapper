@@ -27,8 +27,10 @@ import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import SectionDesktop from './sectionDesktop';
 import Footer from './footer';
 import Notifications from './user_notification';
+import NotificationsMobile from './user_notification_mobile';
 import clsx from 'clsx';
-import {useScrollPosition} from './use-scroll-position'
+import {useScrollPosition} from './use-scroll-position';
+import Hidden from '@material-ui/core/Hidden';
 
 function strongPass ( pwd ){
   let array = [ ];
@@ -123,13 +125,12 @@ const useStyles = makeStyles(theme => ({
   },
   buttonFire:{
     margin: 'auto',
-    //width: '35%',
     boxShadow: `0 0 4px`,
   },
   outer:{
     position : "relative" ,
     overflow:'visible',
-    width:'65vw'
+    //width:'65vw'
   },
   inner:{
     width: '90%',
@@ -407,7 +408,7 @@ function PaperSheet ( props ) {
     }
 
     if (values.pass1) {
-      if ( !strongPass ( values.pass2 )[1]  ){
+      if ( !strongPass ( values.pass1 )[1]  ){
         if (values.pass2 === values.pass1) {
           changed.current.add ( `password: '${values.pass1}'` )
           toGo.current = { ...toGo.current , pass1:values.pass1 }
@@ -580,6 +581,128 @@ function PaperSheet ( props ) {
     150
   )
 
+  const fName = (
+    <Input
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      label="first name"
+      validate={values.fNameValid}
+      value={values.fName}
+      onChange={handleChange('fName')}
+    />
+  )
+
+  const email = (
+    <Input
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      label="email adress"
+      validate={values.emailValid}
+      value={values.email}
+      onChange={handleChange('email')}
+    />
+  )
+
+  const company = (
+    <Input
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      label="company"
+      validate={values.companyValid}
+      onChange={handleChange('company')}
+      value={values.company}
+    />
+  )
+
+  const pwd1 = (
+    <Input
+      autoComplete="on"
+      onPaste={disablePaste}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      label={values.passLabel}
+      validate={values.pass1Valid}
+      onChange={handleChange('pass1')}
+      value={values.pass1}
+      type={values.showPassword1 ? 'text' : 'password'}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              edge="end"
+              aria-label="toggle password visibility"
+              onClick={handleClickShowPassword1}
+              onMouseDown={handleMouseDownPassword}
+            >
+              {values.showPassword1 ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
+  )
+
+  const sName = (
+    <Input
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      label="last name"
+      validate={values.sNameValid}
+      value={values.sName}
+      onChange={handleChange('sName')}
+    />
+  )
+
+  const phone = (
+    <Input
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      label="phoneNumber"
+      validate={values.phoneValid}
+      value={values.phone}
+      onChange={handleChange('phone')}
+    />
+  )
+
+  const job =(
+    <Input
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      label="job"
+      validate={values.jobValid}
+      value={values.job}
+      onChange={handleChange('job')}
+    />
+  )
+
+  const pwd2 = (
+    <Input
+      autoComplete="on"
+      onPaste={disablePaste}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      label={values.pass2Label}
+      validate={values.pass2Valid}
+      value={values.pass2}
+      onChange={handleChange('pass2')}
+      type={values.showPassword2 ? 'text' : 'password'}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              edge="end"
+              aria-label="toggle password visibility"
+              onClick={handleClickShowPassword2}
+              onMouseDown={handleMouseDownPassword}
+            >
+              {values.showPassword2 ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
+  )
+
   return (
     <div style={{
       display:'flex',
@@ -595,7 +718,7 @@ function PaperSheet ( props ) {
         <div style={{display:"flex"}}>
           <Grid item  style={{flex:'0 1 5%',alignSelf:'flex-start',}}>
             <div style={{display:'flex',justifyContent:"center"}}>
-              <div style={{position:'fixed',top:'30vh'}} ref={guide}>
+              <div style={{position:'fixed',top:'30vh',left:'1vw'}} ref={guide}>
                 <div className={clsx({
                   [classes.vl]: row[0],
                   [classes.vll]: !row[0],
@@ -658,108 +781,31 @@ function PaperSheet ( props ) {
                   </Typography>
                 </Paper>
                 <Grid container spacing={3}>
-                  <Grid item xs={6} component='form' style={{display:'flex',alignItems:'flex-end', flexDirection:'column'}}>
-                    <Input
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
-                      label="first name"
-                      validate={values.fNameValid}
-                      value={values.fName}
-                      onChange={handleChange('fName')}
-                    />
-                    <Input
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
-                      label="email adress"
-                      validate={values.emailValid}
-                      value={values.email}
-                      onChange={handleChange('email')}
-                    />
-                    <Input
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
-                      label="company"
-                      validate={values.companyValid}
-                      onChange={handleChange('company')}
-                      value={values.company}
-                    />
-                    <Input
-                      autoComplete="on"
-                      onPaste={disablePaste}
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
-                      label={values.passLabel}
-                      validate={values.pass1Valid}
-                      onChange={handleChange('pass1')}
-                      value={values.pass1}
-                      type={values.showPassword1 ? 'text' : 'password'}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              edge="end"
-                              aria-label="toggle password visibility"
-                              onClick={handleClickShowPassword1}
-                              onMouseDown={handleMouseDownPassword}
-                            >
-                              {values.showPassword1 ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={6} component='form' style={{display:'flex',alignItems:'flex-start', flexDirection:'column'}}>
-                    <Input
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
-                      label="last name"
-                      validate={values.sNameValid}
-                      value={values.sName}
-                      onChange={handleChange('sName')}
-                    />
-                    <Input
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
-                      label="phoneNumber"
-                      validate={values.phoneValid}
-                      value={values.phone}
-                      onChange={handleChange('phone')}
-                    />
-                    <Input
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
-                      label="job"
-                      validate={values.jobValid}
-                      value={values.job}
-                      onChange={handleChange('job')}
-                    />
-                    <Input
-                      autoComplete="on"
-                      onPaste={disablePaste}
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
-                      label={values.pass2Label}
-                      validate={values.pass2Valid}
-                      value={values.pass2}
-                      onChange={handleChange('pass2')}
-                      type={values.showPassword2 ? 'text' : 'password'}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              edge="end"
-                              aria-label="toggle password visibility"
-                              onClick={handleClickShowPassword2}
-                              onMouseDown={handleMouseDownPassword}
-                            >
-                              {values.showPassword2 ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
+                  <Hidden xsDown>
+                    <Grid item xs={6} component='form' style={{display:'flex',alignItems:'flex-end', flexDirection:'column'}}>
+                      {fName}
+                      {email}
+                      {company}
+                      {pwd1}
+                    </Grid>
+                    <Grid item xs={6} component='form' style={{display:'flex',alignItems:'flex-start', flexDirection:'column'}}>
+                      {sName}
+                      {phone}
+                      {job}
+                      {pwd2}
+                    </Grid>
+                  </Hidden>
+                  <Hidden smUp>
+                    <Grid item style={{display:'flex',alignItems:'center', flexFlow:'column nowrap',margin:'auto'}}>
+                      {fName}
+                      {sName}
+                      {email}
+                      {phone}
+                      {job}
+                      {pwd1}
+                      {pwd2}
+                    </Grid>
+                  </Hidden>
                   <Button variant="contained" color="secondary" className={classes.buttonFire} onClick={handleUpdate}>
                     save details
                     <SaveIcon className={classes.rightIcon} />
@@ -768,9 +814,14 @@ function PaperSheet ( props ) {
               </Paper>
             </Grid>
             <div style={{height:theme.mixins.toolbar.minHeight}}/>
-            <Grid item style={{width:'70vw'}} ref={row3}>
+            <Grid item ref={row3}>
               <Paper className={classes.paper1}>
-                {React.useMemo(()=><Notifications/>,[])}
+                <Hidden xsDown>
+                  {React.useMemo(()=><Notifications/>,[])}
+                </Hidden>
+                <Hidden smUp>
+                  {React.useMemo(()=><NotificationsMobile/>,[])}
+                </Hidden>
               </Paper>
             </Grid>
             <div style={{height:theme.mixins.toolbar.minHeight}}/>

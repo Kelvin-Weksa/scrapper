@@ -40,10 +40,10 @@ const useStyles = makeStyles(theme => ({
 
   },
   unlock:{
-    display: 'none',
+    /*display: 'none',
     [theme.breakpoints.up('md')]: {
       display: ' flex',
-    },
+    },*/
   }
 }));
 

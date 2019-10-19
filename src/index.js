@@ -10,6 +10,7 @@ import Loader from './loader';
 import Account from './account';
 import Pricing from './pricing';
 import Admin from './admin';
+import About from './about'
 import './index.css';
 
 ReactDOM.render(
@@ -26,6 +27,7 @@ ReactDOM.render(
         <PrivateRoute exact path="/dashboard" component={App}/>
         <PrivateRoute exact path="/admin" component={Admin}/>
         <Route exact path="/" component={LoginPage} />
+        <Route exact path="/about" component={About} />
       </Switch>
     </BrowserRouter>
   </SnackbarProvider>,
