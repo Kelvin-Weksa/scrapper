@@ -48,12 +48,15 @@ class App extends Component {
               snapshot.forEach ( function ( childSnapshot) {
                 plan.push(childSnapshot.val());
               });
+              //console.log(plan);
               if ( plan.length ){
                 let set = new Set ();
                 plan.forEach((item) => {
-                  item.following.forEach((following) => {
-                    set.add(following);
-                  })
+                  if (item.following&&item.following.length) {
+                    item.following.forEach((following) => {
+                      set.add(following);
+                    })
+                  }
                 })
                 let Listed = Listing.filter ( companyList => Array.from(set)
                   .some ( permission => companyList.includes( permission ) ) );
